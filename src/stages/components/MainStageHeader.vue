@@ -145,7 +145,6 @@ export default {
 
 <style scoped>
 .main-header {
-  overflow: hidden;
 }
 
 .main-header__search-wrapper {
