@@ -72,6 +72,7 @@ export default {
   height: max-content;
   position: sticky;
   top: 15px;
+  opacity: 0;
   transition: all 0.2s;
 }
 

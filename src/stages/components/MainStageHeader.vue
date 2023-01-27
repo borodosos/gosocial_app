@@ -1,21 +1,28 @@
 <template>
   <section class="main-header panel">
-    <div class="main-header">
+    <div class="main-header__wrapper">
       <div class="main-header__search">
         <div class="main-header__search-wrapper">
-          <div class="main-header__back-input">
+          <div class="main-header__back-input title">
+            <InputText
+              class="main-header__title-input"
+              v-show="isTitleInput"
+              v-model="postTitle"
+              @focus.native="showBackgroundTitle"
+              @blur="showBackgroundTitle"
+              type="text"
+              placeholder="Write title..."
+            />
+          </div>
+          <div class="main-header__back-input text">
             <InputText
               class="input"
               type="text"
               v-model="postText"
               placeholder="What's on your mind..."
-              @focus.native="showBackground"
-              @blur="showBackground"
-              @click="
-                {
-                  showTitleInput = !showTitleInput;
-                }
-              "
+              @focus.native="showBackgroundText"
+              @blur="showBackgroundText"
+              @click="showTitleInput"
             />
           </div>
         </div>
@@ -24,14 +31,6 @@
       <div class="main-header__content">
         <v-divider />
         <div class="main-header__menu">
-          <InputText
-            class="main-header__title-input"
-            v-show="showTitleInput"
-            v-model="postTitle"
-            type="text"
-            placeholder="Write title..."
-          />
-
           <FormulateInput
             class="main-header__file-input"
             v-show="fileInput"
@@ -90,9 +89,11 @@ export default {
       postLikes: 0,
       selectedTag: null,
       expanded: false,
-      showback: false,
-      myopacity: 0,
-      showTitleInput: false,
+      showbackText: false,
+      myopacityText: 0,
+      showbackTitle: false,
+      myopacityTitle: 0,
+      isTitleInput: false,
       fileInput: false,
       files: [],
       tags: [
@@ -109,18 +110,34 @@ export default {
   },
 
   methods: {
-    showBackground() {
-      if (this.showback !== true) {
-        this.showback = true;
-        this.myopacity = 0.4;
+    showBackgroundText() {
+      if (this.showbackText !== true) {
+        this.showbackText = true;
+        this.myopacityText = 0.4;
       } else {
-        this.showback = false;
-        this.myopacity = 0;
+        this.showbackText = false;
+        this.myopacityText = 0;
+      }
+    },
+
+    showBackgroundTitle() {
+      if (this.showbackTitle !== true) {
+        this.showbackTitle = true;
+        this.myopacityTitle = 0.4;
+      } else {
+        this.showbackTitle = false;
+        this.myopacityTitle = 0;
       }
     },
 
     showFileInput() {
       this.fileInput = !this.fileInput;
+    },
+
+    showTitleInput() {
+      if (!this.postTitle) {
+        this.isTitleInput = !this.isTitleInput;
+      }
     },
   },
 };
@@ -128,11 +145,12 @@ export default {
 
 <style scoped>
 .main-header {
-  height: max-content;
+  overflow: hidden;
 }
 
 .main-header__search-wrapper {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   transition: all 0.4s;
@@ -161,7 +179,12 @@ export default {
   background: none;
 }
 
-.main-header__back-input:before {
+.main-header__back-input.title {
+  margin-bottom: 16px;
+}
+
+.main-header__back-input.text:before,
+.main-header__back-input.title:before {
   content: "";
   background: linear-gradient(
     45deg,
@@ -181,22 +204,28 @@ export default {
   filter: blur(5px);
   width: 100%;
   height: 100%;
-  opacity: v-bind(myopacity);
   animation: glowing 5s linear infinite;
   transition: all 0.4s;
   border-radius: 20px;
 }
+.main-header__back-input.text:before {
+  opacity: v-bind(myopacityText);
+}
 
-.main-header__back-input:hover:before {
+.main-header__back-input.title:before {
+  opacity: v-bind(myopacityTitle);
+}
+
+.main-header__back-input.text:hover:before {
+  opacity: 0.4;
+}
+
+.main-header__back-input.title:hover:before {
   opacity: 0.4;
 }
 
 .p-inputtext:enabled:hover {
   border: 1px solid rgba(0, 0, 0, 0);
-}
-
-.main-header__title-input {
-  margin-bottom: 10px;
 }
 
 .main-header__file-input {

@@ -42,6 +42,7 @@ a.router-link-exact-active {
 canvas.particles {
   position: fixed;
   height: 100%;
+  width: 100%;
 }
 
 .v-btn i {
