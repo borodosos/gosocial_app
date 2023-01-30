@@ -10,42 +10,7 @@
               <img src="@/assets/photos/somebody.jpeg" alt="alt" />
               <div class="avatar-overlay" @click="dialog = !dialog"></div>
             </v-avatar>
-            <v-dialog v-model="dialog" class="profile__dialog" width="500">
-              <v-card class="profile__dialog">
-                <v-card-title class="text-h5 grey lighten-2">
-                  Please, crop the image
-                </v-card-title>
-                <div class="pa-5">
-                  <FormulateInput
-                    v-model="file"
-                    class="file-input"
-                    @file-upload-complete="uploadFile"
-                    @file-removed="imgSrc = ''"
-                    type="image"
-                    label="Post Image"
-                    validation="mime:image/jpeg,image/jpg,image/png"
-                    help="Download your image"
-                  />
-                  <Cropper
-                    class="cropper"
-                    :src="imgSrc"
-                    @change="onChange"
-                    :debounce="false"
-                    :stencil-props="{
-                      aspectRatio: 1,
-                    }"
-                    stencil-component="circle-stencil"
-                  />
-                </div>
-                <v-divider></v-divider>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn class="registration__button" rounded @click="setImage"
-                    >Set image</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+            <VProfileModal :modalDialog="dialog" />
           </div>
 
           <div class="profile__content">
@@ -53,121 +18,33 @@
               <div class="profile__main-settings-title">Main Setting</div>
               <div class="profile__main-settings-body">
                 <div class="profile__first-name">
-                  <span class="mr-2">First Name: </span>
-                  <span v-if="!firstNameChangeable">Shrek</span>
-                  <InputText
-                    class="input"
-                    v-else
-                    v-model="firstNameChanged"
-                    autofocus
-                    type="text"
+                  <span class="mr-2 settings-title">First Name: </span>
+                  <VProfileField
+                    :valueChangeable="firstNameChangeable"
+                    :valueProp="firstName"
                   />
-                  <v-btn
-                    v-if="!firstNameChangeable"
-                    icon
-                    text
-                    small
-                    @click="changeFirstName"
-                  >
-                    <v-icon size="18">mdi-pencil</v-icon>
-                  </v-btn>
-                  <div v-else class="ms-auto">
-                    <v-btn icon text small>
-                      <v-icon size="18">fa-check</v-icon>
-                    </v-btn>
-                    <v-btn icon text small @click="changeFirstName">
-                      <v-icon size="18">fa-xmark</v-icon>
-                    </v-btn>
-                  </div>
                 </div>
                 <div class="profile__second-name">
-                  <span class="mr-2">Second Name: </span>
-                  <span v-if="!secondNameChangeable">Shrekovich</span>
-                  <InputText
-                    class="input"
-                    v-else
-                    v-model="secondNameChanged"
-                    autofocus
-                    type="text"
+                  <span class="mr-2 settings-title">Second Name: </span>
+                  <VProfileField
+                    :valueChangeable="secondNameChangeable"
+                    :valueProp="secondName"
                   />
-                  <v-btn
-                    v-if="!secondNameChangeable"
-                    icon
-                    text
-                    small
-                    @click="changeSecondName"
-                  >
-                    <v-icon size="18">mdi-pencil</v-icon>
-                  </v-btn>
-                  <div v-else class="ms-auto">
-                    <v-btn icon text small>
-                      <v-icon size="18">fa-check</v-icon>
-                    </v-btn>
-                    <v-btn icon text small @click="changeSecondName">
-                      <v-icon size="18">fa-xmark</v-icon>
-                    </v-btn>
-                  </div>
                 </div>
                 <div class="profile__email">
-                  <span class="mr-2">Email: </span>
-                  <span v-if="!emailChangeable">example@dd.com</span>
-                  <InputText
-                    class="input"
-                    v-else
-                    v-model="emailChanged"
-                    autofocus
-                    type="text"
-                  />
-                  <v-btn
-                    v-if="!emailChangeable"
-                    icon
-                    text
-                    small
-                    @click="changeEmail"
+                  <span class="mr-2 settings-title">Email: </span>
+                  <VProfileField
+                    :valueChangeable="emailChangeable"
+                    :valueProp="email"
                   >
-                    <v-icon size="18">mdi-pencil</v-icon>
-                  </v-btn>
-                  <div v-else class="ms-auto">
-                    <v-btn icon text small>
-                      <v-icon size="18">fa-check</v-icon>
-                    </v-btn>
-                    <v-btn icon text small @click="changeEmail">
-                      <v-icon size="18">fa-xmark</v-icon>
-                    </v-btn>
-                  </div>
+                  </VProfileField>
                 </div>
                 <div class="profile__pass">
-                  <span class="mr-2">Password: </span>
-                  <input
-                    v-if="!passwordChangeable"
-                    value="123456789"
-                    readonly
-                    type="password"
+                  <span class="mr-2 settings-title">Password: </span>
+                  <VProfileField
+                    :valueChangeable="passwordChangeable"
+                    :valueProp="password"
                   />
-                  <InputText
-                    class="input"
-                    v-else
-                    v-model="passwordChanged"
-                    autofocus
-                    type="text"
-                  />
-                  <v-btn
-                    v-if="!passwordChangeable"
-                    icon
-                    text
-                    small
-                    @click="changePassword"
-                  >
-                    <v-icon size="18">mdi-pencil</v-icon>
-                  </v-btn>
-                  <div v-else class="ms-auto">
-                    <v-btn icon text small>
-                      <v-icon size="18">fa-check</v-icon>
-                    </v-btn>
-                    <v-btn icon text small @click="changePassword">
-                      <v-icon size="18">fa-xmark</v-icon>
-                    </v-btn>
-                  </div>
                 </div>
               </div>
             </div>
@@ -191,34 +68,28 @@
 <script>
 import VPost from "@/components/UI/VPost.vue";
 import VLoader from "@/components/UI/VLoader.vue";
-import InputText from "primevue/inputtext";
-import { Cropper } from "vue-advanced-cropper";
+import VProfileField from "@/components/UI/VProfileField.vue";
+import VProfileModal from "@/components/UI/VProfileModal.vue";
 
 export default {
   components: {
     VPost,
-    InputText,
+    VProfileField,
     VLoader,
-    Cropper,
+    VProfileModal,
   },
   data() {
     return {
       firstNameChangeable: false,
-      firstNameChanged: "",
+      firstName: "Shrek",
       secondNameChangeable: false,
-      secondNameChanged: "",
+      secondName: "Shrekovich",
       emailChangeable: false,
-      emailChanged: "",
+      email: "user@mail.ru",
       passwordChangeable: false,
-      passwordChanged: "",
+      password: "*****",
       loadingProfile: true,
       dialog: false,
-      file: null,
-      imgSrc: "",
-      result: {
-        coordinates: null,
-        image: null,
-      },
     };
   },
 
@@ -251,16 +122,6 @@ export default {
     changePassword() {
       this.passwordChangeable = !this.passwordChangeable;
     },
-
-    onChange({ coordinates, image }) {
-      this.result = {
-        coordinates,
-        image,
-      };
-    },
-    setImage() {
-      console.log(this.imgSrc);
-    },
   },
 };
 </script>
@@ -270,7 +131,7 @@ export default {
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 1px 10px 0 rgb(185, 185, 185);
-  min-width: 700px;
+  min-width: 500px;
 }
 
 .container {
@@ -309,8 +170,7 @@ export default {
     align-self: center;
   }
 
-  &__first-name span:nth-child(1),
-  &__second-name span:nth-child(1) {
+  .settings-title {
     font-weight: bold;
   }
 
@@ -379,12 +239,6 @@ export default {
     margin-left: 1.5em;
   }
 
-  &__name span:nth-child(1),
-  &__email span:nth-child(1),
-  &__pass span:nth-child(1) {
-    font-weight: bold;
-  }
-
   &__icons {
     display: flex;
     flex-direction: column;
@@ -397,9 +251,7 @@ export default {
   &__first-name,
   &__second-name,
   &__email,
-  &__pass,
-  &__place,
-  &__status {
+  &__pass {
     display: flex;
     align-items: center;
   }
