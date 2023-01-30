@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    :value="modalDialog"
-    @click="$emit('click', console.log('dasdads'))"
-    class="profile__dialog"
-    width="500"
-  >
+  <v-dialog :value="modalDialog" class="profile__dialog" width="500">
     <v-card class="profile__dialog">
       <v-card-title class="text-h5 grey lighten-2">
         Please, download and crop the image
