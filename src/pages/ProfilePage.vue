@@ -100,16 +100,6 @@ export default {
   },
 
   methods: {
-    async uploadFile() {
-      const reader = new FileReader();
-      if (this.file) {
-        reader.readAsDataURL(this.file.fileList[0]);
-        reader.onload = () => {
-          this.imgSrc = reader.result;
-        };
-      }
-    },
-
     changeFirstName() {
       this.firstNameChangeable = !this.firstNameChangeable;
     },
