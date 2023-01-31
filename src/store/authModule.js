@@ -54,17 +54,32 @@ export default {
           });
       });
     },
+
+    async userLogoutFetch(ctx) {
+      return new Promise((resolve) => {
+        localStorage.removeItem("accessToken");
+        delete axios.defaults.headers.common["Authorization"];
+        ctx.commit("resetToken");
+        resolve();
+      });
+    },
   },
 
   mutations: {
     fetchSuccess(state, token) {
       state.token = token;
     },
+    resetToken(state) {
+      state.token = localStorage.getItem("accessToken");
+    },
   },
 
   getters: {
     getAccessToken(state) {
       return state.token;
+    },
+    isAuthenticated(state) {
+      return !!state.token;
     },
   },
 };

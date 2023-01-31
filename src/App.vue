@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <AppHeader />
+    <AppHeader v-show="this.$store.getters.isAuthenticated" />
     <router-view />
   </v-app>
 </template>
