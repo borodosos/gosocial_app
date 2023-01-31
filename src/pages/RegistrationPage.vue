@@ -58,12 +58,17 @@
           <v-btn :loading="loading" rounded type="submit">Sign Up</v-btn>
         </div>
       </v-form>
+      <Toast position="bottom-left" group="bl" />
     </div>
   </section>
 </template>
 
 <script>
+import Toast from "primevue/toast";
 export default {
+  components: {
+    Toast,
+  },
   data() {
     return {
       email: "",
@@ -92,13 +97,31 @@ export default {
       this.$refs.form.validate();
     },
 
-    onSubmit(event) {
+    async onSubmit(event) {
       event.preventDefault();
       this.validate();
       if (this.valid) {
-        console.log("success");
-      } else if (!this.valid) {
-        return null;
+        event.preventDefault();
+        this.loading = true;
+        const a = this.$refs.form.$el;
+        let formData = new FormData(a);
+        this.$store
+          .dispatch("userRegisterFetch", formData)
+          .then(() => {
+            this.$router.push("/");
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: "error",
+              summary: "Registration",
+              detail: error,
+              group: "bl",
+              life: 3000,
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       }
     },
   },

@@ -36,12 +36,18 @@
           <v-btn :loading="loading" rounded type="submit">Log In</v-btn>
         </div>
       </v-form>
+      <Toast position="bottom-left" group="bl" />
     </div>
   </section>
 </template>
 
 <script>
+import Toast from "primevue/toast";
+
 export default {
+  components: {
+    Toast,
+  },
   data() {
     return {
       loading: false,
@@ -70,9 +76,27 @@ export default {
       event.preventDefault();
       this.validate();
       if (this.valid) {
-        console.log("success");
-      } else if (!this.valid) {
-        return null;
+        this.loading = true;
+        const form = this.$refs.form.$el;
+        let formData = new FormData(form);
+        this.$store
+          .dispatch("userLoginFetch", formData)
+          .then(() => {
+            this.loading = !this.loading;
+            this.$router.push("/");
+          })
+          .catch((error) => {
+            this.$toast.add({
+              severity: "error",
+              summary: "Login",
+              detail: error,
+              group: "bl",
+              life: 3000,
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       }
     },
   },
