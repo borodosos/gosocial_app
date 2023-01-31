@@ -189,9 +189,6 @@ export default {
     flex-grow: 1;
   }
 
-  &__main-settings {
-  }
-
   &__main-settings-title {
     color: #c0c0c0;
     display: flex;
@@ -223,9 +220,6 @@ export default {
     justify-content: space-between;
   }
 
-  &__info {
-  }
-
   &__first-name,
   &__second-name,
   &__email,
@@ -244,9 +238,6 @@ export default {
 
   & .v-btn i {
     margin: 0;
-  }
-
-  &__footer {
   }
 
   &__posts {
