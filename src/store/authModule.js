@@ -55,6 +55,7 @@ export default {
       });
     },
 
+    // === Logout user
     async userLogoutFetch(ctx) {
       return new Promise((resolve) => {
         localStorage.removeItem("accessToken");
@@ -70,7 +71,7 @@ export default {
       state.token = token;
     },
     resetToken(state) {
-      state.token = localStorage.getItem("accessToken");
+      state.token = "";
     },
   },
 

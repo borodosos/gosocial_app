@@ -7,6 +7,7 @@
 
 <script>
 import "@/components/UI/particles/particles";
+import axios from "axios";
 import AppHeader from "./components/AppHeader.vue";
 
 export default {
@@ -14,6 +15,16 @@ export default {
   data: () => ({
     //
   }),
+
+  created() {
+    axios.interceptors.response.use(undefined, (err) => {
+      if (err.response.status === 401) {
+        this.$store.dispatch("userLogoutFetch").then(() => {
+          this.$router.push("/login");
+        });
+      }
+    });
+  },
 };
 </script>
 
