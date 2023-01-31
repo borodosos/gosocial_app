@@ -1,9 +1,31 @@
 <template>
-  <section class="login container">
-    <div class="login__wrapper card">
-      <div class="login__title">Welcome to the GoSocial!</div>
-      <v-form ref="form" v-model="valid" class="login__form" @submit="onSubmit">
-        <div class="login__email">
+  <section class="registration container">
+    <div class="registration__wrapper card">
+      <div class="registration__title">Welcome to the GoSocial!</div>
+      <v-form
+        ref="form"
+        v-model="valid"
+        class="registration__form"
+        @submit="onSubmit"
+      >
+        <div class="registration__initials">
+          <v-text-field
+            v-model="firstName"
+            label="First Name"
+            name="firstName"
+            :rules="[firstNameRule]"
+            outlined
+          ></v-text-field>
+          <v-text-field
+            v-model="secondName"
+            label="Second Name"
+            name="secondName"
+            :rules="[secondNameRule]"
+            outlined
+          ></v-text-field>
+        </div>
+
+        <div class="registration__email">
           <v-text-field
             v-model="email"
             :rules="emailRules"
@@ -14,7 +36,7 @@
           >
           </v-text-field>
         </div>
-        <div class="login__password">
+        <div class="registration__password">
           <v-text-field
             v-model="password"
             :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
@@ -28,12 +50,12 @@
             @click:append="showPass = !showPass"
           ></v-text-field>
         </div>
-        <div class="login__form-submit-container">
+        <div class="registration__form-submit-container">
           <div>
-            Don't have an account?
-            <router-link to="/registration">Sign Up</router-link>
+            Already have an account?
+            <router-link to="/login">Log In</router-link>
           </div>
-          <v-btn :loading="loading" rounded type="submit">Log In</v-btn>
+          <v-btn :loading="loading" rounded type="submit">Sign Up</v-btn>
         </div>
       </v-form>
     </div>
@@ -44,20 +66,24 @@
 export default {
   data() {
     return {
-      loading: false,
       email: "",
       password: "",
+      firstName: "",
+      secondName: "",
+      valid: true,
       showPass: false,
+      loading: false,
+      firstNameRule: (value) => !!value || "First name is required.",
+      secondNameRule: (value) => !!value || "Second name is required.",
       passRules: {
-        required: (value) => !!value || "Required.",
+        required: (value) => !!value || "Password is required.",
         min: (v) => v.length >= 8 || "Min 8 characters",
         emailMatch: () => `The email and password you entered don't match`,
       },
       emailRules: [
-        (v) => !!v || "E-mail is required",
+        (v) => !!v || "E-mail is required.",
         (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
       ],
-      valid: true,
     };
   },
 
@@ -92,8 +118,8 @@ export default {
   justify-content: center;
 }
 
-.login {
-  position: relative;
+.registration {
+  display: relative;
   z-index: 1;
 
   &__wrapper {
@@ -108,7 +134,7 @@ export default {
   &__form {
     margin-top: 15px;
 
-    .login__form-submit-container {
+    .registration__form-submit-container {
       display: flex;
     }
 
