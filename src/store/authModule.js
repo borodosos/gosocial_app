@@ -1,6 +1,5 @@
 import { login, registration } from "@/http/userApi";
 import axios from "axios";
-import store from ".";
 
 export default {
   state: {
@@ -13,7 +12,7 @@ export default {
       return new Promise((resolve, reject) => {
         registration(payload)
           .then((res) => {
-            const accessToken = res.token_data.access_token;
+            const accessToken = res.access_token;
             localStorage.setItem("accessToken", accessToken);
 
             axios.defaults.headers.common[
@@ -24,8 +23,6 @@ export default {
             resolve(res);
           })
           .catch((error) => {
-            console.log(error);
-
             if (error.response) {
               reject(error.response.data.error);
             } else if (error.message) reject(error.message);
@@ -38,13 +35,14 @@ export default {
       return new Promise((resolve, reject) => {
         login(payload)
           .then((res) => {
-            const accessToken = res.token_data.access_token;
+            const accessToken = res.access_token;
             localStorage.setItem("accessToken", accessToken);
+
             axios.defaults.headers.common[
               "Authorization"
             ] = `Bearer ${accessToken}`;
-            ctx.commit("fetchSuccess", res);
 
+            ctx.commit("fetchSuccess", accessToken);
             resolve(res);
           })
           .catch((error) => {
@@ -67,9 +65,8 @@ export default {
   },
 
   mutations: {
-    fetchSuccess(state, payload) {
-      state.token = payload.token_data.access_token;
-      store.dispatch("initUser", payload.user_data);
+    fetchSuccess(state, accessToken) {
+      state.token = accessToken;
     },
     resetToken(state) {
       state.token = "";

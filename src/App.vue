@@ -7,7 +7,6 @@
 
 <script>
 import "@/components/UI/particles/particles";
-import axios from "axios";
 import AppHeader from "./components/AppHeader.vue";
 
 export default {
@@ -17,18 +16,10 @@ export default {
   }),
 
   created() {
-    const token = this.$store.getters.getAccessToken;
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = token;
-    }
-
-    axios.interceptors.response.use(undefined, (err) => {
-      if (err.response.status === 401) {
-        this.$store.dispatch("userLogoutFetch").then(() => {
-          this.$router.push("/login");
-        });
-      }
-    });
+    // const token = this.$store.getters.getAccessToken;
+    // if (token) {
+    //   axios.defaults.headers.common["Authorization"] = token;
+    // }
   },
 };
 </script>

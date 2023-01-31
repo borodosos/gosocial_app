@@ -6,7 +6,7 @@
         <div class="profile__body">
           <div class="profile__sidebar">
             <p class="profile__profile-name">Shrek Shrekovich</p>
-            <p class="profile__id">ID: {{ user.id }}</p>
+            <!-- <p class="profile__id">ID: {{ user.id }}</p> -->
             <v-avatar size="180" color="black">
               <img src="@/assets/photos/somebody.jpeg" alt="alt" />
               <div class="avatar-overlay" @click="dialog = !dialog"></div>
@@ -86,16 +86,14 @@ export default {
       secondNameChangeable: false,
       emailChangeable: false,
       passwordChangeable: false,
-      loadingProfile: true,
+      loadingProfile: false,
       dialog: false,
     };
   },
 
-  created() {
-    setTimeout(() => {
-      this.loadingProfile = false;
-    }, 1000);
-    console.log(this.$route.params.id);
+  async created() {
+    this.$store.dispatch("fetchUserPosts");
+    // console.log(this.$route.params.id);
   },
 
   methods: {

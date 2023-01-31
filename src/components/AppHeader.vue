@@ -9,7 +9,7 @@
             <router-link to="/">Home</router-link>
           </v-btn>
           <v-btn class="button-navigation" rounded>
-            <router-link to="/users">My Profile</router-link>
+            <router-link to="/users/">My Profile</router-link>
           </v-btn>
         </nav>
         <InputText
