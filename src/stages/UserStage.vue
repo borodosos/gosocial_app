@@ -18,13 +18,13 @@
           <div class="user__icon">
             <i class="fa-duotone fa-location-dot"></i>
           </div>
-          <span>Russia, Boloto</span>
+          <span>Taganrog</span>
         </div>
         <div class="user__status">
           <div class="user__icon">
             <i class="fa-duotone fa-briefcase-blank"></i>
           </div>
-          <span>Ogre</span>
+          <span>User</span>
         </div>
       </div>
     </div>

@@ -9,18 +9,16 @@
             <router-link to="/">Home</router-link>
           </v-btn>
           <v-btn class="button-navigation" rounded>
-            <router-link to="/me">My Profile</router-link>
+            <router-link to="/users">My Profile</router-link>
           </v-btn>
         </nav>
-        <div class="header__search">
-          <InputText
-            class="header__input"
-            id="username"
-            type="text"
-            placeholder="Search"
-          />
-          <VCustomSelect class="custom-select" :text="'Filter'" />
-        </div>
+        <InputText
+          class="header__input"
+          id="username"
+          type="text"
+          placeholder="Search"
+        />
+        <VCustomSelect class="custom-select" :text="'Filter'" />
       </div>
       <v-btn class="button-icon-menu" rounded>
         <i class="fa-duotone fa-person-from-portal"></i>
@@ -67,7 +65,7 @@ export default {
 .header__navigation {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
   width: 25%;
 }
 
@@ -77,11 +75,6 @@ export default {
 
 .button-navigation {
   display: block;
-  transform: scale 0.2s;
-}
-
-.button-navigation:hover {
-  transform: scale(1.2);
 }
 
 .button-navigation::before {
@@ -142,11 +135,11 @@ export default {
 
 .header__input {
   border-radius: 20px;
-  width: 70%;
+  width: 40%;
 }
 
 .custom-select {
-  margin-left: 4%;
+  margin: 0 auto 0 16px;
 }
 
 .header__wrapper {
@@ -170,7 +163,7 @@ export default {
 .header__menu {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
 }
 

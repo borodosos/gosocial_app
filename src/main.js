@@ -10,6 +10,7 @@ Vue.use(VueFormulate);
 // -- Styles
 import "primevue/resources/themes/saga-blue/theme.css";
 import "primevue/resources/primevue.min.css";
+import "vue-advanced-cropper/dist/style.css";
 
 Vue.config.productionTip = false;
 
