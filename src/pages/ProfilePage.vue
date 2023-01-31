@@ -6,6 +6,7 @@
         <div class="profile__body">
           <div class="profile__sidebar">
             <p class="profile__profile-name">Shrek Shrekovich</p>
+            <p class="profile__id">ID: {{ user.id }}</p>
             <v-avatar size="180" color="black">
               <img src="@/assets/photos/somebody.jpeg" alt="alt" />
               <div class="avatar-overlay" @click="dialog = !dialog"></div>
@@ -21,14 +22,14 @@
                   <span class="mr-2 settings-title">First Name: </span>
                   <VProfileField
                     :valueChangeable="firstNameChangeable"
-                    :valueProp="user.firstName"
+                    :valueProp="user.first_name"
                   />
                 </div>
                 <div class="profile__second-name">
                   <span class="mr-2 settings-title">Second Name: </span>
                   <VProfileField
                     :valueChangeable="secondNameChangeable"
-                    :valueProp="user.secondName"
+                    :valueProp="user.second_name"
                   />
                 </div>
                 <div class="profile__email">
@@ -94,6 +95,7 @@ export default {
     setTimeout(() => {
       this.loadingProfile = false;
     }, 1000);
+    console.log(this.$route.params.id);
   },
 
   methods: {
@@ -146,6 +148,10 @@ export default {
     border-radius: 10px;
     box-shadow: 0 0 10px 5px rgb(206, 206, 206);
     align-self: center;
+  }
+
+  &__profile-name {
+    font-weight: bold;
   }
 
   .settings-title {

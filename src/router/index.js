@@ -18,7 +18,7 @@ const routes = [
   },
 
   {
-    path: "/users/",
+    path: "/users/:id",
     component: ProfilePage,
     meta: {
       requiresAuth: true,

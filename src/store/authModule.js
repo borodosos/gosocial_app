@@ -1,5 +1,6 @@
 import { login, registration } from "@/http/userApi";
 import axios from "axios";
+import store from ".";
 
 export default {
   state: {
@@ -12,7 +13,7 @@ export default {
       return new Promise((resolve, reject) => {
         registration(payload)
           .then((res) => {
-            const accessToken = res.access_token;
+            const accessToken = res.token_data.access_token;
             localStorage.setItem("accessToken", accessToken);
 
             axios.defaults.headers.common[
@@ -37,15 +38,14 @@ export default {
       return new Promise((resolve, reject) => {
         login(payload)
           .then((res) => {
-            if (res.access_token) {
-              const accessToken = res.access_token;
-              localStorage.setItem("accessToken", accessToken);
-              axios.defaults.headers.common[
-                "Authorization"
-              ] = `Bearer ${accessToken}`;
-              ctx.commit("fetchSuccess", accessToken);
-              resolve(res);
-            }
+            const accessToken = res.token_data.access_token;
+            localStorage.setItem("accessToken", accessToken);
+            axios.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${accessToken}`;
+            ctx.commit("fetchSuccess", res);
+
+            resolve(res);
           })
           .catch((error) => {
             if (error.response) {
@@ -67,8 +67,9 @@ export default {
   },
 
   mutations: {
-    fetchSuccess(state, token) {
-      state.token = token;
+    fetchSuccess(state, payload) {
+      state.token = payload.token_data.access_token;
+      store.dispatch("initUser", payload.user_data);
     },
     resetToken(state) {
       state.token = "";

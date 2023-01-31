@@ -1,16 +1,19 @@
 export default {
   state: {
-    user: {
-      firstName: "Shrek",
-      secondName: "Shrekovich",
-      email: "user@mail.ru",
-      imageProfile: "",
+    user: null,
+  },
+
+  actions: {
+    initUser(ctx, payload) {
+      ctx.commit("updateUser", payload);
     },
   },
 
-  actions: {},
-
-  mutations: {},
+  mutations: {
+    updateUser(state, payload) {
+      state.user = payload;
+    },
+  },
 
   getters: {
     getUser(state) {
