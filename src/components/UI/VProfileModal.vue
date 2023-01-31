@@ -1,13 +1,13 @@
 <template>
-  <v-dialog :value="modalDialog" class="profile__dialog" width="500">
-    <v-card class="profile__dialog">
+  <v-dialog :value="modalDialog" @click:outside="toggleDialog" width="500">
+    <v-card class="card">
       <v-card-title class="text-h5 grey lighten-2">
         Please, download and crop the image
       </v-card-title>
-      <div class="pa-5">
+      <div class="card__menu">
         <FormulateInput
           v-model="file"
-          class="file-input"
+          class="card__input"
           @file-upload-complete="uploadFile"
           @file-removed="imgSrc = ''"
           type="image"
@@ -75,17 +75,43 @@ export default {
       }
     },
 
-    onChange({ coordinates, image }) {
+    onChange({ coordinates, canvas }) {
       this.result = {
         coordinates,
-        image,
+        image: canvas.toDataURL(),
       };
     },
+
     setImage() {
-      console.log(this.imgSrc);
+      console.log(this.result);
+    },
+
+    toggleDialog() {
+      this.$emit("toggle-func");
     },
   },
 };
 </script>
 
-<style lang=""></style>
+<style scoped lang="scss">
+.v-dialog {
+  border-radius: 10px;
+}
+
+.card {
+  border-radius: 10px;
+
+  &__menu {
+    padding: 8px;
+  }
+
+  &__input {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+</style>

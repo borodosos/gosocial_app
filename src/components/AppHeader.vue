@@ -75,11 +75,6 @@ export default {
 
 .button-navigation {
   display: block;
-  transform: scale 0.2s;
-}
-
-.button-navigation:hover {
-  transform: scale(1.2);
 }
 
 .button-navigation::before {

@@ -10,7 +10,7 @@
               <img src="@/assets/photos/somebody.jpeg" alt="alt" />
               <div class="avatar-overlay" @click="dialog = !dialog"></div>
             </v-avatar>
-            <VProfileModal :modalDialog="dialog" />
+            <VProfileModal :modalDialog="dialog" @toggle-func="toggleDialog" />
           </div>
 
           <div class="profile__content">
@@ -21,21 +21,21 @@
                   <span class="mr-2 settings-title">First Name: </span>
                   <VProfileField
                     :valueChangeable="firstNameChangeable"
-                    :valueProp="firstName"
+                    :valueProp="user.firstName"
                   />
                 </div>
                 <div class="profile__second-name">
                   <span class="mr-2 settings-title">Second Name: </span>
                   <VProfileField
                     :valueChangeable="secondNameChangeable"
-                    :valueProp="secondName"
+                    :valueProp="user.secondName"
                   />
                 </div>
                 <div class="profile__email">
                   <span class="mr-2 settings-title">Email: </span>
                   <VProfileField
                     :valueChangeable="emailChangeable"
-                    :valueProp="email"
+                    :valueProp="user.email"
                   >
                   </VProfileField>
                 </div>
@@ -43,7 +43,7 @@
                   <span class="mr-2 settings-title">Password: </span>
                   <VProfileField
                     :valueChangeable="passwordChangeable"
-                    :valueProp="password"
+                    :valueProp="'******'"
                   />
                 </div>
               </div>
@@ -80,14 +80,11 @@ export default {
   },
   data() {
     return {
+      user: this.$store.getters.getUser,
       firstNameChangeable: false,
-      firstName: "Shrek",
       secondNameChangeable: false,
-      secondName: "Shrekovich",
       emailChangeable: false,
-      email: "user@mail.ru",
       passwordChangeable: false,
-      password: "*****",
       loadingProfile: true,
       dialog: false,
     };
@@ -100,17 +97,8 @@ export default {
   },
 
   methods: {
-    changeFirstName() {
-      this.firstNameChangeable = !this.firstNameChangeable;
-    },
-    changeSecondName() {
-      this.secondNameChangeable = !this.secondNameChangeable;
-    },
-    changeEmail() {
-      this.emailChangeable = !this.emailChangeable;
-    },
-    changePassword() {
-      this.passwordChangeable = !this.passwordChangeable;
+    toggleDialog() {
+      this.dialog = !this.dialog;
     },
   },
 };
@@ -263,6 +251,7 @@ export default {
 
   &__posts {
     display: flex;
+    align-items: center;
     overflow-x: auto;
     border-radius: 10px;
     box-shadow: inset 0 0 10px 5px rgb(206, 206, 206);
@@ -305,15 +294,13 @@ export default {
     margin-top: 0;
     transform: scale(0.9);
     cursor: pointer;
-  }
-
-  &__list-element::v-deep .post__img,
-  &__list-element::v-deep .post__header {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &__list-element:hover {
-    transform: scale(1);
+    transform: scale(0.92);
   }
 }
 </style>
