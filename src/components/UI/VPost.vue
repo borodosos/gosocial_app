@@ -3,10 +3,17 @@
     <div class="post__wrapper">
       <div class="post__header">
         <v-avatar size="50" color="red">
-          <img src="@/assets/photos/potter.jpeg" alt="alt" />
+          <img
+            v-if="post.user.image_profile !== '0'"
+            src="@/assets/photos/somebody.jpeg"
+            alt="alt"
+          />
+          <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" />
         </v-avatar>
         <div class="post__user-info">
-          <div class="post__user-name">Harry Shprotter</div>
+          <div class="post__user-name">
+            {{ post.user?.first_name }} {{ post.user?.second_name }}
+          </div>
           <div class="post__data">11 January 2023</div>
         </div>
       </div>

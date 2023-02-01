@@ -1,3 +1,5 @@
+import { getUserPosts } from "@/http/postApi";
+
 export default {
   state: {
     user: null,
@@ -12,20 +14,35 @@ export default {
       });
     },
 
-    // async fetchUserPosts() {
-    //   fetchUserPosts();
-    // },
+    async fetchUserPosts(ctx, paramsId) {
+      return new Promise((resolve, reject) => {
+        getUserPosts(paramsId)
+          .then((res) => {
+            ctx.commit("updateUserPosts", res);
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
   },
 
   mutations: {
     updateUser(state, payload) {
       state.user = payload;
     },
+    updateUserPosts(state, payload) {
+      state.userPosts = payload;
+    },
   },
 
   getters: {
     getUser(state) {
       return state.user;
+    },
+    getUserPosts(state) {
+      return state.userPosts;
     },
   },
 };

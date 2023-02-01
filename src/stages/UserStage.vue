@@ -2,15 +2,24 @@
   <section class="user panel">
     <div class="user__header">
       <v-avatar size="50" color="red">
-        <img src="@/assets/photos/somebody.jpeg" alt="alt" />
+        <img
+          v-if="user.image_profile !== '0'"
+          src="@/assets/photos/somebody.jpeg"
+          alt="alt"
+        />
+        <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" />
       </v-avatar>
       <div class="user__title">
-        <span class="user__name">Shrek Shrekovich</span>
+        <span class="user__name"
+          >{{ user.first_name }} {{ user.second_name }}</span
+        >
       </div>
-      <button class="user__button-settings ms-auto">
-        <i class="fa-solid fa-gear"></i>
-        <i class="fa-solid fa-gear"></i>
-      </button>
+      <router-link class="ms-auto user__link" :to="'/users/' + user.id">
+        <button class="user__button-settings">
+          <i class="fa-solid fa-gear"></i>
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </router-link>
     </div>
     <div class="user__info">
       <div class="user__info-wrapper">
@@ -36,6 +45,7 @@ export default {
   data() {
     return {
       marginBottomIntersecting: `-${window.innerHeight - 55}`,
+      user: this.$store.getters.getUser,
     };
   },
   methods: {
@@ -74,6 +84,10 @@ export default {
   top: 15px;
   opacity: 0;
   transition: all 0.2s;
+}
+
+.user__link {
+  color: unset;
 }
 
 .user__button-settings {

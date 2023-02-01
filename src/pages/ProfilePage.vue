@@ -22,7 +22,7 @@
                   <span class="mr-2 settings-title">First Name: </span>
                   <VProfileField
                     :valueChangeable="firstNameChangeable"
-                    :valueProp="'dsadaskd'"
+                    :valueProp="user.first_name"
                   />
                 </div>
                 <div class="profile__second-name">
@@ -52,15 +52,18 @@
           </div>
         </div>
 
-        <!-- <div class="profile__footer">
+        <div class="profile__footer">
           <p class="profile__footer-title">My Posts</p>
           <ul class="profile__posts">
-            <li class="profile__list-element"><VPost /></li>
-            <li class="profile__list-element"><VPost /></li>
-            <li class="profile__list-element"><VPost /></li>
-            <li class="profile__list-element"><VPost /></li>
+            <li
+              v-for="(post, index) in posts"
+              :key="index"
+              class="profile__list-element"
+            >
+              <VPost :post="post" />
+            </li>
           </ul>
-        </div> -->
+        </div>
       </div>
     </transition>
   </section>
@@ -83,6 +86,7 @@ export default {
   data() {
     return {
       user: this.$store.getters.getUser,
+      posts: [],
       firstNameChangeable: false,
       secondNameChangeable: false,
       emailChangeable: false,
@@ -92,11 +96,13 @@ export default {
     };
   },
 
-  // mounted() {
-  //   const token = this.$store.getters.getAccessToken;
-  //   this.$store.dispatch("initUser", token);
-  //   // console.log(this.$route.params.id);
-  // },
+  created() {
+    this.$store
+      .dispatch("fetchUserPosts", this.$route.params.id)
+      .then((value) => {
+        this.posts = value;
+      });
+  },
 
   methods: {
     toggleDialog() {

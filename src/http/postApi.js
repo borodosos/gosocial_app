@@ -8,6 +8,12 @@ export const getAllPosts = async () => {
   return data;
 };
 
+export const getUserPosts = async (paramsId) => {
+  const { data } = await authHost.get(`api/posts/${paramsId}`);
+
+  return data;
+};
+
 // export const createFetchPost = async (title, text, image, tag) => {
 //   const { data } = await authHost.post("api/posts", {
 //     title,
