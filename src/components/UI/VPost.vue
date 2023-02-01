@@ -11,12 +11,9 @@
         </div>
       </div>
       <div class="post__body">
-        <div class="post__title">Tiiiitle!</div>
+        <div class="post__title">{{ post.title }}</div>
         <div class="post__text">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas
-          maxime officia architecto sapiente obcaecati similique iste quibusdam
-          dolor numquam, modi sed illo doloremque tenetur odit possimus a labore
-          deleniti explicabo!
+          {{ post.text }}
         </div>
         <div class="post__img">
           <v-img
@@ -27,9 +24,16 @@
           ></v-img>
         </div>
         <div class="post__tags">
-          <v-chip class="mr-2" color="indigo lighten-1" outlined small>
-            <v-icon left>fa-computer-classic</v-icon>
-            IT
+          <v-chip
+            v-for="(tag, index) in postTags"
+            :key="index"
+            class="mr-2"
+            color="indigo lighten-1"
+            outlined
+            small
+          >
+            <v-icon left>fa-tag</v-icon>
+            {{ tag }}
           </v-chip>
         </div>
       </div>
@@ -38,7 +42,26 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    post: {
+      type: Object,
+    },
+  },
+
+  data() {
+    return {
+      postTags: [],
+    };
+  },
+
+  beforeMount() {
+    this.post.tags.map((element) => {
+      this.postTags.push(element.tag_text);
+    });
+    console.log(this.postTags);
+  },
+};
 </script>
 
 <style scoped>
@@ -66,6 +89,10 @@ export default {};
 
 .post__header .v-avatar {
   margin-right: 5%;
+}
+
+.v-avatar img {
+  object-fit: cover;
 }
 
 .post__user-info {

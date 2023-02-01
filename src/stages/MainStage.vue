@@ -14,18 +14,6 @@ export default {
     MainStageBody,
     MainStageHeader,
   },
-
-  data() {
-    return {
-      loading: false,
-    };
-  },
-
-  created() {
-    this.$store.dispatch("fetchAllPosts").then(() => {
-      console.log("postsStore: ", this.$store.getters.getAllPosts);
-    });
-  },
 };
 </script>
 
