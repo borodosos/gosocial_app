@@ -1,3 +1,4 @@
+import store from "@/store";
 import axios from "axios";
 
 const host = axios.create({
@@ -5,7 +6,7 @@ const host = axios.create({
 });
 
 const authHost = axios.create({
-  baseURL: process.env.REACT_APP_SERVER_URL,
+  baseURL: process.env.VUE_APP_SERVER_URL,
 });
 
 const authInterceptor = (config) => {
@@ -17,8 +18,12 @@ const authInterceptor = (config) => {
 
 authHost.interceptors.request.use(authInterceptor);
 
-host.interceptors.response.use(() => {
-  console.log("err");
+authHost.interceptors.response.use(undefined, (err) => {
+  if (err.response.status === 401) {
+    store.dispatch("userLogoutFetch").then(() => {
+      this.$router.push("/login");
+    });
+  }
 });
 
 export { authHost, host };

@@ -17,7 +17,7 @@
           <div class="profile__content">
             <div class="profile__main-settings">
               <div class="profile__main-settings-title">Main Setting</div>
-              <div class="profile__main-settings-body">
+              <!-- <div class="profile__main-settings-body">
                 <div class="profile__first-name">
                   <span class="mr-2 settings-title">First Name: </span>
                   <VProfileField
@@ -47,7 +47,7 @@
                     :valueProp="'******'"
                   />
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -69,13 +69,13 @@
 <script>
 import VPost from "@/components/UI/VPost.vue";
 import VLoader from "@/components/UI/VLoader.vue";
-import VProfileField from "@/components/UI/VProfileField.vue";
+// import VProfileField from "@/components/UI/VProfileField.vue";
 import VProfileModal from "@/components/UI/VProfileModal.vue";
 
 export default {
   components: {
     VPost,
-    VProfileField,
+    // VProfileField,
     VLoader,
     VProfileModal,
   },

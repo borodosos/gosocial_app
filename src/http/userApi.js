@@ -17,7 +17,7 @@ export const login = async (formData) => {
   return data;
 };
 
-export const fetchUserPosts = async () => {
-  const { data } = await host.get("api/users");
+export const whoAmI = async () => {
+  const { data } = await authHost.get("api/users");
   return data;
 };

@@ -15,9 +15,9 @@ export default {
             const accessToken = res.access_token;
             localStorage.setItem("accessToken", accessToken);
 
-            axios.defaults.headers.common[
-              "Authorization"
-            ] = `Bearer ${accessToken}`;
+            // axios.defaults.headers.common[
+            //   "Authorization"
+            // ] = `Bearer ${accessToken}`;
 
             ctx.commit("fetchSuccess", accessToken);
             resolve(res);
@@ -38,14 +38,15 @@ export default {
             const accessToken = res.access_token;
             localStorage.setItem("accessToken", accessToken);
 
-            axios.defaults.headers.common[
-              "Authorization"
-            ] = `Bearer ${accessToken}`;
+            // axios.defaults.headers.common[
+            //   "Authorization"
+            // ] = `Bearer ${accessToken}`;
 
             ctx.commit("fetchSuccess", accessToken);
             resolve(res);
           })
           .catch((error) => {
+            console.log(error);
             if (error.response) {
               reject(error.response.data.error);
             } else if (error.message) reject(error.message);
