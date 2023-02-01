@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+import router from "@/router";
 import store from "@/store";
 import axios from "axios";
 
@@ -10,9 +12,7 @@ const authHost = axios.create({
 });
 
 const authInterceptor = (config) => {
-  config.headers.authorization = `Bearer ${localStorage.getItem(
-    "accessToken"
-  )}`;
+  config.headers.authorization = `Bearer ${store.getters.getAccessToken}`;
   return config;
 };
 
@@ -21,8 +21,10 @@ authHost.interceptors.request.use(authInterceptor);
 authHost.interceptors.response.use(undefined, (err) => {
   if (err.response.status === 401) {
     store.dispatch("userLogoutFetch").then(() => {
-      this.$router.push("/login");
+      router.push("/login");
     });
+  } else {
+    return Promise.reject(err);
   }
 });
 

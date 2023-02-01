@@ -72,7 +72,7 @@ export default {
       this.$refs.form.validate();
     },
 
-    onSubmit(event) {
+    async onSubmit(event) {
       event.preventDefault();
       this.validate();
       if (this.valid) {

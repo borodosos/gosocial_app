@@ -3,7 +3,7 @@ import axios from "axios";
 
 export default {
   state: {
-    token: localStorage.getItem("accessToken") || "",
+    token: "",
   },
 
   actions: {
@@ -13,7 +13,7 @@ export default {
         registration(payload)
           .then((res) => {
             const accessToken = res.access_token;
-            localStorage.setItem("accessToken", accessToken);
+            // localStorage.setItem("accessToken", accessToken);
 
             // axios.defaults.headers.common[
             //   "Authorization"
@@ -36,7 +36,7 @@ export default {
         login(payload)
           .then((res) => {
             const accessToken = res.access_token;
-            localStorage.setItem("accessToken", accessToken);
+            // localStorage.setItem("accessToken", accessToken);
 
             // axios.defaults.headers.common[
             //   "Authorization"
@@ -46,7 +46,6 @@ export default {
             resolve(res);
           })
           .catch((error) => {
-            console.log(error);
             if (error.response) {
               reject(error.response.data.error);
             } else if (error.message) reject(error.message);
