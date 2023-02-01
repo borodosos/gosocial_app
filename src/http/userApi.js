@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { host } from "@/http";
-import store from "@/store";
+import { authHost, host } from "@/http";
 
 export const registration = async (formData) => {
   const { data } = await host.post("api/registration", formData);
@@ -17,5 +15,10 @@ export const refresh = async (refreshToken) => {
   const { data } = await host.post("api/refresh", {
     refreshToken: refreshToken,
   });
+  return data;
+};
+
+export const getUserInfo = async (paramsId) => {
+  const { data } = await authHost.get(`api/users/${paramsId}`);
   return data;
 };

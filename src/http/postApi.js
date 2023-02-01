@@ -13,14 +13,3 @@ export const getUserPosts = async (paramsId) => {
 
   return data;
 };
-
-// export const createFetchPost = async (title, text, image, tag) => {
-//   const { data } = await authHost.post("api/posts", {
-//     title,
-//     text,
-//     image,
-//     tag,
-//   });
-
-//   return data;
-// };

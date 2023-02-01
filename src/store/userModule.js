@@ -1,4 +1,4 @@
-import { getUserPosts } from "@/http/postApi";
+import { getUserInfo } from "@/http/userApi";
 
 export default {
   state: {
@@ -14,10 +14,11 @@ export default {
       });
     },
 
-    async fetchUserPosts(ctx, paramsId) {
+    async fetchUserInfo(ctx, paramsId) {
       return new Promise((resolve, reject) => {
-        getUserPosts(paramsId)
+        getUserInfo(paramsId)
           .then((res) => {
+            console.log("res: ", res);
             ctx.commit("updateUserPosts", res);
             resolve(res);
           })

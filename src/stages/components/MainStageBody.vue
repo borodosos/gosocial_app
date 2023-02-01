@@ -3,7 +3,12 @@
     <transition name="component-fade" mode="out-in">
       <VLoader v-if="loading && !posts.length" />
       <ul v-else>
-        <VPost v-for="(post, index) in posts" :key="index" :post="post" />
+        <VPost
+          v-for="(post, index) in posts"
+          :key="index"
+          :post="post"
+          :user="post.user"
+        />
       </ul>
     </transition>
   </div>
@@ -42,8 +47,9 @@ export default {
       this.loading = true;
       this.$store
         .dispatch("fetchAllPosts")
-        .then(() => {
-          this.posts = this.$store.getters.getAllPosts;
+        .then((value) => {
+          console.log(value);
+          this.posts = value;
         })
         .catch((error) => {
           this.$toast.add({

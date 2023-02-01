@@ -1,14 +1,23 @@
 <template>
   <section class="profile container">
     <transition name="component-fade" mode="out-in">
-      <VLoader v-if="loadingProfile" />
+      <VLoader v-if="loading" />
       <div v-else class="profile__wrapper card">
         <div class="profile__body">
           <div class="profile__sidebar">
-            <p class="profile__profile-name">Shrek Shrekovich</p>
+            <p class="profile__profile-name">
+              {{ user.first_name }} {{ user.second_name }}
+            </p>
             <p class="profile__id">ID: {{ user.id }}</p>
             <v-avatar size="180" color="black">
-              <img src="@/assets/photos/somebody.jpeg" alt="alt" />
+              <!-- <img
+                v-if="post.user.image_profile !== '0'"
+                src="@/assets/photos/somebody.jpeg"
+                alt="alt"
+              /> -->
+              <!-- <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" /> -->
+              <img src="@/assets/photos/defaultGiga.jpg" alt="alt" />
+
               <div class="avatar-overlay" @click="dialog = !dialog"></div>
             </v-avatar>
             <VProfileModal :modalDialog="dialog" @toggle-func="toggleDialog" />
@@ -54,13 +63,18 @@
 
         <div class="profile__footer">
           <p class="profile__footer-title">My Posts</p>
-          <ul class="profile__posts">
+          <ul
+            :class="[
+              'profile__posts',
+              user.posts.length === 1 ? 'justify-center' : '',
+            ]"
+          >
             <li
-              v-for="(post, index) in posts"
+              v-for="(post, index) in user.posts"
               :key="index"
               class="profile__list-element"
             >
-              <VPost :post="post" />
+              <VPost :post="post" :user="user" />
             </li>
           </ul>
         </div>
@@ -85,23 +99,28 @@ export default {
   },
   data() {
     return {
-      user: this.$store.getters.getUser,
-      posts: [],
+      user: null,
       firstNameChangeable: false,
       secondNameChangeable: false,
       emailChangeable: false,
       passwordChangeable: false,
-      loadingProfile: false,
+      loading: false,
       dialog: false,
     };
   },
 
-  created() {
-    // TODO: Получать новости пользователя и самого пользователя
+  async created() {
+    this.loading = true;
     this.$store
-      .dispatch("fetchUserPosts", this.$route.params.id)
+      .dispatch("fetchUserInfo", this.$route.params.id)
       .then((value) => {
-        this.posts = value;
+        this.user = value;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        this.loading = false;
       });
   },
 

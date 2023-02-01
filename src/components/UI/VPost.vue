@@ -3,16 +3,17 @@
     <div class="post__wrapper">
       <div class="post__header">
         <v-avatar size="50" color="red">
-          <img
-            v-if="post.user.image_profile !== '0'"
+          <!-- <img
+            v-if="user.image_profile !== '0'"
             src="@/assets/photos/somebody.jpeg"
             alt="alt"
           />
-          <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" />
+          <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" /> -->
+          <img src="@/assets/photos/defaultGiga.jpg" alt="alt" />
         </v-avatar>
         <div class="post__user-info">
           <div class="post__user-name">
-            {{ post.user?.first_name }} {{ post.user?.second_name }}
+            {{ user.first_name }} {{ user.second_name }}
           </div>
           <div class="post__data">11 January 2023</div>
         </div>
@@ -54,6 +55,9 @@ export default {
     post: {
       type: Object,
     },
+    user: {
+      type: Object,
+    },
   },
 
   data() {
@@ -63,7 +67,7 @@ export default {
   },
 
   mounted() {
-    this.post.tags.map((element) => {
+    this.post.tags?.map((element) => {
       this.postTags.push(element.tag_text);
     });
   },
