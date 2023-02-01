@@ -97,6 +97,7 @@ export default {
   },
 
   created() {
+    // TODO: Получать новости пользователя и самого пользователя
     this.$store
       .dispatch("fetchUserPosts", this.$route.params.id)
       .then((value) => {
