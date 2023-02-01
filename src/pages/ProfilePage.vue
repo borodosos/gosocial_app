@@ -52,7 +52,7 @@
           </div>
         </div>
 
-        <div class="profile__footer">
+        <!-- <div class="profile__footer">
           <p class="profile__footer-title">My Posts</p>
           <ul class="profile__posts">
             <li class="profile__list-element"><VPost /></li>
@@ -60,7 +60,7 @@
             <li class="profile__list-element"><VPost /></li>
             <li class="profile__list-element"><VPost /></li>
           </ul>
-        </div>
+        </div> -->
       </div>
     </transition>
   </section>
@@ -74,6 +74,7 @@ import VProfileModal from "@/components/UI/VProfileModal.vue";
 
 export default {
   components: {
+    // eslint-disable-next-line vue/no-unused-components
     VPost,
     VProfileField,
     VLoader,
@@ -91,11 +92,11 @@ export default {
     };
   },
 
-  created() {
-    const token = this.$store.getters.getAccessToken;
-    this.$store.dispatch("initUser", token);
-    // console.log(this.$route.params.id);
-  },
+  // mounted() {
+  //   const token = this.$store.getters.getAccessToken;
+  //   this.$store.dispatch("initUser", token);
+  //   // console.log(this.$route.params.id);
+  // },
 
   methods: {
     toggleDialog() {

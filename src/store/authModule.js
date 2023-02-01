@@ -1,4 +1,5 @@
 import { login, refresh, registration } from "@/http/userApi";
+import parseToken from "@/utils/parseToken";
 import Cookies from "js-cookie";
 
 export default {
@@ -16,6 +17,8 @@ export default {
             const refreshToken = res.refresh_token;
             Cookies.set("refreshToken", refreshToken);
 
+            const userDetails = parseToken(accessToken).user_info;
+            ctx.dispatch("initUser", userDetails); // -- Init user
             ctx.commit("fetchSuccess", accessToken); // -- Set access token
             resolve(res);
           })
@@ -36,6 +39,8 @@ export default {
             const refreshToken = res.refresh_token;
             Cookies.set("refreshToken", refreshToken);
 
+            const userDetails = parseToken(accessToken).user_info;
+            ctx.dispatch("initUser", userDetails); // -- Init user
             ctx.commit("fetchSuccess", accessToken); // -- Set access token
             resolve(res);
           })
@@ -56,6 +61,8 @@ export default {
             const refreshToken = res.refresh_token;
             Cookies.set("refreshToken", refreshToken);
 
+            const userDetails = parseToken(accessToken).user_info;
+            ctx.dispatch("initUser", userDetails); // -- Init user
             ctx.commit("fetchSuccess", accessToken); // -- Set access token
             resolve(res);
           })

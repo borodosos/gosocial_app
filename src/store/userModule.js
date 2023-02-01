@@ -1,5 +1,3 @@
-import parseToken from "@/utils/parseToken";
-
 export default {
   state: {
     user: null,
@@ -7,11 +5,9 @@ export default {
   },
 
   actions: {
-    initUser(ctx, token) {
-      const parsedToken = parseToken(token);
-      const userInfo = parsedToken.user_info;
+    initUser(ctx, userDetails) {
       return new Promise((resolve) => {
-        ctx.commit("updateUser", userInfo);
+        ctx.commit("updateUser", userDetails);
         resolve();
       });
     },
