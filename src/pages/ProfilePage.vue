@@ -64,6 +64,7 @@
         <div class="profile__footer">
           <p class="profile__footer-title">My Posts</p>
           <ul
+            v-if="user.posts.length"
             :class="[
               'profile__posts',
               user.posts.length === 1 ? 'justify-center' : '',
@@ -77,6 +78,9 @@
               <VPost :post="post" :user="user" />
             </li>
           </ul>
+          <p v-else class="d-flex justify-center">
+            Oops, you've not any posts... Let's go create it!
+          </p>
         </div>
       </div>
     </transition>
@@ -91,7 +95,6 @@ import VProfileModal from "@/components/UI/VProfileModal.vue";
 
 export default {
   components: {
-    // eslint-disable-next-line vue/no-unused-components
     VPost,
     VProfileField,
     VLoader,
