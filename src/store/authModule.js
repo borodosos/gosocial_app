@@ -1,5 +1,5 @@
-import { login, registration } from "@/http/userApi";
-import axios from "axios";
+import { login, refresh, registration } from "@/http/userApi";
+import Cookies from "js-cookie";
 
 export default {
   state: {
@@ -13,12 +13,8 @@ export default {
         registration(payload)
           .then((res) => {
             const accessToken = res.access_token;
-            // localStorage.setItem("accessToken", accessToken);
-
-            // axios.defaults.headers.common[
-            //   "Authorization"
-            // ] = `Bearer ${accessToken}`;
-
+            const refreshToken = res.refresh_token;
+            Cookies.set("refreshToken", refreshToken);
             ctx.commit("fetchSuccess", accessToken);
             resolve(res);
           })
@@ -36,12 +32,27 @@ export default {
         login(payload)
           .then((res) => {
             const accessToken = res.access_token;
-            // localStorage.setItem("accessToken", accessToken);
+            const refreshToken = res.refresh_token;
+            Cookies.set("refreshToken", refreshToken);
+            ctx.commit("fetchSuccess", accessToken);
+            resolve(res);
+          })
+          .catch((error) => {
+            if (error.response) {
+              reject(error.response.data.error);
+            } else if (error.message) reject(error.message);
+          });
+      });
+    },
 
-            // axios.defaults.headers.common[
-            //   "Authorization"
-            // ] = `Bearer ${accessToken}`;
-
+    // === Refresh token user
+    async refreshTokenFetch(ctx, payload) {
+      return new Promise((resolve, reject) => {
+        refresh(payload)
+          .then((res) => {
+            const accessToken = res.access_token;
+            const refreshToken = res.refresh_token;
+            Cookies.set("refreshToken", refreshToken);
             ctx.commit("fetchSuccess", accessToken);
             resolve(res);
           })
@@ -56,8 +67,6 @@ export default {
     // === Logout user
     async userLogoutFetch(ctx) {
       return new Promise((resolve) => {
-        localStorage.removeItem("accessToken");
-        delete axios.defaults.headers.common["Authorization"];
         ctx.commit("resetToken");
         resolve();
       });

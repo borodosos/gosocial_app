@@ -86,13 +86,13 @@ export default {
       secondNameChangeable: false,
       emailChangeable: false,
       passwordChangeable: false,
-      loadingProfile: false,
+      loadingProfile: true,
       dialog: false,
     };
   },
 
   async created() {
-    this.$store.dispatch("fetchUserPosts");
+    // this.$store.dispatch("fetchUserPosts");
     // console.log(this.$route.params.id);
   },
 

@@ -1,7 +1,7 @@
-/* eslint-disable no-unused-vars */
-import router from "@/router";
+// import router from "@/router";
 import store from "@/store";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const host = axios.create({
   baseURL: process.env.VUE_APP_SERVER_URL,
@@ -20,12 +20,9 @@ authHost.interceptors.request.use(authInterceptor);
 
 authHost.interceptors.response.use(undefined, (err) => {
   if (err.response.status === 401) {
-    store.dispatch("userLogoutFetch").then(() => {
-      router.push("/login");
-    });
-  } else {
-    return Promise.reject(err);
+    store.dispatch("refreshTokenFetch", Cookies.get("refreshToken"));
   }
+  return Promise.reject(err);
 });
 
 export { authHost, host };

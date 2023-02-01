@@ -14,13 +14,6 @@ export default {
   data: () => ({
     //
   }),
-
-  created() {
-    // const token = this.$store.getters.getAccessToken;
-    // if (token) {
-    //   axios.defaults.headers.common["Authorization"] = token;
-    // }
-  },
 };
 </script>
 

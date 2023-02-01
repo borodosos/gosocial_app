@@ -59,7 +59,6 @@ export default {
     this.post.tags.map((element) => {
       this.postTags.push(element.tag_text);
     });
-    console.log(this.postTags);
   },
 };
 </script>
