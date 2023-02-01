@@ -1,13 +1,10 @@
 <template>
   <div class="main-body panel">
     <transition name="component-fade" mode="out-in">
-      <VLoader v-if="loading" />
-      <ul v-else-if="!loading && posts.length">
+      <VLoader v-if="loading && !posts.length" />
+      <ul v-else>
         <VPost v-for="(post, index) in posts" :key="index" :post="post" />
       </ul>
-      <div v-else>
-        <p>Please, reload page!</p>
-      </div>
     </transition>
   </div>
 </template>
@@ -40,10 +37,6 @@ export default {
     },
   },
 
-  created() {
-    this.fetchPosts();
-  },
-
   methods: {
     async fetchPosts() {
       this.loading = true;
@@ -65,6 +58,10 @@ export default {
           this.loading = false;
         });
     },
+  },
+
+  mounted() {
+    this.fetchPosts();
   },
 };
 </script>

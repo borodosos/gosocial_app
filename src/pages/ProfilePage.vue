@@ -6,7 +6,7 @@
         <div class="profile__body">
           <div class="profile__sidebar">
             <p class="profile__profile-name">Shrek Shrekovich</p>
-            <!-- <p class="profile__id">ID: {{ user.id }}</p> -->
+            <p class="profile__id">ID: {{ user.id }}</p>
             <v-avatar size="180" color="black">
               <img src="@/assets/photos/somebody.jpeg" alt="alt" />
               <div class="avatar-overlay" @click="dialog = !dialog"></div>
@@ -17,12 +17,12 @@
           <div class="profile__content">
             <div class="profile__main-settings">
               <div class="profile__main-settings-title">Main Setting</div>
-              <!-- <div class="profile__main-settings-body">
+              <div class="profile__main-settings-body">
                 <div class="profile__first-name">
                   <span class="mr-2 settings-title">First Name: </span>
                   <VProfileField
                     :valueChangeable="firstNameChangeable"
-                    :valueProp="user.first_name"
+                    :valueProp="'dsadaskd'"
                   />
                 </div>
                 <div class="profile__second-name">
@@ -47,7 +47,7 @@
                     :valueProp="'******'"
                   />
                 </div>
-              </div> -->
+              </div>
             </div>
           </div>
         </div>
@@ -69,13 +69,13 @@
 <script>
 import VPost from "@/components/UI/VPost.vue";
 import VLoader from "@/components/UI/VLoader.vue";
-// import VProfileField from "@/components/UI/VProfileField.vue";
+import VProfileField from "@/components/UI/VProfileField.vue";
 import VProfileModal from "@/components/UI/VProfileModal.vue";
 
 export default {
   components: {
     VPost,
-    // VProfileField,
+    VProfileField,
     VLoader,
     VProfileModal,
   },
@@ -86,13 +86,14 @@ export default {
       secondNameChangeable: false,
       emailChangeable: false,
       passwordChangeable: false,
-      loadingProfile: true,
+      loadingProfile: false,
       dialog: false,
     };
   },
 
-  async created() {
-    // this.$store.dispatch("fetchUserPosts");
+  created() {
+    const token = this.$store.getters.getAccessToken;
+    this.$store.dispatch("initUser", token);
     // console.log(this.$route.params.id);
   },
 

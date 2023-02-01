@@ -1,4 +1,4 @@
-import { fetchUserPosts } from "@/http/userApi";
+import parseToken from "@/utils/parseToken";
 
 export default {
   state: {
@@ -7,13 +7,18 @@ export default {
   },
 
   actions: {
-    initUser(ctx, payload) {
-      ctx.commit("updateUser", payload);
+    initUser(ctx, token) {
+      const parsedToken = parseToken(token);
+      const userInfo = parsedToken.user_info;
+      return new Promise((resolve) => {
+        ctx.commit("updateUser", userInfo);
+        resolve();
+      });
     },
 
-    async fetchUserPosts() {
-      fetchUserPosts();
-    },
+    // async fetchUserPosts() {
+    //   fetchUserPosts();
+    // },
   },
 
   mutations: {

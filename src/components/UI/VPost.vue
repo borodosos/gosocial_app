@@ -55,7 +55,7 @@ export default {
     };
   },
 
-  beforeMount() {
+  mounted() {
     this.post.tags.map((element) => {
       this.postTags.push(element.tag_text);
     });

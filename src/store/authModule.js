@@ -15,7 +15,8 @@ export default {
             const accessToken = res.access_token;
             const refreshToken = res.refresh_token;
             Cookies.set("refreshToken", refreshToken);
-            ctx.commit("fetchSuccess", accessToken);
+
+            ctx.commit("fetchSuccess", accessToken); // -- Set access token
             resolve(res);
           })
           .catch((error) => {
@@ -34,7 +35,8 @@ export default {
             const accessToken = res.access_token;
             const refreshToken = res.refresh_token;
             Cookies.set("refreshToken", refreshToken);
-            ctx.commit("fetchSuccess", accessToken);
+
+            ctx.commit("fetchSuccess", accessToken); // -- Set access token
             resolve(res);
           })
           .catch((error) => {
@@ -53,7 +55,8 @@ export default {
             const accessToken = res.access_token;
             const refreshToken = res.refresh_token;
             Cookies.set("refreshToken", refreshToken);
-            ctx.commit("fetchSuccess", accessToken);
+
+            ctx.commit("fetchSuccess", accessToken); // -- Set access token
             resolve(res);
           })
           .catch((error) => {
