@@ -9,7 +9,9 @@
             <router-link to="/">Home</router-link>
           </v-btn>
           <v-btn class="button-navigation" rounded>
-            <router-link to="/users">My Profile</router-link>
+            <router-link :to="'/users/' + this.$store.getters.getAuthUser?.id"
+              >My Profile</router-link
+            >
           </v-btn>
         </nav>
         <InputText
@@ -20,7 +22,7 @@
         />
         <VCustomSelect class="custom-select" :text="'Filter'" />
       </div>
-      <v-btn class="button-icon-menu" rounded>
+      <v-btn class="button-icon-menu" rounded @click="logout">
         <i class="fa-duotone fa-person-from-portal"></i>
         <span>Log out</span>
       </v-btn>
@@ -39,6 +41,14 @@ export default {
 
   data() {
     return {};
+  },
+
+  methods: {
+    logout() {
+      this.$store.dispatch("userLogoutFetch").then(() => {
+        this.$router.push("/login");
+      });
+    },
   },
 };
 </script>

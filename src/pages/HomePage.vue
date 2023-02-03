@@ -14,12 +14,6 @@ export default {
     MainStage,
     UserStage,
   },
-
-  data() {
-    return {
-      positionHeight: null,
-    };
-  },
 };
 </script>
 

@@ -3,20 +3,25 @@
     <div class="post__wrapper">
       <div class="post__header">
         <v-avatar size="50" color="red">
-          <img src="@/assets/photos/potter.jpeg" alt="alt" />
+          <!-- <img
+            v-if="user.image_profile !== '0'"
+            src="@/assets/photos/somebody.jpeg"
+            alt="alt"
+          />
+          <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" /> -->
+          <img src="@/assets/photos/defaultGiga.jpg" alt="alt" />
         </v-avatar>
         <div class="post__user-info">
-          <div class="post__user-name">Harry Shprotter</div>
+          <div class="post__user-name">
+            {{ user.first_name }} {{ user.second_name }}
+          </div>
           <div class="post__data">11 January 2023</div>
         </div>
       </div>
       <div class="post__body">
-        <div class="post__title">Tiiiitle!</div>
+        <div class="post__title">{{ post.title }}</div>
         <div class="post__text">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas
-          maxime officia architecto sapiente obcaecati similique iste quibusdam
-          dolor numquam, modi sed illo doloremque tenetur odit possimus a labore
-          deleniti explicabo!
+          {{ post.text }}
         </div>
         <div class="post__img">
           <v-img
@@ -27,9 +32,16 @@
           ></v-img>
         </div>
         <div class="post__tags">
-          <v-chip class="mr-2" color="indigo lighten-1" outlined small>
-            <v-icon left>fa-computer-classic</v-icon>
-            IT
+          <v-chip
+            v-for="(tag, index) in postTags"
+            :key="index"
+            class="mr-2"
+            color="indigo lighten-1"
+            outlined
+            small
+          >
+            <v-icon left>fa-tag</v-icon>
+            {{ tag }}
           </v-chip>
         </div>
       </div>
@@ -38,7 +50,28 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    post: {
+      type: Object,
+    },
+    user: {
+      type: Object,
+    },
+  },
+
+  data() {
+    return {
+      postTags: [],
+    };
+  },
+
+  mounted() {
+    this.post.tags?.map((element) => {
+      this.postTags.push(element.tag_text);
+    });
+  },
+};
 </script>
 
 <style scoped>
@@ -66,6 +99,10 @@ export default {};
 
 .post__header .v-avatar {
   margin-right: 5%;
+}
+
+.v-avatar img {
+  object-fit: cover;
 }
 
 .post__user-info {

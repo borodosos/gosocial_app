@@ -5,7 +5,10 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import PrimeVue from "primevue/config";
 import VueFormulate from "@braid/vue-formulate";
+import ToastService from "primevue/toastservice";
+
 Vue.use(VueFormulate);
+Vue.use(ToastService);
 
 // -- Styles
 import "primevue/resources/themes/saga-blue/theme.css";

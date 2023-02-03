@@ -1,13 +1,23 @@
 <template>
   <section class="profile container">
     <transition name="component-fade" mode="out-in">
-      <VLoader v-if="loadingProfile" />
+      <VLoader v-if="loading" />
       <div v-else class="profile__wrapper card">
         <div class="profile__body">
           <div class="profile__sidebar">
-            <p class="profile__profile-name">Shrek Shrekovich</p>
+            <p class="profile__profile-name">
+              {{ user.first_name }} {{ user.second_name }}
+            </p>
+            <p class="profile__id">ID: {{ user.id }}</p>
             <v-avatar size="180" color="black">
-              <img src="@/assets/photos/somebody.jpeg" alt="alt" />
+              <!-- <img
+                v-if="post.user.image_profile !== '0'"
+                src="@/assets/photos/somebody.jpeg"
+                alt="alt"
+              /> -->
+              <!-- <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" /> -->
+              <img src="@/assets/photos/defaultGiga.jpg" alt="alt" />
+
               <div class="avatar-overlay" @click="dialog = !dialog"></div>
             </v-avatar>
             <VProfileModal :modalDialog="dialog" @toggle-func="toggleDialog" />
@@ -21,14 +31,14 @@
                   <span class="mr-2 settings-title">First Name: </span>
                   <VProfileField
                     :valueChangeable="firstNameChangeable"
-                    :valueProp="user.firstName"
+                    :valueProp="user.first_name"
                   />
                 </div>
                 <div class="profile__second-name">
                   <span class="mr-2 settings-title">Second Name: </span>
                   <VProfileField
                     :valueChangeable="secondNameChangeable"
-                    :valueProp="user.secondName"
+                    :valueProp="user.second_name"
                   />
                 </div>
                 <div class="profile__email">
@@ -53,12 +63,24 @@
 
         <div class="profile__footer">
           <p class="profile__footer-title">My Posts</p>
-          <ul class="profile__posts">
-            <li class="profile__list-element"><VPost /></li>
-            <li class="profile__list-element"><VPost /></li>
-            <li class="profile__list-element"><VPost /></li>
-            <li class="profile__list-element"><VPost /></li>
+          <ul
+            v-if="user.posts.length"
+            :class="[
+              'profile__posts',
+              user.posts.length === 1 ? 'justify-center' : '',
+            ]"
+          >
+            <li
+              v-for="(post, index) in user.posts"
+              :key="index"
+              class="profile__list-element"
+            >
+              <VPost :post="post" :user="user" />
+            </li>
           </ul>
+          <p v-else class="d-flex justify-center">
+            Oops, you've not any posts... Let's go create it!
+          </p>
         </div>
       </div>
     </transition>
@@ -80,20 +102,35 @@ export default {
   },
   data() {
     return {
-      user: this.$store.getters.getUser,
+      user: null,
+      isAmI: false,
       firstNameChangeable: false,
       secondNameChangeable: false,
       emailChangeable: false,
       passwordChangeable: false,
-      loadingProfile: true,
+      loading: false,
       dialog: false,
     };
   },
 
-  created() {
-    setTimeout(() => {
-      this.loadingProfile = false;
-    }, 1000);
+  async created() {
+    this.loading = true;
+    this.$store
+      .dispatch("fetchUserInfo", this.$route.params.id)
+      .then(() => {
+        const userId = this.$store.getters.getUser.id;
+        const authUserId = this.$store.getters.getAuthUser.id;
+        this.user = this.$store.getters.getUser;
+        if (userId === authUserId) {
+          this.isAmI = true;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        this.loading = false;
+      });
   },
 
   methods: {
@@ -148,6 +185,10 @@ export default {
     align-self: center;
   }
 
+  &__profile-name {
+    font-weight: bold;
+  }
+
   .settings-title {
     font-weight: bold;
   }
@@ -189,9 +230,6 @@ export default {
     flex-grow: 1;
   }
 
-  &__main-settings {
-  }
-
   &__main-settings-title {
     color: #c0c0c0;
     display: flex;
@@ -223,9 +261,6 @@ export default {
     justify-content: space-between;
   }
 
-  &__info {
-  }
-
   &__first-name,
   &__second-name,
   &__email,
@@ -244,9 +279,6 @@ export default {
 
   & .v-btn i {
     margin: 0;
-  }
-
-  &__footer {
   }
 
   &__posts {
