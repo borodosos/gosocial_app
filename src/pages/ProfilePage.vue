@@ -8,7 +8,6 @@
             <p class="profile__profile-name">
               {{ user.first_name }} {{ user.second_name }}
             </p>
-            {{ isAmI }}
             <p class="profile__id">ID: {{ user.id }}</p>
             <v-avatar size="180" color="black">
               <!-- <img
