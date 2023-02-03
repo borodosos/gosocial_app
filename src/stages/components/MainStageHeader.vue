@@ -1,72 +1,94 @@
 <template>
   <section class="main-header panel">
     <div class="main-header__wrapper">
-      <div class="main-header__search">
-        <div class="main-header__search-wrapper">
-          <div class="main-header__back-input title">
-            <InputText
-              class="main-header__title-input"
-              v-show="isTitleInput"
-              v-model="postTitle"
-              @focus.native="showBackgroundTitle"
-              @blur="showBackgroundTitle"
-              type="text"
-              placeholder="Write title..."
-            />
-          </div>
-          <div class="main-header__back-input text">
-            <InputText
-              class="input"
-              type="text"
-              v-model="postText"
-              placeholder="What's on your mind..."
-              @focus.native="showBackgroundText"
-              @blur="showBackgroundText"
-              @click="showTitleInput"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="main-header__content">
-        <v-divider />
-        <div class="main-header__menu">
-          <FormulateInput
-            class="main-header__file-input"
-            v-show="fileInput"
-            type="image"
-            label="Post Image"
-            validation="mime:image/jpeg,image/jpg,image/png"
-            help="Download your image"
-          />
-
-          <div class="main-header__menu-buttons">
-            <div class="main-header__crumbs">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    class="button-icon-menu"
-                    v-on="on"
-                    @click="showFileInput"
-                    icon
-                  >
-                    <i class="fa-duotone fa-image"></i>
-                  </v-btn>
-                </template>
-                <span>Image</span>
-              </v-tooltip>
-
-              <Dropdown
-                class="custom-select"
-                v-model="selectedTag"
-                :options="tags"
-                placeholder="Tags"
+      <v-form ref="form" v-model="valid">
+        <div class="main-header__search">
+          <div class="main-header__search-wrapper">
+            <div class="main-header__back-input title">
+              <InputText
+                class="input"
+                v-show="isTitleInput"
+                v-model="postTitle"
+                @focus.native="showBackgroundTitle"
+                @blur="showBackgroundTitle"
+                type="text"
+                name="title"
+                placeholder="Write title..."
               />
             </div>
-            <v-btn class="indigo button-post" rounded>POST</v-btn>
+            <div class="main-header__back-input text">
+              <InputText
+                class="input"
+                type="text"
+                name="text"
+                v-model="postText"
+                placeholder="What's on your mind..."
+                @focus.native="showBackgroundText"
+                @blur="showBackgroundText"
+                @click="showTitleInput"
+              />
+            </div>
           </div>
         </div>
-      </div>
+
+        <div class="main-header__content">
+          <v-divider />
+          <div class="main-header__menu">
+            <FormulateInput
+              class="main-header__file-input"
+              v-show="fileInput"
+              type="image"
+              name="image"
+              label="Post Image"
+              validation="mime:image/jpeg,image/jpg,image/png"
+              help="Download your image"
+            />
+
+            <div class="main-header__menu-buttons">
+              <div class="main-header__crumbs">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      class="button-icon-menu"
+                      v-on="on"
+                      @click="showFileInput"
+                      icon
+                    >
+                      <i class="fa-duotone fa-image"></i>
+                    </v-btn>
+                  </template>
+                  <span>Image</span>
+                </v-tooltip>
+
+                <!-- <Dropdown
+                  class="custom-select"
+                  v-model="postTag"
+                  :options="tags"
+                  placeholder="Tags"
+                  scrollHeight="200px"
+                  name="tags"
+                  :ariaLabelledBy="dasda"
+                  @change="changed"
+                /> -->
+                <VSelectTags
+                  :placeholder="'Tags'"
+                  :options="tags"
+                  :value="selectedTag"
+                  @add-tag="addTag"
+                />
+              </div>
+              <v-btn
+                class="indigo button-post"
+                type="submit"
+                rounded
+                @click="onSubmit"
+                >POST</v-btn
+              >
+            </div>
+          </div>
+        </div>
+      </v-form>
+      <Toast position="bottom-left" group="bl" />
     </div>
   </section>
 </template>
@@ -74,20 +96,25 @@
 <script>
 import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";
-
+import Toast from "primevue/toast";
+import VSelectTags from "@/components/UI/VSelectTags.vue";
 export default {
   components: {
     InputText,
+    // eslint-disable-next-line vue/no-unused-components
     Dropdown,
+    Toast,
+    VSelectTags,
   },
 
   data() {
     return {
+      valid: true,
       postTitle: "",
       postText: "",
-      postTag: null,
+      postTags: [],
       postLikes: 0,
-      selectedTag: null,
+      selectedTag: "",
       expanded: false,
       showbackText: false,
       myopacityText: 0,
@@ -96,20 +123,40 @@ export default {
       isTitleInput: false,
       fileInput: false,
       files: [],
-      tags: [
-        "IT",
-        "Games",
-        "Music",
-        "Humor",
-        "Film",
-        "Sport",
-        "Science",
-        "Turism",
-      ],
+      tags: ["IT", "Film", "Sport", "Music"],
     };
   },
 
   methods: {
+    addTag(event) {
+      console.log(event.value);
+    },
+
+    async onSubmit(event) {
+      event.preventDefault();
+      if (!this.postTitle.trim().length || !this.postText.trim().length) {
+        this.valid = false;
+        return this.$toast.add({
+          severity: "error",
+          summary: "Login",
+          detail: "Please, enter the text and title",
+          group: "bl",
+          life: 3000,
+        });
+      }
+      const form = this.$refs.form.$el;
+      let formData = new FormData(form);
+      console.log(formData.get("title"));
+      console.log(formData.get("text"));
+      console.log(formData.get("image"));
+      console.log(formData.get("tags"));
+
+      // this.$store.dispatch("fetchCreatePost", formData).then((value) => {
+      //   console.log(value);
+      // });
+    },
+
+    // === Functions for style
     showBackgroundText() {
       if (this.showbackText !== true) {
         this.showbackText = true;
@@ -176,6 +223,7 @@ export default {
   color: black;
   padding: 10px;
   background: none;
+  height: 46px;
 }
 
 .main-header__back-input.title {
