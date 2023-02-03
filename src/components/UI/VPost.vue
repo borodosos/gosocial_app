@@ -25,11 +25,22 @@
         </div>
         <div class="post__img">
           <v-img
-            src="@/assets/images/post2.jpeg"
-            max-height="400px"
+            :src="
+              imageSrc
+                ? imageSrc
+                : 'https://fastly.picsum.photos/id/4/500/300.jpg?hmac=aMmnbxfY9C0oT8EbRkejiTGR0q-_kxlKhQnbzgl0Aq8'
+            "
+            max-height="400"
             max-width="500"
             contain
-          ></v-img>
+          >
+            <template v-slot:placeholder>
+              <v-progress-circular
+                indeterminate
+                color="grey lighten-5"
+              ></v-progress-circular>
+            </template>
+          </v-img>
         </div>
         <div class="post__tags">
           <v-chip
@@ -63,6 +74,8 @@ export default {
   data() {
     return {
       postTags: [],
+      imageLoad: true,
+      imageSrc: `${process.env.VUE_APP_SERVER_URL}${this.post.image}`,
     };
   },
 
@@ -71,6 +84,7 @@ export default {
       this.postTags.push(element.tag_text);
     });
   },
+  methods: {},
 };
 </script>
 

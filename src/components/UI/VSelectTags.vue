@@ -3,7 +3,6 @@
     class="custom-select"
     :options="options"
     :placeholder="placeholder"
-    :value="value"
     @change="addTag"
   >
     <template #value="slotProps">

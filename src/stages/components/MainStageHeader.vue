@@ -32,18 +32,30 @@
         </div>
 
         <div class="main-header__content">
-          <v-divider />
           <div class="main-header__menu">
             <FormulateInput
               class="main-header__file-input"
+              v-model="postFile"
               v-show="fileInput"
+              @file-removed="postFile = null"
               type="image"
               name="image"
               label="Post Image"
               validation="mime:image/jpeg,image/jpg,image/png"
               help="Download your image"
             />
-
+            <div class="main-header__tags-container pt-2">
+              <v-chip
+                v-for="(tag, index) in postTags"
+                :key="index"
+                small
+                close
+                close-icon="mdi-delete"
+                @click:close="remove(tag)"
+                >{{ tag }}</v-chip
+              >
+            </div>
+            <v-divider />
             <div class="main-header__menu-buttons">
               <div class="main-header__crumbs">
                 <v-tooltip bottom>
@@ -59,21 +71,9 @@
                   </template>
                   <span>Image</span>
                 </v-tooltip>
-
-                <!-- <Dropdown
-                  class="custom-select"
-                  v-model="postTag"
-                  :options="tags"
-                  placeholder="Tags"
-                  scrollHeight="200px"
-                  name="tags"
-                  :ariaLabelledBy="dasda"
-                  @change="changed"
-                /> -->
                 <VSelectTags
                   :placeholder="'Tags'"
                   :options="tags"
-                  :value="selectedTag"
                   @add-tag="addTag"
                 />
               </div>
@@ -95,14 +95,12 @@
 
 <script>
 import InputText from "primevue/inputtext";
-import Dropdown from "primevue/dropdown";
 import Toast from "primevue/toast";
 import VSelectTags from "@/components/UI/VSelectTags.vue";
+
 export default {
   components: {
     InputText,
-    // eslint-disable-next-line vue/no-unused-components
-    Dropdown,
     Toast,
     VSelectTags,
   },
@@ -113,23 +111,32 @@ export default {
       postTitle: "",
       postText: "",
       postTags: [],
+      postFile: null,
       postLikes: 0,
       selectedTag: "",
+      fileInput: false,
+      files: [],
+      tags: ["IT", "Film", "Sport", "Music"],
+
+      // --- Value for style
       expanded: false,
       showbackText: false,
       myopacityText: 0,
       showbackTitle: false,
       myopacityTitle: 0,
       isTitleInput: false,
-      fileInput: false,
-      files: [],
-      tags: ["IT", "Film", "Sport", "Music"],
     };
   },
 
   methods: {
     addTag(event) {
-      console.log(event.value);
+      this.postTags.push(event.value);
+      const newSet = new Set(this.postTags);
+      this.postTags = Array.from(newSet);
+    },
+
+    remove(item) {
+      this.postTags.splice(this.postTags.indexOf(item), 1);
     },
 
     async onSubmit(event) {
@@ -146,14 +153,11 @@ export default {
       }
       const form = this.$refs.form.$el;
       let formData = new FormData(form);
-      console.log(formData.get("title"));
-      console.log(formData.get("text"));
-      console.log(formData.get("image"));
-      console.log(formData.get("tags"));
+      formData.set("tags", this.postTags);
 
-      // this.$store.dispatch("fetchCreatePost", formData).then((value) => {
-      //   console.log(value);
-      // });
+      this.$store.dispatch("fetchCreatePost", formData).then((value) => {
+        console.log(value);
+      });
     },
 
     // === Functions for style
@@ -276,7 +280,7 @@ export default {
 }
 
 .main-header__file-input {
-  margin-bottom: 10px;
+  margin: 5px 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -296,7 +300,8 @@ export default {
   }
 }
 
-.main-header__content {
+.main-header__tags-container .v-chip + .v-chip {
+  margin-left: 5px;
 }
 
 .main-header__menu {
