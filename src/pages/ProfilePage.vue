@@ -8,6 +8,7 @@
             <p class="profile__profile-name">
               {{ user.first_name }} {{ user.second_name }}
             </p>
+            {{ isAmI }}
             <p class="profile__id">ID: {{ user.id }}</p>
             <v-avatar size="180" color="black">
               <!-- <img
@@ -103,6 +104,7 @@ export default {
   data() {
     return {
       user: null,
+      isAmI: false,
       firstNameChangeable: false,
       secondNameChangeable: false,
       emailChangeable: false,
@@ -116,8 +118,13 @@ export default {
     this.loading = true;
     this.$store
       .dispatch("fetchUserInfo", this.$route.params.id)
-      .then((value) => {
-        this.user = value;
+      .then(() => {
+        const userId = this.$store.getters.getUser.id;
+        const authUserId = this.$store.getters.getAuthUser.id;
+        this.user = this.$store.getters.getUser;
+        if (userId === authUserId) {
+          this.isAmI = true;
+        }
       })
       .catch((error) => {
         console.log(error);

@@ -9,7 +9,7 @@
             <router-link to="/">Home</router-link>
           </v-btn>
           <v-btn class="button-navigation" rounded>
-            <router-link :to="'/users/' + this.$store.getters.getUser?.id"
+            <router-link :to="'/users/' + this.$store.getters.getAuthUser?.id"
               >My Profile</router-link
             >
           </v-btn>

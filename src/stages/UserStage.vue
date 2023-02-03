@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       marginBottomIntersecting: `-${window.innerHeight - 55}`,
-      user: this.$store.getters.getUser,
+      user: this.$store.getters.getAuthUser,
     };
   },
   methods: {
