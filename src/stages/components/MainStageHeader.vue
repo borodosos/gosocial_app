@@ -115,7 +115,6 @@ export default {
       postLikes: 0,
       selectedTag: "",
       fileInput: false,
-      files: [],
       tags: ["IT", "Film", "Sport", "Music"],
 
       // --- Value for style
@@ -141,12 +140,17 @@ export default {
 
     async onSubmit(event) {
       event.preventDefault();
-      if (!this.postTitle.trim().length || !this.postText.trim().length) {
+      if (
+        !this.postTitle.trim().length ||
+        !this.postText.trim().length ||
+        !this.postTags.length ||
+        !this.postFile
+      ) {
         this.valid = false;
         return this.$toast.add({
           severity: "error",
           summary: "Login",
-          detail: "Please, enter the text and title",
+          detail: "Please, enter the text, title, file and tags",
           group: "bl",
           life: 3000,
         });
@@ -154,10 +158,26 @@ export default {
       const form = this.$refs.form.$el;
       let formData = new FormData(form);
       formData.set("tags", this.postTags);
-
-      this.$store.dispatch("fetchCreatePost", formData).then((value) => {
-        console.log(value);
-      });
+      this.$store
+        .dispatch("fetchCreatePost", formData)
+        .then(() => {
+          this.$toast.add({
+            severity: "success",
+            summary: "Success",
+            detail: "Post created",
+            group: "bl",
+            life: 3000,
+          });
+        })
+        .catch((error) => {
+          this.$toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: error.response.data,
+            group: "bl",
+            life: 3000,
+          });
+        });
     },
 
     // === Functions for style

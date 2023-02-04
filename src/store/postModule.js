@@ -6,11 +6,6 @@ export default {
   },
 
   actions: {
-    pushPost(ctx, payload) {
-      console.log(payload);
-      ctx.commit("updatePost", payload);
-    },
-
     async fetchAllPosts(ctx) {
       return new Promise((resolve, reject) => {
         getAllPosts()
@@ -47,7 +42,7 @@ export default {
 
   getters: {
     getAllPosts(state) {
-      return state.posts;
+      return state.posts?.reverse();
     },
   },
 };

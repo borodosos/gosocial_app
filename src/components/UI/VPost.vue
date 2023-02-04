@@ -15,7 +15,7 @@
           <div class="post__user-name">
             {{ user.first_name }} {{ user.second_name }}
           </div>
-          <div class="post__data">11 January 2023</div>
+          <div class="post__data">{{ parseDate() }}</div>
         </div>
       </div>
       <div class="post__body">
@@ -25,11 +25,8 @@
         </div>
         <div class="post__img">
           <v-img
-            :src="
-              imageSrc
-                ? imageSrc
-                : 'https://fastly.picsum.photos/id/4/500/300.jpg?hmac=aMmnbxfY9C0oT8EbRkejiTGR0q-_kxlKhQnbzgl0Aq8'
-            "
+            :src="'https://fastly.picsum.photos/id/4/500/300.jpg?hmac=aMmnbxfY9C0oT8EbRkejiTGR0q-_kxlKhQnbzgl0Aq8'"
+            @load="func"
             max-height="400"
             max-width="500"
             contain
@@ -79,12 +76,29 @@ export default {
     };
   },
 
+  methods: {
+    func() {
+      console.log("message");
+    },
+    parseDate() {
+      const date = new Date(this.post.created_at);
+      const myOptions = {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      };
+      return date.toLocaleString("en-US", myOptions);
+    },
+  },
+
   mounted() {
     this.post.tags?.map((element) => {
       this.postTags.push(element.tag_text);
     });
   },
-  methods: {},
 };
 </script>
 
