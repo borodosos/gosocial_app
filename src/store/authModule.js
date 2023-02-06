@@ -9,7 +9,7 @@ export default {
 
   actions: {
     // === Registration fetch user
-    async userRegisterFetch(ctx, payload) {
+    userRegisterFetch(ctx, payload) {
       return new Promise((resolve, reject) => {
         registration(payload)
           .then((res) => {
@@ -31,7 +31,7 @@ export default {
     },
 
     // === Login fetch user
-    async userLoginFetch(ctx, payload) {
+    userLoginFetch(ctx, payload) {
       return new Promise((resolve, reject) => {
         login(payload)
           .then((res) => {
@@ -53,7 +53,7 @@ export default {
     },
 
     // === Refresh token user
-    async refreshTokenFetch(ctx, payload) {
+    refreshTokenFetch(ctx, payload) {
       return new Promise((resolve, reject) => {
         refresh(payload)
           .then((res) => {
@@ -75,7 +75,7 @@ export default {
     },
 
     // === Logout user
-    async userLogoutFetch(ctx) {
+    userLogoutFetch(ctx) {
       return new Promise((resolve) => {
         ctx.commit("resetToken");
         resolve();

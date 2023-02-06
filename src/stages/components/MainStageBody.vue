@@ -46,7 +46,7 @@ export default {
   },
 
   methods: {
-    async fetchPosts() {
+    fetchPosts() {
       this.loading = true;
       this.$store
         .dispatch("fetchAllPosts")

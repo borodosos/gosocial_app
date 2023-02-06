@@ -14,7 +14,7 @@ export default {
       });
     },
 
-    async fetchUserInfo(ctx, paramsId) {
+    fetchUserInfo(ctx, paramsId) {
       return new Promise((resolve, reject) => {
         getUserInfo(paramsId)
           .then((res) => {

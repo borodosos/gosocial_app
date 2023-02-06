@@ -66,7 +66,7 @@ export default {
   },
 
   mounted() {
-    let options = {
+    const options = {
       root: null,
       rootMargin: `0px 0px ${this.marginBottomIntersecting}px 0px`,
       threshold: 0,

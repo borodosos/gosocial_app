@@ -136,7 +136,7 @@ export default {
       this.postTags.splice(this.postTags.indexOf(item), 1);
     },
 
-    async onSubmit(event) {
+    onSubmit(event) {
       event.preventDefault();
       if (
         !this.postTitle.trim().length ||

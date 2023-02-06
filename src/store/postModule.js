@@ -6,7 +6,7 @@ export default {
   },
 
   actions: {
-    async fetchAllPosts(ctx) {
+    fetchAllPosts(ctx) {
       return new Promise((resolve, reject) => {
         getAllPosts()
           .then((res) => {
@@ -20,7 +20,7 @@ export default {
       });
     },
 
-    async fetchCreatePost(ctx, payload) {
+    fetchCreatePost(ctx, payload) {
       return new Promise((resolve, reject) => {
         createPost(payload)
           .then((res) => {
