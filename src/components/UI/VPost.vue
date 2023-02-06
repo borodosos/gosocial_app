@@ -24,32 +24,19 @@
           {{ post.text }}
         </div>
         <div class="post__img">
-          <v-img
-            :src="'https://fastly.picsum.photos/id/4/500/300.jpg?hmac=aMmnbxfY9C0oT8EbRkejiTGR0q-_kxlKhQnbzgl0Aq8'"
-            @load="func"
-            max-height="400"
-            max-width="500"
-            contain
-          >
-            <template v-slot:placeholder>
-              <v-progress-circular
-                indeterminate
-                color="grey lighten-5"
-              ></v-progress-circular>
-            </template>
-          </v-img>
+          <v-img :src="setImage" max-height="400" max-width="500" contain />
         </div>
         <div class="post__tags">
           <v-chip
-            v-for="(tag, index) in postTags"
-            :key="index"
+            v-for="(tag, index) in post.tags"
+            :key="`${tag}-${index}`"
             class="mr-2"
             color="indigo lighten-1"
             outlined
             small
           >
             <v-icon left>fa-tag</v-icon>
-            {{ tag }}
+            {{ tag.tag_text }}
           </v-chip>
         </div>
       </div>
@@ -77,9 +64,6 @@ export default {
   },
 
   methods: {
-    func() {
-      console.log("message");
-    },
     parseDate() {
       const date = new Date(this.post.created_at);
       const myOptions = {
@@ -94,10 +78,10 @@ export default {
     },
   },
 
-  mounted() {
-    this.post.tags?.map((element) => {
-      this.postTags.push(element.tag_text);
-    });
+  computed: {
+    setImage() {
+      return `${process.env.VUE_APP_SERVER_URL}${this.post.image}`;
+    },
   },
 };
 </script>

@@ -10,6 +10,7 @@ export default {
       return new Promise((resolve, reject) => {
         getAllPosts()
           .then((res) => {
+            res.reverse();
             ctx.commit("updatePosts", res);
             resolve(res);
           })
@@ -23,9 +24,9 @@ export default {
       return new Promise((resolve, reject) => {
         createPost(payload)
           .then((res) => {
-            console.log(res);
-            ctx.dispatch("fetchAllPosts");
-            resolve(res);
+            ctx.dispatch("fetchAllPosts").then(() => {
+              resolve(res);
+            });
           })
           .catch((error) => {
             reject(error);
@@ -42,7 +43,7 @@ export default {
 
   getters: {
     getAllPosts(state) {
-      return state.posts?.reverse();
+      return state.posts;
     },
   },
 };
