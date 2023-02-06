@@ -154,7 +154,7 @@ export default {
         });
       }
       const form = this.$refs.form.$el;
-      let formData = new FormData(form);
+      const formData = new FormData(form);
       formData.set("tags", this.postTags);
       this.$store
         .dispatch("fetchCreatePost", formData)
