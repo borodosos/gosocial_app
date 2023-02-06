@@ -1,15 +1,14 @@
 import store from "@/store";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { SERVER_URL } from "@/constants";
 
 const host = axios.create({
-  baseURL:
-    process.env.VUE_APP_SERVER_URL || process.env.example.VUE_APP_SERVER_URL,
+  baseURL: SERVER_URL,
 });
 
 const authHost = axios.create({
-  baseURL:
-    process.env.VUE_APP_SERVER_URL || process.env.example.VUE_APP_SERVER_URL,
+  baseURL: SERVER_URL,
 });
 
 const authInterceptor = (config) => {

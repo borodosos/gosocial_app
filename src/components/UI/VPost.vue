@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import { SERVER_URL } from "@/constants";
+
 export default {
   props: {
     post: {
@@ -59,13 +61,12 @@ export default {
     return {
       postTags: [],
       imageLoad: true,
-      imageSrc: `${process.env.VUE_APP_SERVER_URL}${this.post.image}`,
     };
   },
 
   computed: {
     setImage() {
-      return `${process.env.VUE_APP_SERVER_URL}${this.post.image}`;
+      return `${SERVER_URL}${this.post.image}`;
     },
     parseDate() {
       const date = new Date(this.post.created_at);
