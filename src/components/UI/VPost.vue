@@ -15,7 +15,7 @@
           <div class="post__user-name">
             {{ user.first_name }} {{ user.second_name }}
           </div>
-          <div class="post__data">{{ parseDate() }}</div>
+          <div class="post__data">{{ parseDate }}</div>
         </div>
       </div>
       <div class="post__body">
@@ -63,7 +63,10 @@ export default {
     };
   },
 
-  methods: {
+  computed: {
+    setImage() {
+      return `${process.env.VUE_APP_SERVER_URL}${this.post.image}`;
+    },
     parseDate() {
       const date = new Date(this.post.created_at);
       const myOptions = {
@@ -75,12 +78,6 @@ export default {
         minute: "numeric",
       };
       return date.toLocaleString("en-US", myOptions);
-    },
-  },
-
-  computed: {
-    setImage() {
-      return `${process.env.VUE_APP_SERVER_URL}${this.post.image}`;
     },
   },
 };
