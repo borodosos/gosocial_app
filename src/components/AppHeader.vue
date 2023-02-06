@@ -209,7 +209,4 @@ export default {
 .button-icon-menu.v-btn:hover i {
   transform: rotate(360deg);
 }
-
-.header__crumbs {
-}
 </style>

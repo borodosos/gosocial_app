@@ -115,9 +115,6 @@ export default {
   object-fit: cover;
 }
 
-.post__user-info {
-}
-
 .post__user-name {
   font-weight: bold;
 }
@@ -192,9 +189,6 @@ img {
 .v-chip__content .v-icon {
   font-size: 1.5em;
   padding: 5px;
-}
-
-.post__buttons {
 }
 
 .post__likes {

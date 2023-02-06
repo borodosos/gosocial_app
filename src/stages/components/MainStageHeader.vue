@@ -213,9 +213,6 @@ export default {
 </script>
 
 <style scoped>
-.main-header {
-}
-
 .main-header__search-wrapper {
   display: flex;
   flex-direction: column;
