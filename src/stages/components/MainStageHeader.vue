@@ -118,7 +118,6 @@ export default {
       tags: ["IT", "Film", "Sport", "Music"],
 
       // --- Value for style
-      expanded: false,
       showbackText: false,
       myopacityText: 0,
       showbackTitle: false,
@@ -130,8 +129,7 @@ export default {
   methods: {
     addTag(event) {
       this.postTags.push(event.value);
-      const newSet = new Set(this.postTags);
-      this.postTags = Array.from(newSet);
+      this.postTags = [...new Set(this.postTags)];
     },
 
     remove(item) {
