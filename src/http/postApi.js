@@ -8,8 +8,8 @@ export const getAllPosts = async () => {
   return data;
 };
 
-export const getUserPosts = async (paramsId) => {
-  const { data } = await authHost.get(`api/posts/${paramsId}`);
+export const createPost = async (formData) => {
+  const { data } = await authHost.post("api/posts", formData);
 
   return data;
 };

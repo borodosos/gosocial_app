@@ -78,8 +78,7 @@ export default {
       valid: true,
       showPass: false,
       loading: false,
-      firstNameRule: (value) => !!value || "First name is required.",
-      secondNameRule: (value) => !!value || "Second name is required.",
+
       passRules: {
         required: (value) => !!value || "Password is required.",
         min: (v) => v.length >= 8 || "Min 8 characters",
@@ -97,7 +96,10 @@ export default {
       this.$refs.form.validate();
     },
 
-    async onSubmit(event) {
+    firstNameRule: (value) => !!value || "First name is required.",
+    secondNameRule: (value) => !!value || "Second name is required.",
+
+    onSubmit(event) {
       event.preventDefault();
       this.validate();
       if (this.valid) {

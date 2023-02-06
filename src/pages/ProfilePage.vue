@@ -113,7 +113,7 @@ export default {
     };
   },
 
-  async created() {
+  created() {
     this.loading = true;
     this.$store
       .dispatch("fetchUserInfo", this.$route.params.id)

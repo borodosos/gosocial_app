@@ -9,17 +9,15 @@ export default {
   actions: {
     initUser(ctx, userDetails) {
       return new Promise((resolve) => {
-        console.log(userDetails);
         ctx.commit("updateAuthUser", userDetails);
         resolve();
       });
     },
 
-    async fetchUserInfo(ctx, paramsId) {
+    fetchUserInfo(ctx, paramsId) {
       return new Promise((resolve, reject) => {
         getUserInfo(paramsId)
           .then((res) => {
-            // console.log("res: ", res);
             ctx.commit("updateUser", res);
             resolve(res);
           })

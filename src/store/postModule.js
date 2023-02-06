@@ -1,4 +1,4 @@
-import { getAllPosts } from "@/http/postApi";
+import { createPost, getAllPosts } from "@/http/postApi";
 
 export default {
   state: {
@@ -6,20 +6,30 @@ export default {
   },
 
   actions: {
-    pushPost(ctx, payload) {
-      console.log(payload);
-      ctx.commit("updatePost", payload);
-    },
-
-    async fetchAllPosts(ctx) {
+    fetchAllPosts(ctx) {
       return new Promise((resolve, reject) => {
         getAllPosts()
           .then((res) => {
+            res.reverse();
             ctx.commit("updatePosts", res);
             resolve(res);
           })
           .catch((err) => {
             reject(err);
+          });
+      });
+    },
+
+    fetchCreatePost(ctx, payload) {
+      return new Promise((resolve, reject) => {
+        createPost(payload)
+          .then((res) => {
+            ctx.dispatch("fetchAllPosts").then(() => {
+              resolve(res);
+            });
+          })
+          .catch((error) => {
+            reject(error);
           });
       });
     },

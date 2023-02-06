@@ -1,15 +1,16 @@
 <template>
   <div class="main-body panel">
     <transition name="component-fade" mode="out-in">
-      <VLoader v-if="loading && !posts.length" />
-      <ul v-else>
+      <VLoader v-if="loading && !countPosts?.length" />
+      <ul v-else-if="!loading && countPosts?.length">
         <VPost
-          v-for="(post, index) in posts"
+          v-for="(post, index) in countPosts"
           :key="index"
           :post="post"
           :user="post.user"
         />
       </ul>
+      <p v-else>Oops, there are not any posts...</p>
     </transition>
   </div>
 </template>
@@ -23,7 +24,6 @@ export default {
   components: { VPost, VLoader },
   data() {
     return {
-      posts: [],
       loading: false,
     };
   },
@@ -32,6 +32,9 @@ export default {
     ...mapGetters({
       token: "getAccessToken",
     }),
+    countPosts() {
+      return this.$store.getters.getAllPosts;
+    },
   },
 
   watch: {
@@ -43,13 +46,12 @@ export default {
   },
 
   methods: {
-    async fetchPosts() {
+    fetchPosts() {
       this.loading = true;
       this.$store
         .dispatch("fetchAllPosts")
-        .then((value) => {
-          console.log(value);
-          this.posts = value;
+        .then(() => {
+          this.posts = this.countPosts;
         })
         .catch((error) => {
           this.$toast.add({

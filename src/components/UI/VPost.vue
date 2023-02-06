@@ -15,7 +15,7 @@
           <div class="post__user-name">
             {{ user.first_name }} {{ user.second_name }}
           </div>
-          <div class="post__data">11 January 2023</div>
+          <div class="post__data">{{ parseDate }}</div>
         </div>
       </div>
       <div class="post__body">
@@ -24,24 +24,19 @@
           {{ post.text }}
         </div>
         <div class="post__img">
-          <v-img
-            src="@/assets/images/post2.jpeg"
-            max-height="400px"
-            max-width="500"
-            contain
-          ></v-img>
+          <v-img :src="setImage" max-height="400" max-width="500" contain />
         </div>
         <div class="post__tags">
           <v-chip
-            v-for="(tag, index) in postTags"
-            :key="index"
+            v-for="(tag, index) in post.tags"
+            :key="`${tag}-${index}`"
             class="mr-2"
             color="indigo lighten-1"
             outlined
             small
           >
             <v-icon left>fa-tag</v-icon>
-            {{ tag }}
+            {{ tag.tag_text }}
           </v-chip>
         </div>
       </div>
@@ -50,6 +45,8 @@
 </template>
 
 <script>
+import { SERVER_URL } from "@/constants";
+
 export default {
   props: {
     post: {
@@ -63,13 +60,26 @@ export default {
   data() {
     return {
       postTags: [],
+      imageLoad: true,
     };
   },
 
-  mounted() {
-    this.post.tags?.map((element) => {
-      this.postTags.push(element.tag_text);
-    });
+  computed: {
+    setImage() {
+      return `${SERVER_URL}${this.post.image}`;
+    },
+    parseDate() {
+      const date = new Date(this.post.created_at);
+      const myOptions = {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      };
+      return date.toLocaleString("en-US", myOptions);
+    },
   },
 };
 </script>
@@ -103,9 +113,6 @@ export default {
 
 .v-avatar img {
   object-fit: cover;
-}
-
-.post__user-info {
 }
 
 .post__user-name {
@@ -182,9 +189,6 @@ img {
 .v-chip__content .v-icon {
   font-size: 1.5em;
   padding: 5px;
-}
-
-.post__buttons {
 }
 
 .post__likes {

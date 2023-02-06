@@ -1,115 +1,184 @@
 <template>
   <section class="main-header panel">
     <div class="main-header__wrapper">
-      <div class="main-header__search">
-        <div class="main-header__search-wrapper">
-          <div class="main-header__back-input title">
-            <InputText
-              class="main-header__title-input"
-              v-show="isTitleInput"
-              v-model="postTitle"
-              @focus.native="showBackgroundTitle"
-              @blur="showBackgroundTitle"
-              type="text"
-              placeholder="Write title..."
-            />
-          </div>
-          <div class="main-header__back-input text">
-            <InputText
-              class="input"
-              type="text"
-              v-model="postText"
-              placeholder="What's on your mind..."
-              @focus.native="showBackgroundText"
-              @blur="showBackgroundText"
-              @click="showTitleInput"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="main-header__content">
-        <v-divider />
-        <div class="main-header__menu">
-          <FormulateInput
-            class="main-header__file-input"
-            v-show="fileInput"
-            type="image"
-            label="Post Image"
-            validation="mime:image/jpeg,image/jpg,image/png"
-            help="Download your image"
-          />
-
-          <div class="main-header__menu-buttons">
-            <div class="main-header__crumbs">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    class="button-icon-menu"
-                    v-on="on"
-                    @click="showFileInput"
-                    icon
-                  >
-                    <i class="fa-duotone fa-image"></i>
-                  </v-btn>
-                </template>
-                <span>Image</span>
-              </v-tooltip>
-
-              <Dropdown
-                class="custom-select"
-                v-model="selectedTag"
-                :options="tags"
-                placeholder="Tags"
+      <v-form ref="form" v-model="valid">
+        <div class="main-header__search">
+          <div class="main-header__search-wrapper">
+            <div class="main-header__back-input title">
+              <InputText
+                class="input"
+                v-show="isTitleInput"
+                v-model="postTitle"
+                @focus.native="showBackgroundTitle"
+                @blur="showBackgroundTitle"
+                type="text"
+                name="title"
+                placeholder="Write title..."
               />
             </div>
-            <v-btn class="indigo button-post" rounded>POST</v-btn>
+            <div class="main-header__back-input text">
+              <InputText
+                class="input"
+                type="text"
+                name="text"
+                v-model="postText"
+                placeholder="What's on your mind..."
+                @focus.native="showBackgroundText"
+                @blur="showBackgroundText"
+                @click="showTitleInput"
+              />
+            </div>
           </div>
         </div>
-      </div>
+
+        <div class="main-header__content">
+          <div class="main-header__menu">
+            <FormulateInput
+              class="main-header__file-input"
+              v-model="postFile"
+              v-show="fileInput"
+              @file-removed="postFile = null"
+              type="image"
+              name="image"
+              label="Post Image"
+              validation="mime:image/jpeg,image/jpg,image/png"
+              help="Download your image"
+            />
+            <div class="main-header__tags-container pt-2">
+              <v-chip
+                v-for="(tag, index) in postTags"
+                :key="index"
+                small
+                close
+                close-icon="mdi-delete"
+                @click:close="remove(tag)"
+                >{{ tag }}</v-chip
+              >
+            </div>
+            <v-divider />
+            <div class="main-header__menu-buttons">
+              <div class="main-header__crumbs">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      class="button-icon-menu"
+                      v-on="on"
+                      @click="showFileInput"
+                      icon
+                    >
+                      <i class="fa-duotone fa-image"></i>
+                    </v-btn>
+                  </template>
+                  <span>Image</span>
+                </v-tooltip>
+                <VSelectTags
+                  :placeholder="'Tags'"
+                  :options="tags"
+                  @add-tag="addTag"
+                />
+              </div>
+              <v-btn
+                class="indigo button-post"
+                type="submit"
+                rounded
+                @click="onSubmit"
+                >POST</v-btn
+              >
+            </div>
+          </div>
+        </div>
+      </v-form>
+      <Toast position="bottom-left" group="bl" />
     </div>
   </section>
 </template>
 
 <script>
 import InputText from "primevue/inputtext";
-import Dropdown from "primevue/dropdown";
+import Toast from "primevue/toast";
+import VSelectTags from "@/components/UI/VSelectTags.vue";
 
 export default {
   components: {
     InputText,
-    Dropdown,
+    Toast,
+    VSelectTags,
   },
 
   data() {
     return {
+      valid: true,
       postTitle: "",
       postText: "",
-      postTag: null,
+      postTags: [],
+      postFile: null,
       postLikes: 0,
-      selectedTag: null,
-      expanded: false,
+      selectedTag: "",
+      fileInput: false,
+      tags: ["IT", "Film", "Sport", "Music"],
+
+      // --- Value for style
       showbackText: false,
       myopacityText: 0,
       showbackTitle: false,
       myopacityTitle: 0,
       isTitleInput: false,
-      fileInput: false,
-      files: [],
-      tags: [
-        "IT",
-        "Games",
-        "Music",
-        "Humor",
-        "Film",
-        "Sport",
-        "Science",
-        "Turism",
-      ],
     };
   },
 
   methods: {
+    addTag(event) {
+      this.postTags.push(event.value);
+      this.postTags = [...new Set(this.postTags)];
+    },
+
+    remove(item) {
+      this.postTags.splice(this.postTags.indexOf(item), 1);
+    },
+
+    onSubmit(event) {
+      event.preventDefault();
+      if (
+        !this.postTitle.trim().length ||
+        !this.postText.trim().length ||
+        !this.postTags.length ||
+        !this.postFile
+      ) {
+        this.valid = false;
+        return this.$toast.add({
+          severity: "error",
+          summary: "Login",
+          detail: "Please, enter the text, title, file and tags",
+          group: "bl",
+          life: 3000,
+        });
+      }
+      const form = this.$refs.form.$el;
+      const formData = new FormData(form);
+      formData.set("tags", this.postTags);
+      this.$store
+        .dispatch("fetchCreatePost", formData)
+        .then(() => {
+          this.$toast.add({
+            severity: "success",
+            summary: "Success",
+            detail: "Post created",
+            group: "bl",
+            life: 3000,
+          });
+        })
+        .catch((error) => {
+          this.$toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: error.response.data,
+            group: "bl",
+            life: 3000,
+          });
+        });
+    },
+
+    // === Functions for style
     showBackgroundText() {
       if (this.showbackText !== true) {
         this.showbackText = true;
@@ -144,9 +213,6 @@ export default {
 </script>
 
 <style scoped>
-.main-header {
-}
-
 .main-header__search-wrapper {
   display: flex;
   flex-direction: column;
@@ -176,6 +242,7 @@ export default {
   color: black;
   padding: 10px;
   background: none;
+  height: 46px;
 }
 
 .main-header__back-input.title {
@@ -228,7 +295,7 @@ export default {
 }
 
 .main-header__file-input {
-  margin-bottom: 10px;
+  margin: 5px 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -248,7 +315,8 @@ export default {
   }
 }
 
-.main-header__content {
+.main-header__tags-container .v-chip + .v-chip {
+  margin-left: 5px;
 }
 
 .main-header__menu {
