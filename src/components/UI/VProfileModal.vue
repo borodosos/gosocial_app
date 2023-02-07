@@ -16,10 +16,15 @@
           help="Download your image"
         />
         <Cropper
+          ref="cropper"
           class="cropper"
-          :src="imgSrc"
+          :src="imageProfile.src"
           @change="onChange"
           :debounce="false"
+          :default-size="{
+            width: 400,
+            height: 400,
+          }"
           :stencil-props="{
             aspectRatio: 1,
           }"
@@ -33,6 +38,7 @@
           >Set image</v-btn
         >
       </v-card-actions>
+      {{ imageProfile }}
     </v-card>
   </v-dialog>
 </template>
@@ -57,37 +63,88 @@ export default {
     return {
       file: null,
       imgSrc: "",
-      result: {
-        coordinates: null,
-        image: null,
+      result: null,
+      imageProfile: {
+        src: null,
+        type: null,
       },
     };
   },
 
   methods: {
-    async uploadFile() {
+    uploadFile(event) {
+      const { file } = event;
+      URL.revokeObjectURL(this.imageProfile.src);
+      const blob = URL.createObjectURL(file);
       const reader = new FileReader();
-      if (this.file) {
-        reader.readAsDataURL(this.file.fileList[0]);
-        reader.onload = () => {
-          this.imgSrc = reader.result;
+      reader.onload = (e) => {
+        this.imageProfile = {
+          src: blob,
+          type: this.getMimeType(e.target.result, file),
         };
-      }
+      };
+      reader.readAsArrayBuffer(file);
     },
 
-    onChange({ coordinates, canvas }) {
-      this.result = {
-        coordinates,
-        image: canvas.toDataURL(),
-      };
+    onChange() {
+      const { canvas } = this.$refs.cropper.getResult();
+      canvas.toBlob((blob) => {
+        this.result = blob;
+      }, this.imageProfile.type);
     },
 
     setImage() {
+      const urlId = this.$route.params.id;
+      const { canvas } = this.$refs.cropper.getResult();
+      const formData = new FormData();
+      canvas.toBlob((blob) => {
+        formData.append("file", blob);
+
+        console.log(blob);
+        this.$store
+          .dispatch("fetchUpdateUserInfo", { urlId, formData })
+          .then((res) => {
+            console.log(res);
+            // setTimeout(() => {
+            //   this.loading = false;
+            //   location.reload();
+            // }, 2000);
+            this.$toast.add({
+              severity: "success",
+              summary: "Success",
+              detail: "Your profile is updated!",
+              group: "bl",
+              life: 1800,
+            });
+          });
+      }, this.imageProfile.type);
       console.log(this.result);
     },
 
     toggleDialog() {
       this.$emit("toggle-func");
+    },
+
+    getMimeType(file, fallback = null) {
+      const byteArray = new Uint8Array(file).subarray(0, 4);
+      let header = "";
+      for (let i = 0; i < byteArray.length; i++) {
+        header += byteArray[i].toString(16);
+      }
+      switch (header) {
+        case "89504e47":
+          return "image/png";
+        case "47494638":
+          return "image/gif";
+        case "ffd8ffe0":
+        case "ffd8ffe1":
+        case "ffd8ffe2":
+        case "ffd8ffe3":
+        case "ffd8ffe8":
+          return "image/jpeg";
+        default:
+          return fallback;
+      }
     },
   },
 };
