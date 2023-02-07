@@ -18,7 +18,11 @@
               <!-- <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" /> -->
               <img src="@/assets/photos/defaultGiga.jpg" alt="alt" />
 
-              <div class="avatar-overlay" @click="dialog = !dialog"></div>
+              <div
+                v-show="isAmI"
+                class="avatar-overlay"
+                @click="dialog = !dialog"
+              ></div>
             </v-avatar>
             <VProfileModal :modalDialog="dialog" @toggle-func="toggleDialog" />
           </div>
@@ -32,6 +36,7 @@
                   <VProfileField
                     :valueChangeable="firstNameChangeable"
                     :valueProp="user.first_name"
+                    :isAmI="isAmI"
                   />
                 </div>
                 <div class="profile__second-name">
@@ -39,6 +44,7 @@
                   <VProfileField
                     :valueChangeable="secondNameChangeable"
                     :valueProp="user.second_name"
+                    :isAmI="isAmI"
                   />
                 </div>
                 <div class="profile__email">
@@ -46,6 +52,7 @@
                   <VProfileField
                     :valueChangeable="emailChangeable"
                     :valueProp="user.email"
+                    :isAmI="isAmI"
                   >
                   </VProfileField>
                 </div>
@@ -54,6 +61,7 @@
                   <VProfileField
                     :valueChangeable="passwordChangeable"
                     :valueProp="'******'"
+                    :isAmI="isAmI"
                   />
                 </div>
               </div>
@@ -62,7 +70,9 @@
         </div>
 
         <div class="profile__footer">
-          <p class="profile__footer-title">My Posts</p>
+          <p class="profile__footer-title">
+            {{ isAmI ? "My Posts" : `${user.first_name}'s Posts` }}
+          </p>
           <ul
             v-if="user.posts.length"
             :class="[
@@ -84,6 +94,7 @@
         </div>
       </div>
     </transition>
+    <Toast position="bottom-left" group="bl" />
   </section>
 </template>
 
@@ -92,6 +103,7 @@ import VPost from "@/components/UI/VPost.vue";
 import VLoader from "@/components/UI/VLoader.vue";
 import VProfileField from "@/components/UI/VProfileField.vue";
 import VProfileModal from "@/components/UI/VProfileModal.vue";
+import Toast from "primevue/toast";
 
 export default {
   components: {
@@ -99,6 +111,7 @@ export default {
     VProfileField,
     VLoader,
     VProfileModal,
+    Toast,
   },
   data() {
     return {
@@ -126,7 +139,13 @@ export default {
         }
       })
       .catch((error) => {
-        console.log(error);
+        this.$toast.add({
+          severity: "success",
+          summary: "Success",
+          detail: error,
+          group: "bl",
+          life: 3000,
+        });
       })
       .finally(() => {
         this.loading = false;

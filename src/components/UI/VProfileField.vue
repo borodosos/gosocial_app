@@ -4,10 +4,16 @@
       <span v-if="!modelValueChangeable">{{ modelValue }}</span>
       <InputText v-else v-model="changedValue" type="text" autofocus />
     </div>
-    <v-btn v-if="!modelValueChangeable" icon text small @click="changeValue">
+    <v-btn
+      v-if="!modelValueChangeable && isAmI"
+      icon
+      text
+      small
+      @click="changeValue"
+    >
       <v-icon size="18">mdi-pencil</v-icon>
     </v-btn>
-    <div v-else>
+    <div v-else-if="modelValueChangeable && isAmI">
       <v-btn icon text small @click="acceptChangedValue">
         <v-icon size="18">fa-check</v-icon>
       </v-btn>
@@ -27,12 +33,9 @@ export default {
   },
 
   props: {
-    valueChangeable: {
-      type: Boolean,
-    },
-    valueProp: {
-      type: String,
-    },
+    valueChangeable: Boolean,
+    valueProp: String,
+    isAmI: Boolean,
   },
 
   data() {
