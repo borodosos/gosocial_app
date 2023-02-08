@@ -9,27 +9,29 @@
           v-model="file"
           class="card__input"
           @file-upload-complete="uploadFile"
-          @file-removed="imgSrc = ''"
+          @file-removed="imageProfile.src = null"
           type="image"
           label="Post Image"
           validation="mime:image/jpeg,image/jpg,image/png"
           help="Download your image"
         />
-        <Cropper
-          ref="cropper"
-          class="cropper"
-          :src="imageProfile.src"
-          @change="onChange"
-          :debounce="false"
-          :default-size="{
-            width: 400,
-            height: 400,
-          }"
-          :stencil-props="{
-            aspectRatio: 1,
-          }"
-          stencil-component="circle-stencil"
-        />
+        <div class="cropper__container">
+          <Cropper
+            ref="cropper"
+            class="cropper"
+            :src="imageProfile.src"
+            @change="onChange"
+            :debounce="false"
+            :default-size="{
+              width: 400,
+              height: 400,
+            }"
+            :stencil-props="{
+              aspectRatio: 1,
+            }"
+            stencil-component="circle-stencil"
+          />
+        </div>
       </div>
       <v-divider></v-divider>
       <v-card-actions>
@@ -121,9 +123,15 @@ export default {
     },
 
     toggleDialog() {
+      this.imageProfile = {
+        src: null,
+        type: null,
+      };
+      this.file = null;
       this.$emit("toggle-func");
     },
 
+    // -- Check type of the image
     getMimeType(file, fallback = null) {
       const byteArray = new Uint8Array(file).subarray(0, 4);
       let header = "";
@@ -159,6 +167,19 @@ export default {
 
   &__menu {
     padding: 8px;
+    max-height: 470px;
+    overflow-y: auto;
+  }
+
+  &__menu::-webkit-scrollbar {
+    opacity: 0;
+    width: 10px;
+  }
+
+  &__menu::-webkit-scrollbar-thumb {
+    display: block;
+    border-radius: 10px;
+    background-color: black;
   }
 
   &__input {

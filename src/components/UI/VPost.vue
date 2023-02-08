@@ -2,14 +2,8 @@
   <li class="post">
     <div class="post__wrapper">
       <div class="post__header">
-        <v-avatar size="50" color="red">
-          <!-- <img
-            v-if="user.image_profile !== '0'"
-            src="@/assets/photos/somebody.jpeg"
-            alt="alt"
-          />
-          <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" /> -->
-          <img src="@/assets/photos/defaultGiga.jpg" alt="alt" />
+        <v-avatar size="50" color="purple darken-1">
+          <img :src="setImageProfile" alt="alt" />
         </v-avatar>
         <div class="post__user-info">
           <div class="post__user-name">
@@ -67,6 +61,12 @@ export default {
   computed: {
     setImage() {
       return `${SERVER_URL}${this.post.image}`;
+    },
+
+    setImageProfile() {
+      if (this.user.image_profile === "0") {
+        return require("@/assets/photos/defaultGiga.jpg");
+      } else return `${SERVER_URL}${this.user.image_profile}`;
     },
 
     parseDate() {

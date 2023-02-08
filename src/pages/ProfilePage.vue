@@ -360,6 +360,14 @@ export default {
     justify-content: center;
   }
 
+  &__list-element::v-deep .post__img {
+    display: none;
+  }
+
+  &__list-element::v-deep .post__user-info {
+    white-space: nowrap;
+  }
+
   &__list-element:hover {
     transform: scale(0.92);
   }
