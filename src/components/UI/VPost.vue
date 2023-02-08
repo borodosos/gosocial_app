@@ -2,11 +2,11 @@
   <li class="post">
     <div class="post__wrapper">
       <div class="post__header">
-        <v-avatar size="50" color="purple darken-1">
+        <v-avatar size="50" color="purple darken-1" @click="routeToUser">
           <img :src="setImageProfile" alt="alt" />
         </v-avatar>
         <div class="post__user-info">
-          <div class="post__user-name">
+          <div class="post__user-name" @click="routeToUser">
             {{ user.first_name }} {{ user.second_name }}
           </div>
           <div class="post__data">{{ parseDate }}</div>
@@ -56,6 +56,12 @@ export default {
       postTags: [],
       imageLoad: true,
     };
+  },
+
+  methods: {
+    routeToUser() {
+      this.$router.push("/users/" + this.user.id);
+    },
   },
 
   computed: {
@@ -118,6 +124,7 @@ export default {
 
 .post__user-name {
   font-weight: bold;
+  cursor: pointer;
 }
 
 .post__data {
