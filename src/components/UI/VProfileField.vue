@@ -1,14 +1,21 @@
 <template>
   <div class="field">
-    <v-form class="form" ref="form" @submit="acceptChangedValue">
+    <v-form
+      class="form"
+      ref="form"
+      @submit="acceptChangedValue"
+      v-model="valid"
+    >
       <div class="field__content">
         <span v-if="!modelValueChangeable">{{ modelValue }}</span>
-        <InputText
+        <v-text-field
           v-else-if="modelValueChangeable && !loading"
           v-model="changedValue"
-          type="text"
+          :rules="setRules()"
           autofocus
+          outlined
           :name="nameField"
+          :type="typeField"
         />
         <v-progress-circular
           v-else
@@ -40,12 +47,10 @@
 </template>
 
 <script>
-import InputText from "primevue/inputtext/InputText";
 import Toast from "primevue/toast";
 
 export default {
   components: {
-    InputText,
     Toast,
   },
 
@@ -53,6 +58,7 @@ export default {
     valueChangeable: Boolean,
     valueProp: String,
     nameField: String,
+    typeField: String,
     isAmI: Boolean,
   },
 
@@ -62,16 +68,41 @@ export default {
       modelValueChangeable: this.valueChangeable,
       changedValue: "",
       loading: false,
+      valid: true,
+      emailRules: [
+        (v) => !!v || "E-mail is required.",
+        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+      ],
     };
   },
 
   methods: {
+    setRules() {
+      if (this.typeField === "email") {
+        return [
+          (v) => !!v || "E-mail is required.",
+          (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+        ];
+      } else if (this.typeField === "password") {
+        return [
+          (value) => !!value || "Required.",
+          (v) => v.length >= 8 || "Min 8 characters",
+          () => `The email and password you entered don't match`,
+        ];
+      } else {
+        return [(value) => !!value || "The field is required."];
+      }
+    },
+
     changeValue() {
       this.modelValueChangeable = !this.modelValueChangeable;
     },
 
     acceptChangedValue(event) {
       event.preventDefault();
+      if (!this.valid) {
+        return;
+      }
       this.loading = true;
 
       const urlId = this.$route.params.id;
@@ -103,15 +134,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   flex-grow: 1;
-}
-
-.field__content {
-  font-weight: normal;
-}
-
-.field__content input {
-  padding: 0 8px;
-  border-radius: 24px;
 }
 
 .form {

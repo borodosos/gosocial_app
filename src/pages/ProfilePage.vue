@@ -34,6 +34,7 @@
                     :valueChangeable="firstNameChangeable"
                     :valueProp="user.first_name"
                     :nameField="'first_name'"
+                    :typeField="'text'"
                     :isAmI="isAmI"
                   />
                 </div>
@@ -43,6 +44,7 @@
                     :valueChangeable="secondNameChangeable"
                     :valueProp="user.second_name"
                     :nameField="'second_name'"
+                    :typeField="'text'"
                     :isAmI="isAmI"
                   />
                 </div>
@@ -52,6 +54,7 @@
                     :valueChangeable="emailChangeable"
                     :valueProp="user.email"
                     :nameField="'email'"
+                    :typeField="'email'"
                     :isAmI="isAmI"
                   >
                   </VProfileField>
@@ -62,6 +65,7 @@
                     :valueChangeable="passwordChangeable"
                     :valueProp="'******'"
                     :nameField="'password'"
+                    :typeField="'password'"
                     :isAmI="isAmI"
                   />
                 </div>
