@@ -68,6 +68,7 @@ export default {
     setImage() {
       return `${SERVER_URL}${this.post.image}`;
     },
+
     parseDate() {
       const date = new Date(this.post.created_at);
       const myOptions = {

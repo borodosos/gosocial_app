@@ -38,16 +38,19 @@
           >Set image</v-btn
         >
       </v-card-actions>
-      {{ imageProfile }}
+      <Toast position="top-center" group="dialog" />
     </v-card>
   </v-dialog>
 </template>
 
 <script>
 import { Cropper } from "vue-advanced-cropper";
+import Toast from "primevue/toast";
+
 export default {
   components: {
     Cropper,
+    Toast,
   },
 
   props: {
@@ -98,27 +101,23 @@ export default {
       const { canvas } = this.$refs.cropper.getResult();
       const formData = new FormData();
       canvas.toBlob((blob) => {
-        formData.append("file", blob);
-
-        console.log(blob);
+        formData.append("image_profile", blob);
+        formData.append("image_type", this.imageProfile.type);
         this.$store
           .dispatch("fetchUpdateUserInfo", { urlId, formData })
-          .then((res) => {
-            console.log(res);
-            // setTimeout(() => {
-            //   this.loading = false;
-            //   location.reload();
-            // }, 2000);
+          .then(() => {
+            setTimeout(() => {
+              location.reload();
+            }, 2000);
             this.$toast.add({
               severity: "success",
               summary: "Success",
-              detail: "Your profile is updated!",
-              group: "bl",
+              detail: "Your image profile was updated!",
+              group: "dialog",
               life: 1800,
             });
           });
       }, this.imageProfile.type);
-      console.log(this.result);
     },
 
     toggleDialog() {

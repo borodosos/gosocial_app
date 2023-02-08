@@ -9,15 +9,12 @@
               {{ user.first_name }} {{ user.second_name }}
             </p>
             <p class="profile__id">ID: {{ user.id }}</p>
-            <v-avatar size="180" color="black">
-              <!-- <img
-                v-if="post.user.image_profile !== '0'"
-                src="@/assets/photos/somebody.jpeg"
-                alt="alt"
-              /> -->
-              <!-- <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" /> -->
-              <img src="@/assets/photos/defaultGiga.jpg" alt="alt" />
-
+            <v-avatar
+              class="profile__avatar"
+              size="180"
+              color="purple darken-1"
+            >
+              <img :src="setImageProfile" />
               <div
                 v-show="isAmI"
                 class="avatar-overlay"
@@ -72,7 +69,6 @@
             </div>
           </div>
         </div>
-
         <div class="profile__footer">
           <p class="profile__footer-title">
             {{ isAmI ? "My Posts" : `${user.first_name}'s Posts` }}
@@ -108,6 +104,7 @@ import VLoader from "@/components/UI/VLoader.vue";
 import VProfileField from "@/components/UI/VProfileField.vue";
 import VProfileModal from "@/components/UI/VProfileModal.vue";
 import Toast from "primevue/toast";
+import { SERVER_URL } from "@/constants";
 
 export default {
   components: {
@@ -154,6 +151,14 @@ export default {
       .finally(() => {
         this.loading = false;
       });
+  },
+
+  computed: {
+    setImageProfile() {
+      if (this.user.image_profile === "0") {
+        return require("@/assets/photos/defaultGiga.jpg");
+      } else return `${SERVER_URL}${this.user.image_profile}`;
+    },
   },
 
   methods: {
@@ -225,6 +230,7 @@ export default {
   .v-avatar {
     margin: 10px 0;
     position: relative;
+    border: solid 3px black;
   }
 
   .avatar-overlay {
