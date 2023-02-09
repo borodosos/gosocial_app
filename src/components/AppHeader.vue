@@ -15,6 +15,7 @@
           </v-btn>
         </nav>
         <InputText
+          v-debounce:300ms="search"
           v-model="keywords"
           class="header__input"
           id="username"
@@ -51,15 +52,9 @@ export default {
     return {
       keywords: null,
       results: [],
-      selectedFilter: null,
+      selectedFilter: { name: "All" },
       filters: [{ name: "All" }, { name: "Authors" }, { name: "Tags" }],
     };
-  },
-
-  watch: {
-    keywords: function () {
-      this.search();
-    },
   },
 
   methods: {
@@ -70,10 +65,14 @@ export default {
     },
 
     search() {
-      this.$store.dispatch("fetchSearchPosts", this.keywords).then((value) => {
-        this.results = value;
-        // console.log(value);
-      });
+      this.$store
+        .dispatch("fetchSearchPosts", {
+          keywords: this.keywords,
+          selectedFilter: this.selectedFilter.name,
+        })
+        .then((value) => {
+          this.results = value;
+        });
     },
   },
 };

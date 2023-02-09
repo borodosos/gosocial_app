@@ -16,7 +16,7 @@ export const createPost = async (formData) => {
 
 export const searchPosts = async (query) => {
   const { data } = await authHost.get(`api/posts/`, {
-    params: { keywords: query },
+    params: query,
   });
 
   return data;

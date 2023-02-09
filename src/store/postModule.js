@@ -23,18 +23,17 @@ export default {
     },
 
     fetchSearchPosts(ctx, payload) {
-      console.log(payload);
-      // return new Promise((resolve, reject) => {
-      //   searchPosts(payload)
-      //     .then((res) => {
-      //       ctx.commit("updatePosts", res.data);
-      //       ctx.commit("updateLengthPosts", res.last_page);
-      //       resolve(res);
-      //     })
-      //     .catch((err) => {
-      //       reject(err);
-      //     });
-      // });
+      return new Promise((resolve, reject) => {
+        searchPosts(payload)
+          .then((res) => {
+            ctx.commit("updatePosts", res.data);
+            ctx.commit("updateLengthPosts", res.last_page);
+            resolve(res);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
     },
 
     fetchCreatePost(ctx, payload) {
@@ -58,6 +57,9 @@ export default {
     },
     updateLengthPosts(state, length) {
       state.lengthPosts = length;
+    },
+    updateFoundedText(state, text) {
+      state.foundedText = text;
     },
   },
 
