@@ -2,8 +2,8 @@
 import { authHost } from "@/http";
 import store from "@/store";
 
-export const getAllPosts = async () => {
-  const { data } = await authHost.get("api/posts");
+export const getAllPosts = async (page) => {
+  const { data } = await authHost.get(`api/posts/?page=${page}`);
 
   return data;
 };

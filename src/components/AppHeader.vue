@@ -21,7 +21,13 @@
           type="text"
           placeholder="Search"
         />
-        <VCustomSelect class="custom-select" :text="'Filter'" />
+        <Dropdown
+          class="custom-select"
+          v-model="selectedFilter"
+          optionLabel="name"
+          :options="filters"
+          placeholder="Filter"
+        />
       </div>
       <v-btn class="button-icon-menu" rounded @click="logout">
         <i class="fa-duotone fa-person-from-portal"></i>
@@ -33,17 +39,20 @@
 
 <script>
 import InputText from "primevue/inputtext/InputText";
-import VCustomSelect from "@/components/UI/VCustomSelect.vue";
+import Dropdown from "primevue/dropdown";
+
 export default {
   components: {
     InputText,
-    VCustomSelect,
+    Dropdown,
   },
 
   data() {
     return {
       keywords: null,
       results: [],
+      selectedFilter: null,
+      filters: [{ name: "All" }, { name: "Authors" }, { name: "Tags" }],
     };
   },
 
@@ -74,7 +83,7 @@ export default {
 
 .header {
   position: relative;
-  z-index: 1;
+  z-index: 10;
   padding: 15px;
   margin: 0 120px 20px;
   border-bottom-left-radius: 10px;
