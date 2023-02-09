@@ -13,3 +13,11 @@ export const createPost = async (formData) => {
 
   return data;
 };
+
+export const searchPosts = async (query) => {
+  const { data } = await authHost.get(`api/posts/`, {
+    params: { keywords: query },
+  });
+
+  return data;
+};

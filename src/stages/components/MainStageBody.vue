@@ -1,8 +1,8 @@
 <template>
   <div class="main-body panel">
     <transition name="component-fade" mode="out-in">
-      <VLoader v-if="loading && !countPosts?.length" />
-      <ul v-else-if="!loading && countPosts?.length">
+      <VLoader v-if="loading && !countPosts.length" />
+      <ul v-else-if="!loading && countPosts.length">
         <VPost
           v-for="(post, index) in countPosts"
           :key="index"
@@ -12,6 +12,16 @@
       </ul>
       <p v-else>Oops, there are not any posts...</p>
     </transition>
+    <template>
+      <div class="text-center">
+        <v-pagination
+          v-model="currentPage"
+          :length="$store.getters.getLengthPosts"
+          :total-visible="7"
+          circle
+        ></v-pagination>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -25,6 +35,8 @@ export default {
   data() {
     return {
       loading: false,
+      currentPage: 1,
+      paginatedPosts: [],
     };
   },
 
@@ -43,13 +55,16 @@ export default {
         this.fetchPosts();
       }
     },
+    currentPage: function () {
+      this.fetchPosts(this.currentPage);
+    },
   },
 
   methods: {
-    fetchPosts() {
+    fetchPosts(page) {
       this.loading = true;
       this.$store
-        .dispatch("fetchAllPosts")
+        .dispatch("fetchAllPosts", page)
         .then(() => {
           this.posts = this.countPosts;
         })
@@ -69,7 +84,7 @@ export default {
   },
 
   mounted() {
-    this.fetchPosts();
+    this.fetchPosts(this.currentPage);
   },
 };
 </script>

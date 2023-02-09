@@ -15,6 +15,7 @@
           </v-btn>
         </nav>
         <InputText
+          v-model="keywords"
           class="header__input"
           id="username"
           type="text"
@@ -40,13 +41,28 @@ export default {
   },
 
   data() {
-    return {};
+    return {
+      keywords: null,
+      results: [],
+    };
+  },
+
+  watch: {
+    keywords: function () {
+      this.search();
+    },
   },
 
   methods: {
     logout() {
       this.$store.dispatch("userLogoutFetch").then(() => {
         this.$router.push("/login");
+      });
+    },
+
+    search() {
+      this.$store.dispatch("fetchSearchPosts", this.keywords).then((value) => {
+        this.results = value;
       });
     },
   },
