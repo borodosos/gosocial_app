@@ -1,4 +1,6 @@
-import { getUserInfo } from "@/http/userApi";
+/* eslint-disable no-unused-vars */
+import { getUserInfo, updateUserInfo } from "@/http/userApi";
+import router from "@/router";
 
 export default {
   state: {
@@ -19,6 +21,18 @@ export default {
         getUserInfo(paramsId)
           .then((res) => {
             ctx.commit("updateUser", res);
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+
+    fetchUpdateUserInfo(ctx, payload) {
+      return new Promise((resolve, reject) => {
+        updateUserInfo(payload.urlId, payload.formData)
+          .then((res) => {
             resolve(res);
           })
           .catch((error) => {

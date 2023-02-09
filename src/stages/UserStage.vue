@@ -1,13 +1,8 @@
 <template>
   <section class="user panel">
     <div class="user__header">
-      <v-avatar size="50" color="red">
-        <img
-          v-if="user.image_profile !== '0'"
-          src="@/assets/photos/somebody.jpeg"
-          alt="alt"
-        />
-        <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" />
+      <v-avatar size="50" color="indigo lighten-1" @click="route">
+        <img :src="setImageProfile" alt="alt" />
       </v-avatar>
       <div class="user__title">
         <span class="user__name"
@@ -41,6 +36,8 @@
 </template>
 
 <script>
+import { SERVER_URL } from "@/constants";
+
 export default {
   data() {
     return {
@@ -62,6 +59,18 @@ export default {
           panel.style.zIndex = "-1";
         }
       });
+    },
+
+    route() {
+      this.$router.push(`/users/${this.user.id}`);
+    },
+  },
+
+  computed: {
+    setImageProfile() {
+      if (!this.user.image_profile) {
+        return require("@/assets/photos/defaultGiga.jpg");
+      } else return `${SERVER_URL}${this.user.image_profile}`;
     },
   },
 

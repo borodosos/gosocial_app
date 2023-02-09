@@ -28,7 +28,7 @@
         <div class="registration__email">
           <v-text-field
             v-model="email"
-            :rules="emailRules"
+            :rules="emailRules()"
             label="E-mail"
             name="email"
             required
@@ -40,7 +40,7 @@
           <v-text-field
             v-model="password"
             :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="[passRules.required, passRules.min]"
+            :rules="passRules()"
             :type="showPass ? 'text' : 'password'"
             name="password"
             label="Password"
@@ -78,16 +78,6 @@ export default {
       valid: true,
       showPass: false,
       loading: false,
-
-      passRules: {
-        required: (value) => !!value || "Password is required.",
-        min: (v) => v.length >= 8 || "Min 8 characters",
-        emailMatch: () => `The email and password you entered don't match`,
-      },
-      emailRules: [
-        (v) => !!v || "E-mail is required.",
-        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
-      ],
     };
   },
 
@@ -99,6 +89,19 @@ export default {
     firstNameRule: (value) => !!value || "First name is required.",
     secondNameRule: (value) => !!value || "Second name is required.",
 
+    passRules() {
+      return [
+        (value) => !!value || "Password is required.",
+        (value) => value.length >= 8 || "Min 8 characters",
+      ];
+    },
+    emailRules() {
+      return [
+        (value) => !!value || "E-mail is required.",
+        (value) => /.+@.+\..+/.test(value) || "E-mail must be valid",
+      ];
+    },
+
     onSubmit(event) {
       event.preventDefault();
       this.validate();
@@ -106,7 +109,7 @@ export default {
         event.preventDefault();
         this.loading = true;
         const a = this.$refs.form.$el;
-        let formData = new FormData(a);
+        const formData = new FormData(a);
         this.$store
           .dispatch("userRegisterFetch", formData)
           .then(() => {

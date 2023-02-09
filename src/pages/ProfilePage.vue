@@ -9,16 +9,17 @@
               {{ user.first_name }} {{ user.second_name }}
             </p>
             <p class="profile__id">ID: {{ user.id }}</p>
-            <v-avatar size="180" color="black">
-              <!-- <img
-                v-if="post.user.image_profile !== '0'"
-                src="@/assets/photos/somebody.jpeg"
-                alt="alt"
-              /> -->
-              <!-- <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" /> -->
-              <img src="@/assets/photos/defaultGiga.jpg" alt="alt" />
-
-              <div class="avatar-overlay" @click="dialog = !dialog"></div>
+            <v-avatar
+              class="profile__avatar"
+              size="180"
+              color="purple darken-1"
+            >
+              <img :src="setImageProfile" />
+              <div
+                v-show="isAmI"
+                class="avatar-overlay"
+                @click="dialog = !dialog"
+              ></div>
             </v-avatar>
             <VProfileModal :modalDialog="dialog" @toggle-func="toggleDialog" />
           </div>
@@ -32,6 +33,9 @@
                   <VProfileField
                     :valueChangeable="firstNameChangeable"
                     :valueProp="user.first_name"
+                    :nameField="'first_name'"
+                    :typeField="'text'"
+                    :isAmI="isAmI"
                   />
                 </div>
                 <div class="profile__second-name">
@@ -39,6 +43,9 @@
                   <VProfileField
                     :valueChangeable="secondNameChangeable"
                     :valueProp="user.second_name"
+                    :nameField="'second_name'"
+                    :typeField="'text'"
+                    :isAmI="isAmI"
                   />
                 </div>
                 <div class="profile__email">
@@ -46,6 +53,9 @@
                   <VProfileField
                     :valueChangeable="emailChangeable"
                     :valueProp="user.email"
+                    :nameField="'email'"
+                    :typeField="'email'"
+                    :isAmI="isAmI"
                   >
                   </VProfileField>
                 </div>
@@ -54,15 +64,19 @@
                   <VProfileField
                     :valueChangeable="passwordChangeable"
                     :valueProp="'******'"
+                    :nameField="'password'"
+                    :typeField="'password'"
+                    :isAmI="isAmI"
                   />
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="profile__footer">
-          <p class="profile__footer-title">My Posts</p>
+          <p class="profile__footer-title">
+            {{ isAmI ? "My Posts" : `${user.first_name}'s Posts` }}
+          </p>
           <ul
             v-if="user.posts.length"
             :class="[
@@ -84,6 +98,7 @@
         </div>
       </div>
     </transition>
+    <Toast position="bottom-left" group="bl" />
   </section>
 </template>
 
@@ -92,6 +107,8 @@ import VPost from "@/components/UI/VPost.vue";
 import VLoader from "@/components/UI/VLoader.vue";
 import VProfileField from "@/components/UI/VProfileField.vue";
 import VProfileModal from "@/components/UI/VProfileModal.vue";
+import Toast from "primevue/toast";
+import { SERVER_URL } from "@/constants";
 
 export default {
   components: {
@@ -99,6 +116,7 @@ export default {
     VProfileField,
     VLoader,
     VProfileModal,
+    Toast,
   },
   data() {
     return {
@@ -126,11 +144,25 @@ export default {
         }
       })
       .catch((error) => {
-        console.log(error);
+        this.$toast.add({
+          severity: "success",
+          summary: "Success",
+          detail: error,
+          group: "bl",
+          life: 3000,
+        });
       })
       .finally(() => {
         this.loading = false;
       });
+  },
+
+  computed: {
+    setImageProfile() {
+      if (!this.user.image_profile) {
+        return require("@/assets/photos/defaultGiga.jpg");
+      } else return `${SERVER_URL}${this.user.image_profile}`;
+    },
   },
 
   methods: {
@@ -202,6 +234,7 @@ export default {
   .v-avatar {
     margin: 10px 0;
     position: relative;
+    border: solid 3px black;
   }
 
   .avatar-overlay {
@@ -329,6 +362,14 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  &__list-element::v-deep .post__img {
+    display: none;
+  }
+
+  &__list-element::v-deep .post__user-info {
+    white-space: nowrap;
   }
 
   &__list-element:hover {

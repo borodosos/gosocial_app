@@ -9,22 +9,29 @@
           v-model="file"
           class="card__input"
           @file-upload-complete="uploadFile"
-          @file-removed="imgSrc = ''"
+          @file-removed="imageProfile.src = null"
           type="image"
           label="Post Image"
           validation="mime:image/jpeg,image/jpg,image/png"
           help="Download your image"
         />
-        <Cropper
-          class="cropper"
-          :src="imgSrc"
-          @change="onChange"
-          :debounce="false"
-          :stencil-props="{
-            aspectRatio: 1,
-          }"
-          stencil-component="circle-stencil"
-        />
+        <div class="cropper__container">
+          <Cropper
+            ref="cropper"
+            class="cropper"
+            :src="imageProfile.src"
+            @change="onChange"
+            :debounce="false"
+            :default-size="{
+              width: 400,
+              height: 400,
+            }"
+            :stencil-props="{
+              aspectRatio: 1,
+            }"
+            stencil-component="circle-stencil"
+          />
+        </div>
       </div>
       <v-divider></v-divider>
       <v-card-actions>
@@ -33,15 +40,19 @@
           >Set image</v-btn
         >
       </v-card-actions>
+      <Toast position="top-center" group="dialog" />
     </v-card>
   </v-dialog>
 </template>
 
 <script>
 import { Cropper } from "vue-advanced-cropper";
+import Toast from "primevue/toast";
+
 export default {
   components: {
     Cropper,
+    Toast,
   },
 
   props: {
@@ -57,37 +68,90 @@ export default {
     return {
       file: null,
       imgSrc: "",
-      result: {
-        coordinates: null,
-        image: null,
+      result: null,
+      imageProfile: {
+        src: null,
+        type: null,
       },
     };
   },
 
   methods: {
-    async uploadFile() {
+    uploadFile(event) {
+      const { file } = event;
+      URL.revokeObjectURL(this.imageProfile.src);
+      const blob = URL.createObjectURL(file);
       const reader = new FileReader();
-      if (this.file) {
-        reader.readAsDataURL(this.file.fileList[0]);
-        reader.onload = () => {
-          this.imgSrc = reader.result;
+      reader.onload = (e) => {
+        this.imageProfile = {
+          src: blob,
+          type: this.getMimeType(e.target.result, file),
         };
-      }
+      };
+      reader.readAsArrayBuffer(file);
     },
 
-    onChange({ coordinates, canvas }) {
-      this.result = {
-        coordinates,
-        image: canvas.toDataURL(),
-      };
+    onChange() {
+      const { canvas } = this.$refs.cropper.getResult();
+      canvas.toBlob((blob) => {
+        this.result = blob;
+      }, this.imageProfile.type);
     },
 
     setImage() {
-      console.log(this.result);
+      const urlId = this.$route.params.id;
+      const { canvas } = this.$refs.cropper.getResult();
+      const formData = new FormData();
+      canvas.toBlob((blob) => {
+        formData.append("image_profile", blob);
+        formData.append("image_type", this.imageProfile.type);
+        this.$store
+          .dispatch("fetchUpdateUserInfo", { urlId, formData })
+          .then(() => {
+            setTimeout(() => {
+              location.reload();
+            }, 2000);
+            this.$toast.add({
+              severity: "success",
+              summary: "Success",
+              detail: "Your image profile was updated!",
+              group: "dialog",
+              life: 1800,
+            });
+          });
+      }, this.imageProfile.type);
     },
 
     toggleDialog() {
+      this.imageProfile = {
+        src: null,
+        type: null,
+      };
+      this.file = null;
       this.$emit("toggle-func");
+    },
+
+    // -- Check type of the image
+    getMimeType(file, fallback = null) {
+      const byteArray = new Uint8Array(file).subarray(0, 4);
+      let header = "";
+      for (let i = 0; i < byteArray.length; i++) {
+        header += byteArray[i].toString(16);
+      }
+      switch (header) {
+        case "89504e47":
+          return "image/png";
+        case "47494638":
+          return "image/gif";
+        case "ffd8ffe0":
+        case "ffd8ffe1":
+        case "ffd8ffe2":
+        case "ffd8ffe3":
+        case "ffd8ffe8":
+          return "image/jpeg";
+        default:
+          return fallback;
+      }
     },
   },
 };
@@ -103,6 +167,19 @@ export default {
 
   &__menu {
     padding: 8px;
+    max-height: 470px;
+    overflow-y: auto;
+  }
+
+  &__menu::-webkit-scrollbar {
+    opacity: 0;
+    width: 10px;
+  }
+
+  &__menu::-webkit-scrollbar-thumb {
+    display: block;
+    border-radius: 10px;
+    background-color: black;
   }
 
   &__input {

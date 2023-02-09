@@ -2,17 +2,11 @@
   <li class="post">
     <div class="post__wrapper">
       <div class="post__header">
-        <v-avatar size="50" color="red">
-          <!-- <img
-            v-if="user.image_profile !== '0'"
-            src="@/assets/photos/somebody.jpeg"
-            alt="alt"
-          />
-          <img v-else src="@/assets/photos/defaultGiga.jpg" alt="alt" /> -->
-          <img src="@/assets/photos/defaultGiga.jpg" alt="alt" />
+        <v-avatar size="50" color="purple darken-1" @click="routeToUser">
+          <img :src="setImageProfile" alt="alt" />
         </v-avatar>
         <div class="post__user-info">
-          <div class="post__user-name">
+          <div class="post__user-name" @click="routeToUser">
             {{ user.first_name }} {{ user.second_name }}
           </div>
           <div class="post__data">{{ parseDate }}</div>
@@ -64,10 +58,23 @@ export default {
     };
   },
 
+  methods: {
+    routeToUser() {
+      this.$router.push("/users/" + this.user.id);
+    },
+  },
+
   computed: {
     setImage() {
       return `${SERVER_URL}${this.post.image}`;
     },
+
+    setImageProfile() {
+      if (!this.user.image_profile) {
+        return require("@/assets/photos/defaultGiga.jpg");
+      } else return `${SERVER_URL}${this.user.image_profile}`;
+    },
+
     parseDate() {
       const date = new Date(this.post.created_at);
       const myOptions = {
@@ -117,6 +124,7 @@ export default {
 
 .post__user-name {
   font-weight: bold;
+  cursor: pointer;
 }
 
 .post__data {

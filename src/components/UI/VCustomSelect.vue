@@ -7,7 +7,6 @@ import Dropdown from "primevue/dropdown";
 export default {
   props: {
     text: String,
-    classText: String,
   },
 
   data() {

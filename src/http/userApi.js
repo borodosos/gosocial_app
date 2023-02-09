@@ -22,3 +22,11 @@ export const getUserInfo = async (paramsId) => {
   const { data } = await authHost.get(`api/users/${paramsId}`);
   return data;
 };
+
+export const updateUserInfo = async (paramsId, formData) => {
+  const { data } = await authHost.post(
+    `api/users/${paramsId}?_method=PATCH`,
+    formData
+  );
+  return data;
+};
