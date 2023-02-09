@@ -11,7 +11,7 @@
         <v-text-field
           v-else-if="modelValueChangeable && !loading"
           v-model="changedValue"
-          :rules="setRules()"
+          :rules="setRules"
           autofocus
           outlined
           :name="nameField"
@@ -69,31 +69,28 @@ export default {
       changedValue: "",
       loading: false,
       valid: true,
-      emailRules: [
-        (v) => !!v || "E-mail is required.",
-        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
-      ],
     };
   },
 
-  methods: {
+  computed: {
     setRules() {
       if (this.typeField === "email") {
         return [
-          (v) => !!v || "E-mail is required.",
-          (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+          (value) => !!value || "E-mail is required.",
+          (value) => /.+@.+\..+/.test(value) || "E-mail must be valid",
         ];
       } else if (this.typeField === "password") {
         return [
           (value) => !!value || "Required.",
-          (v) => v.length >= 8 || "Min 8 characters",
-          () => `The email and password you entered don't match`,
+          (value) => value.length >= 8 || "Min 8 characters",
         ];
       } else {
         return [(value) => !!value || "The field is required."];
       }
     },
+  },
 
+  methods: {
     changeValue() {
       this.modelValueChangeable = !this.modelValueChangeable;
     },

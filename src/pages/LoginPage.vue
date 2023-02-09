@@ -6,7 +6,7 @@
         <div class="login__email">
           <v-text-field
             v-model="email"
-            :rules="emailRules"
+            :rules="emailRules()"
             label="E-mail"
             name="email"
             required
@@ -18,7 +18,7 @@
           <v-text-field
             v-model="password"
             :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="[passRules.required, passRules.min]"
+            :rules="passRules()"
             :type="showPass ? 'text' : 'password'"
             name="password"
             label="Password"
@@ -54,15 +54,7 @@ export default {
       email: "",
       password: "",
       showPass: false,
-      passRules: {
-        required: (value) => !!value || "Required.",
-        min: (v) => v.length >= 8 || "Min 8 characters",
-        emailMatch: () => `The email and password you entered don't match`,
-      },
-      emailRules: [
-        (v) => !!v || "E-mail is required",
-        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
-      ],
+
       valid: true,
     };
   },
@@ -72,13 +64,26 @@ export default {
       this.$refs.form.validate();
     },
 
+    passRules() {
+      return [
+        (v) => !!v || "Password required.",
+        (v) => v.length >= 8 || "Min 8 characters",
+      ];
+    },
+    emailRules() {
+      return [
+        (v) => !!v || "E-mail is required",
+        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+      ];
+    },
+
     onSubmit(event) {
       event.preventDefault();
       this.validate();
       if (this.valid) {
         this.loading = true;
         const form = this.$refs.form.$el;
-        let formData = new FormData(form);
+        const formData = new FormData(form);
         this.$store
           .dispatch("userLoginFetch", formData)
           .then(() => {

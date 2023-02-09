@@ -159,7 +159,7 @@ export default {
 
   computed: {
     setImageProfile() {
-      if (this.user.image_profile === "0") {
+      if (!this.user.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
       } else return `${SERVER_URL}${this.user.image_profile}`;
     },
