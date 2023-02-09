@@ -72,6 +72,7 @@ export default {
     search() {
       this.$store.dispatch("fetchSearchPosts", this.keywords).then((value) => {
         this.results = value;
+        // console.log(value);
       });
     },
   },

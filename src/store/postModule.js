@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createPost, getAllPosts, searchPosts } from "@/http/postApi";
 
 export default {
@@ -22,17 +23,18 @@ export default {
     },
 
     fetchSearchPosts(ctx, payload) {
-      return new Promise((resolve, reject) => {
-        searchPosts(payload)
-          .then((res) => {
-            ctx.commit("updatePosts", res.data);
-            ctx.commit("updateLengthPosts", res.last_page);
-            resolve(res);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
+      console.log(payload);
+      // return new Promise((resolve, reject) => {
+      //   searchPosts(payload)
+      //     .then((res) => {
+      //       ctx.commit("updatePosts", res.data);
+      //       ctx.commit("updateLengthPosts", res.last_page);
+      //       resolve(res);
+      //     })
+      //     .catch((err) => {
+      //       reject(err);
+      //     });
+      // });
     },
 
     fetchCreatePost(ctx, payload) {
