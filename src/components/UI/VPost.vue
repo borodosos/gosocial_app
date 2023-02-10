@@ -1,21 +1,37 @@
 <template>
-  <li class="post">
+  <li class="post" ref="post">
     <div class="post__wrapper">
       <div class="post__header">
         <v-avatar size="50" color="purple darken-1" @click="routeToUser">
           <img :src="setImageProfile" alt="alt" />
         </v-avatar>
         <div class="post__user-info">
-          <div class="post__user-name" @click="routeToUser">
-            {{ user.first_name }} {{ user.second_name }}
+          <div
+            class="post__user-name"
+            @click="routeToUser"
+            v-html="
+              storeFilter === 'Authors' || 'All'
+                ? highlight(`${user.first_name} ${user.second_name}`)
+                : `${user.first_name} ${user.second_name}`
+            "
+          >
+            <!-- {{ user.first_name }} {{ user.second_name }} -->
           </div>
           <div class="post__data">{{ parseDate }}</div>
         </div>
       </div>
       <div class="post__body">
-        <div class="post__title">{{ post.title }}</div>
-        <div class="post__text">
-          {{ post.text }}
+        <div
+          class="post__title"
+          v-html="storeFilter === 'All' ? highlight(post.title) : post.title"
+        >
+          <!-- {{ post.title }} -->
+        </div>
+        <div
+          class="post__text"
+          v-html="storeFilter === 'All' ? highlight(post.text) : post.text"
+        >
+          <!-- {{ post.text }} -->
         </div>
         <div class="post__img">
           <v-img :src="setImage" max-height="400" max-width="500" contain />
@@ -30,7 +46,14 @@
             small
           >
             <v-icon left>fa-tag</v-icon>
-            {{ tag.tag_text }}
+            <span
+              v-html="
+                storeFilter === 'Tags' || 'All'
+                  ? highlight(tag.tag_text)
+                  : tag.tag_text
+              "
+            ></span>
+            <!-- {{ tag.tag_text }} -->
           </v-chip>
         </div>
       </div>
@@ -40,6 +63,7 @@
 
 <script>
 import { SERVER_URL } from "@/constants";
+import { mapGetters } from "vuex";
 
 export default {
   props: {
@@ -54,7 +78,6 @@ export default {
   data() {
     return {
       postTags: [],
-      imageLoad: true,
     };
   },
 
@@ -62,9 +85,24 @@ export default {
     routeToUser() {
       this.$router.push("/users/" + this.user.id);
     },
+    highlight(text) {
+      if (this.storeKeywords) {
+        return text.replace(
+          new RegExp(this.storeKeywords, "gi"),
+          '<span class="highlighted">$&</span>'
+        );
+      } else {
+        return text;
+      }
+    },
   },
 
   computed: {
+    ...mapGetters({
+      storeKeywords: "getKeywords",
+      storeFilter: "getFilter",
+    }),
+
     setImage() {
       return `${SERVER_URL}${this.post.image}`;
     },

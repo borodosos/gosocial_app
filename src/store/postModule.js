@@ -1,10 +1,11 @@
-/* eslint-disable no-unused-vars */
 import { createPost, getAllPosts, searchPosts } from "@/http/postApi";
 
 export default {
   state: {
     posts: [],
     lengthPosts: 0,
+    keywords: "",
+    filter: "",
   },
 
   actions: {
@@ -26,8 +27,17 @@ export default {
       return new Promise((resolve, reject) => {
         searchPosts(payload)
           .then((res) => {
-            ctx.commit("updatePosts", res.data);
-            ctx.commit("updateLengthPosts", res.last_page);
+            if (res.posts) {
+              ctx.commit("updatePosts", res.posts.data);
+              ctx.commit("updateLengthPosts", res.posts.last_page);
+              ctx.commit("updateKeywords", res.keywords);
+              ctx.commit("updateFilter", res.filter);
+            } else {
+              ctx.commit("updatePosts", res.data);
+              ctx.commit("updateLengthPosts", res.last_page);
+              ctx.commit("updateKeywords", "");
+              ctx.commit("updateFilter", "All");
+            }
             resolve(res);
           })
           .catch((err) => {
@@ -58,8 +68,11 @@ export default {
     updateLengthPosts(state, length) {
       state.lengthPosts = length;
     },
-    updateFoundedText(state, text) {
-      state.foundedText = text;
+    updateKeywords(state, keywords) {
+      state.keywords = keywords;
+    },
+    updateFilter(state, filter) {
+      state.filter = filter;
     },
   },
 
@@ -69,6 +82,12 @@ export default {
     },
     getLengthPosts(state) {
       return state.lengthPosts;
+    },
+    getKeywords(state) {
+      return state.keywords;
+    },
+    getFilter(state) {
+      return state.filter;
     },
   },
 };

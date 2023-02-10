@@ -57,6 +57,12 @@ export default {
     };
   },
 
+  watch: {
+    selectedFilter() {
+      this.search();
+    },
+  },
+
   methods: {
     logout() {
       this.$store.dispatch("userLogoutFetch").then(() => {
