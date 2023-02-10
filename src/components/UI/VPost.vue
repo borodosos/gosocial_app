@@ -1,5 +1,5 @@
 <template>
-  <li class="post">
+  <li class="post" ref="post">
     <div class="post__wrapper">
       <div class="post__header">
         <v-avatar size="50" color="purple darken-1" @click="routeToUser">
@@ -7,15 +7,23 @@
         </v-avatar>
         <div class="post__user-info">
           <div class="post__user-name" @click="routeToUser">
-            {{ user.first_name }} {{ user.second_name }}
+            <VHighlightedText
+              v-if="storeFilter === 'Authors' || 'All'"
+              :text="`${user.first_name} ${user.second_name}`"
+            />
+            <span v-else> {{ user.first_name }} {{ user.second_name }} </span>
           </div>
           <div class="post__data">{{ parseDate }}</div>
         </div>
       </div>
       <div class="post__body">
-        <div class="post__title">{{ post.title }}</div>
+        <div class="post__title">
+          <VHighlightedText v-if="storeFilter === 'All'" :text="post.title" />
+          <span v-else> {{ post.title }}</span>
+        </div>
         <div class="post__text">
-          {{ post.text }}
+          <VHighlightedText v-if="storeFilter === 'All'" :text="post.text" />
+          <span v-else> {{ post.text }} </span>
         </div>
         <div class="post__img">
           <v-img :src="setImage" max-height="400" max-width="500" contain />
@@ -30,7 +38,11 @@
             small
           >
             <v-icon left>fa-tag</v-icon>
-            {{ tag.tag_text }}
+            <VHighlightedText
+              v-if="storeFilter === 'Tags' || 'All'"
+              :text="tag.tag_text"
+            />
+            <span v-else> {{ tag.tag_text }} </span>
           </v-chip>
         </div>
       </div>
@@ -40,8 +52,14 @@
 
 <script>
 import { SERVER_URL } from "@/constants";
+import { mapGetters } from "vuex";
+import VHighlightedText from "./VHighlightedText.vue";
 
 export default {
+  components: {
+    VHighlightedText,
+  },
+
   props: {
     post: {
       type: Object,
@@ -54,7 +72,6 @@ export default {
   data() {
     return {
       postTags: [],
-      imageLoad: true,
     };
   },
 
@@ -65,6 +82,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      storeFilter: "getFilter",
+    }),
+
     setImage() {
       return `${SERVER_URL}${this.post.image}`;
     },
@@ -152,6 +173,7 @@ export default {
 .post__text {
   font-size: 0.9em;
   margin-bottom: 1%;
+  word-break: break-all;
 }
 
 .post__body {
