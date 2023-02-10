@@ -128,8 +128,4 @@ i {
 .component-fade-leave-to {
   opacity: 0;
 }
-
-.highlighted {
-  background-color: #3f3f3f;
-}
 </style>

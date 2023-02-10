@@ -6,32 +6,24 @@
           <img :src="setImageProfile" alt="alt" />
         </v-avatar>
         <div class="post__user-info">
-          <div
-            class="post__user-name"
-            @click="routeToUser"
-            v-html="
-              storeFilter === 'Authors' || 'All'
-                ? highlight(`${user.first_name} ${user.second_name}`)
-                : `${user.first_name} ${user.second_name}`
-            "
-          >
-            <!-- {{ user.first_name }} {{ user.second_name }} -->
+          <div class="post__user-name" @click="routeToUser">
+            <VHighlightedText
+              v-if="storeFilter === 'Authors' || 'All'"
+              :text="`${user.first_name} ${user.second_name}`"
+            />
+            <span v-else> {{ user.first_name }} {{ user.second_name }} </span>
           </div>
           <div class="post__data">{{ parseDate }}</div>
         </div>
       </div>
       <div class="post__body">
-        <div
-          class="post__title"
-          v-html="storeFilter === 'All' ? highlight(post.title) : post.title"
-        >
-          <!-- {{ post.title }} -->
+        <div class="post__title">
+          <VHighlightedText v-if="storeFilter === 'All'" :text="post.title" />
+          <span v-else> {{ post.title }}</span>
         </div>
-        <div
-          class="post__text"
-          v-html="storeFilter === 'All' ? highlight(post.text) : post.text"
-        >
-          <!-- {{ post.text }} -->
+        <div class="post__text">
+          <VHighlightedText v-if="storeFilter === 'All'" :text="post.text" />
+          <span v-else> {{ post.text }} </span>
         </div>
         <div class="post__img">
           <v-img :src="setImage" max-height="400" max-width="500" contain />
@@ -46,14 +38,11 @@
             small
           >
             <v-icon left>fa-tag</v-icon>
-            <span
-              v-html="
-                storeFilter === 'Tags' || 'All'
-                  ? highlight(tag.tag_text)
-                  : tag.tag_text
-              "
-            ></span>
-            <!-- {{ tag.tag_text }} -->
+            <VHighlightedText
+              v-if="storeFilter === 'Tags' || 'All'"
+              :text="tag.tag_text"
+            />
+            <span v-else> {{ tag.tag_text }} </span>
           </v-chip>
         </div>
       </div>
@@ -64,8 +53,13 @@
 <script>
 import { SERVER_URL } from "@/constants";
 import { mapGetters } from "vuex";
+import VHighlightedText from "./VHighlightedText.vue";
 
 export default {
+  components: {
+    VHighlightedText,
+  },
+
   props: {
     post: {
       type: Object,
@@ -85,21 +79,10 @@ export default {
     routeToUser() {
       this.$router.push("/users/" + this.user.id);
     },
-    highlight(text) {
-      if (this.storeKeywords) {
-        return text.replace(
-          new RegExp(this.storeKeywords, "gi"),
-          '<span class="highlighted">$&</span>'
-        );
-      } else {
-        return text;
-      }
-    },
   },
 
   computed: {
     ...mapGetters({
-      storeKeywords: "getKeywords",
       storeFilter: "getFilter",
     }),
 
@@ -190,6 +173,7 @@ export default {
 .post__text {
   font-size: 0.9em;
   margin-bottom: 1%;
+  word-break: break-all;
 }
 
 .post__body {
