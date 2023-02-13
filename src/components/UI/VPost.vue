@@ -45,6 +45,28 @@
             <span v-else> {{ tag.tag_text }} </span>
           </v-chip>
         </div>
+        <div class="post__comments">
+          <div class="post__comments-container">
+            <VPostComments
+              class="post__comment"
+              v-for="(item, index) in [1, 2, 3, 4]"
+              :key="index"
+              :user="user"
+              :post="post"
+            />
+          </div>
+          <div class="post__comments-form-container">
+            <v-form ref="form" class="comments__form">
+              <InputText
+                class="comments__input"
+                name="comment"
+                label="Comment"
+                placeholder="Write comment..."
+              ></InputText>
+              <v-btn class="comments__button" rounded>Comment</v-btn>
+            </v-form>
+          </div>
+        </div>
       </div>
     </div>
   </li>
@@ -54,10 +76,14 @@
 import { SERVER_URL } from "@/constants";
 import { mapGetters } from "vuex";
 import VHighlightedText from "./VHighlightedText.vue";
+import VPostComments from "./comments/VPostComments.vue";
+import InputText from "primevue/inputtext/InputText";
 
 export default {
   components: {
     VHighlightedText,
+    VPostComments,
+    InputText,
   },
 
   props: {
@@ -212,6 +238,40 @@ img {
   display: flex;
 }
 
+.post__comments {
+  border-radius: 4px;
+  box-shadow: inset 0 0 8px #b9b9b9;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.comments__form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post__comments-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.post__comments-form-container {
+  padding: 12px 16px 8px;
+  background-color: #e5e5e5;
+}
+
+.post__comment + .post__comment {
+  margin-top: 8px;
+}
+
+.comments__input {
+  width: 75%;
+}
+
+.comments__button {
+}
+
 .v-chip {
   cursor: pointer;
 }
@@ -228,5 +288,11 @@ img {
 
 .post__likes span {
   margin-left: 15px;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 </style>
