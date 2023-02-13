@@ -1,6 +1,5 @@
 import store from "@/store";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { SERVER_URL } from "@/constants";
 
 const host = axios.create({
@@ -20,7 +19,7 @@ authHost.interceptors.request.use(authInterceptor);
 
 authHost.interceptors.response.use(undefined, (err) => {
   if (err.response.status === 401) {
-    store.dispatch("refreshTokenFetch", Cookies.get("refreshToken"));
+    store.dispatch("refreshTokenFetch");
   }
   return Promise.reject(err);
 });

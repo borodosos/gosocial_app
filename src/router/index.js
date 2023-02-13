@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
 import Vue from "vue";
 import VueRouter from "vue-router";
 import HomePage from "@/pages/HomePage.vue";
 import ProfilePage from "@/pages/ProfilePage.vue";
 import LoginPage from "@/pages/LoginPage.vue";
 import RegistrationPage from "@/pages/RegistrationPage.vue";
-import Cookies from "js-cookie";
 import store from "@/store";
 
 Vue.use(VueRouter);
@@ -50,7 +48,7 @@ router.beforeEach((to, from, next) => {
       return next();
     } else {
       store
-        .dispatch("refreshTokenFetch", Cookies.get("refreshToken"))
+        .dispatch("refreshTokenFetch")
         .then(() => {
           return next();
         })
