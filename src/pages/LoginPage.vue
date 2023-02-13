@@ -28,6 +28,9 @@
             @click:append="showPass = !showPass"
           ></v-text-field>
         </div>
+        <div class="login__google-button-container mb-2">
+          <VGoogleButton />
+        </div>
         <div class="login__form-submit-container">
           <div>
             Don't have an account?
@@ -42,11 +45,13 @@
 </template>
 
 <script>
+import VGoogleButton from "@/components/UI/VGoogleButton.vue";
 import Toast from "primevue/toast";
 
 export default {
   components: {
     Toast,
+    VGoogleButton,
   },
   data() {
     return {
@@ -111,7 +116,7 @@ export default {
 <style scoped lang="scss">
 .card {
   border-radius: 10px;
-  padding: 30px;
+  padding: 24px;
   box-shadow: 0 1px 10px 0 rgb(185, 185, 185);
 }
 

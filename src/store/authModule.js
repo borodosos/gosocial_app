@@ -1,6 +1,5 @@
 import { login, refresh, registration } from "@/http/userApi";
 import parseToken from "@/utils/parseToken";
-import Cookies from "js-cookie";
 
 export default {
   state: {
@@ -14,8 +13,6 @@ export default {
         registration(payload)
           .then((res) => {
             const accessToken = res.access_token;
-            const refreshToken = res.refresh_token;
-            Cookies.set("refreshToken", refreshToken);
 
             const userDetails = parseToken(accessToken).user_info;
             ctx.dispatch("initUser", userDetails); // -- Init user
@@ -36,8 +33,6 @@ export default {
         login(payload)
           .then((res) => {
             const accessToken = res.access_token;
-            const refreshToken = res.refresh_token;
-            Cookies.set("refreshToken", refreshToken);
 
             const userDetails = parseToken(accessToken).user_info;
             ctx.dispatch("initUser", userDetails); // -- Init user
@@ -53,13 +48,11 @@ export default {
     },
 
     // === Refresh token user
-    refreshTokenFetch(ctx, payload) {
+    refreshTokenFetch(ctx) {
       return new Promise((resolve, reject) => {
-        refresh(payload)
+        refresh()
           .then((res) => {
             const accessToken = res.access_token;
-            const refreshToken = res.refresh_token;
-            Cookies.set("refreshToken", refreshToken);
 
             const userDetails = parseToken(accessToken).user_info;
             ctx.dispatch("initUser", userDetails); // -- Init user

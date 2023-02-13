@@ -50,6 +50,9 @@
             @click:append="showPass = !showPass"
           ></v-text-field>
         </div>
+        <div class="login__google-button-container mb-2">
+          <VGoogleButton />
+        </div>
         <div class="registration__form-submit-container">
           <div>
             Already have an account?
@@ -64,10 +67,12 @@
 </template>
 
 <script>
+import VGoogleButton from "@/components/UI/VGoogleButton.vue";
 import Toast from "primevue/toast";
 export default {
   components: {
     Toast,
+    VGoogleButton,
   },
   data() {
     return {
