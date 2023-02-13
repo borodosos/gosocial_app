@@ -10,6 +10,7 @@
 
 <script>
 import { googleAuth } from "@/http/userApi";
+import Toast from "primevue/toast/Toast";
 
 export default {
   methods: {
@@ -29,6 +30,7 @@ export default {
         );
     },
   },
+  components: { Toast },
 };
 </script>
 
