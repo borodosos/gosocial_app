@@ -1,17 +1,32 @@
 <template>
-  <button type="button" class="google-button" @click="fetchGoogleAuth">
-    <img class="google-button__icon" src="@/assets/google-icon.svg" />
-    Continue with Google
-  </button>
+  <div>
+    <button type="button" class="google-button" @click="fetchGoogleAuth">
+      <img class="google-button__icon" src="@/assets/google-icon.svg" />
+      Continue with Google
+    </button>
+    <Toast position="bottom-left" group="bl" />
+  </div>
 </template>
 
 <script>
+import { googleAuth } from "@/http/userApi";
+
 export default {
   methods: {
     fetchGoogleAuth() {
-      this.$store.dispatch("userGoogleAuth").then((value) => {
-        window.location.replace(value);
-      });
+      googleAuth()
+        .then((url) => {
+          window.location.replace(url);
+        })
+        .catch((error) =>
+          this.$toast.add({
+            severity: "error",
+            summary: "Login",
+            detail: error,
+            group: "bl",
+            life: 3000,
+          })
+        );
     },
   },
 };
