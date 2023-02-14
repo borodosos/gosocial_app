@@ -63,7 +63,9 @@
                 label="Comment"
                 placeholder="Write comment..."
               ></InputText>
-              <v-btn class="comments__button" rounded>Comment</v-btn>
+              <v-btn class="default-button comments__button" rounded
+                >Comment</v-btn
+              >
             </v-form>
           </div>
         </div>
@@ -241,7 +243,7 @@ img {
 .post__comments {
   border-radius: 4px;
   box-shadow: inset 0 0 8px #b9b9b9;
-  padding: 12px;
+  padding: 8px;
   margin-top: 12px;
 }
 
@@ -254,11 +256,24 @@ img {
 .post__comments-container {
   max-height: 400px;
   overflow-y: auto;
+  padding-right: 4px;
+}
+
+.post__comments-container::-webkit-scrollbar {
+  opacity: 0;
+  width: 4px;
+}
+
+.post__comments-container::-webkit-scrollbar-thumb {
+  display: block;
+  border-radius: 10px;
+  background-color: black;
 }
 
 .post__comments-form-container {
   padding: 12px 16px 8px;
   background-color: #e5e5e5;
+  margin-right: 8px;
 }
 
 .post__comment + .post__comment {
@@ -267,9 +282,7 @@ img {
 
 .comments__input {
   width: 75%;
-}
-
-.comments__button {
+  border-radius: 16px;
 }
 
 .v-chip {

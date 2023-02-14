@@ -1,6 +1,6 @@
 <template>
-  <div class="comment">
-    <div class="comment__body">
+  <div class="comment-container">
+    <div class="comment">
       <div class="comment__title">
         <v-avatar
           class="comment__user-avatar"
@@ -16,18 +16,38 @@
           <span class="comment__data">Just Now</span>
         </div>
       </div>
-      <div class="comment__text">
+      <p class="comment__text">
         Aboba aboba aboba Aboba aboba aboba Aboba aboba aboba Aboba aboba aboba
         Aboba aboba aboba Aboba aboba aboba
-      </div>
+      </p>
     </div>
-    <VPostSubComments />
+    <div class="comment__subcomments-container">
+      <VPostSubComments
+        v-for="(item, index) in [1, 2, 3, 4]"
+        :key="index"
+        :user="user"
+        :post="post"
+      />
+    </div>
+    <div class="comment__form-container">
+      <v-form ref="form" class="comment__form">
+        <InputText
+          class="comment__input"
+          name="subcomment"
+          label="Subcomment"
+          placeholder="Reply..."
+        ></InputText>
+        <v-btn class="default-button subcomment__button" rounded>Reply</v-btn>
+      </v-form>
+    </div>
   </div>
 </template>
 
 <script>
 import { SERVER_URL } from "@/constants";
 import VPostSubComments from "./VPostSubComments.vue";
+import InputText from "primevue/inputtext/InputText";
+
 export default {
   props: {
     user: Object,
@@ -36,6 +56,7 @@ export default {
 
   components: {
     VPostSubComments,
+    InputText,
   },
 
   computed: {
@@ -49,12 +70,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.comment {
+.comment-container {
   font-size: 0.9em;
   border: 1px solid #cccccc;
   border-radius: 8px;
   padding: 8px;
+}
 
+.comment {
   &__title {
     display: flex;
     align-items: center;
@@ -86,6 +109,29 @@ export default {
 
   span {
     display: block;
+  }
+
+  &__subcomments-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  &__form-container {
+    background-color: #e5e5e5;
+    padding: 8px 12px 8px;
+  }
+
+  &__form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__input {
+    width: 70%;
+    padding: 4px;
+    border-radius: 16px;
   }
 }
 </style>

@@ -120,6 +120,11 @@ i {
   background-color: black;
 }
 
+.default-button {
+  background: linear-gradient(0deg, rgb(158, 160, 255), rgb(253, 239, 239));
+  color: rgb(70, 70, 70);
+}
+
 .component-fade-enter-active,
 .component-fade-leave-active {
   transition: opacity 0.3s ease;
