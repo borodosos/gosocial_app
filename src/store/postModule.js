@@ -1,4 +1,9 @@
-import { createPost, getAllPosts, searchPosts } from "@/http/postApi";
+import {
+  addComment,
+  createPost,
+  getAllPosts,
+  searchPosts,
+} from "@/http/postApi";
 
 export default {
   state: {
@@ -50,6 +55,21 @@ export default {
       return new Promise((resolve, reject) => {
         createPost(payload)
           .then((res) => {
+            ctx.dispatch("fetchAllPosts", 1).then(() => {
+              resolve(res);
+            });
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+
+    fetchAddComment(ctx, payload) {
+      return new Promise((resolve, reject) => {
+        addComment(payload)
+          .then((res) => {
+            console.log(res);
             ctx.dispatch("fetchAllPosts", 1).then(() => {
               resolve(res);
             });

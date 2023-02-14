@@ -65,7 +65,8 @@ export default {
       this.loading = true;
       this.$store
         .dispatch("fetchAllPosts", page)
-        .then(() => {
+        .then((res) => {
+          console.log(res);
           this.posts = this.countPosts;
         })
         .catch((error) => {

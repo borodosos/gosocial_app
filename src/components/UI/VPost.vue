@@ -49,21 +49,30 @@
           <div class="post__comments-container">
             <VPostComments
               class="post__comment"
-              v-for="(item, index) in [1, 2, 3, 4]"
+              v-for="(comment, index) in post.comments"
               :key="index"
-              :user="user"
+              :comment="comment"
               :post="post"
             />
           </div>
           <div class="post__comments-form-container">
-            <v-form ref="form" class="comments__form">
+            <v-form
+              ref="form"
+              v-model="valid"
+              class="comments__form"
+              @submit="onSubmit"
+            >
               <InputText
+                v-model="commentText"
                 class="comments__input"
                 name="comment"
                 label="Comment"
-                placeholder="Write comment..."
+                placeholder="Write a comment..."
               ></InputText>
-              <v-btn class="default-button comments__button" rounded
+              <v-btn
+                class="default-button comments__button"
+                type="submit"
+                rounded
                 >Comment</v-btn
               >
             </v-form>
@@ -89,23 +98,45 @@ export default {
   },
 
   props: {
-    post: {
-      type: Object,
-    },
-    user: {
-      type: Object,
-    },
+    post: Object,
+    user: Object,
   },
 
   data() {
     return {
       postTags: [],
+      valid: true,
+      loading: false,
+      commentText: "",
     };
   },
 
   methods: {
     routeToUser() {
       this.$router.push("/users/" + this.user.id);
+    },
+
+    validate() {
+      this.$refs.form.validate();
+    },
+
+    onSubmit(event) {
+      event.preventDefault();
+      this.validate();
+      if (this.valid) {
+        this.loading = true;
+        const form = this.$refs.form.$el;
+        const formData = new FormData(form);
+        this.$store
+          .dispatch("fetchAddComment", {
+            formData: formData,
+            postId: this.post.id,
+          })
+          .then((res) => {
+            this.loading = false;
+            console.log(res);
+          });
+      }
     },
   },
 
@@ -241,8 +272,8 @@ img {
 }
 
 .post__comments {
-  border-radius: 4px;
-  box-shadow: inset 0 0 8px #b9b9b9;
+  border-radius: 8px;
+  box-shadow: inset 0 0 8px #6aa5ff;
   padding: 8px;
   margin-top: 12px;
 }
@@ -256,7 +287,7 @@ img {
 .post__comments-container {
   max-height: 400px;
   overflow-y: auto;
-  padding-right: 4px;
+  padding: 4px;
 }
 
 .post__comments-container::-webkit-scrollbar {
@@ -267,13 +298,12 @@ img {
 .post__comments-container::-webkit-scrollbar-thumb {
   display: block;
   border-radius: 10px;
-  background-color: black;
+  background-color: #6aa5ff;
 }
 
 .post__comments-form-container {
   padding: 12px 16px 8px;
   background-color: #e5e5e5;
-  margin-right: 8px;
 }
 
 .post__comment + .post__comment {

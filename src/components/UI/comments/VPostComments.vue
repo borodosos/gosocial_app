@@ -11,33 +11,39 @@
         </v-avatar>
         <div class="comment__info">
           <span class="comment__user-name">
-            {{ user.first_name }} {{ user.second_name }}
+            {{ comment.user.first_name }} {{ comment.user.second_name }}
           </span>
-          <span class="comment__data">Just Now</span>
+          <span class="comment__data">{{ parseDate }}</span>
         </div>
       </div>
       <p class="comment__text">
-        Aboba aboba aboba Aboba aboba aboba Aboba aboba aboba Aboba aboba aboba
-        Aboba aboba aboba Aboba aboba aboba
+        {{ comment.text }}
       </p>
     </div>
-    <div class="comment__subcomments-container">
+    <div v-show="comment.replies.length" class="comment__subcomments-container">
       <VPostSubComments
-        v-for="(item, index) in [1, 2, 3, 4]"
+        v-for="(reply, index) in comment.replies"
         :key="index"
-        :user="user"
-        :post="post"
+        :reply="reply"
       />
     </div>
     <div class="comment__form-container">
-      <v-form ref="form" class="comment__form">
+      <v-form
+        ref="form"
+        v-model="valid"
+        class="comment__form"
+        @submit="onSubmit"
+      >
         <InputText
+          v-model="replyText"
           class="comment__input"
-          name="subcomment"
-          label="Subcomment"
+          name="reply"
+          label="Reply"
           placeholder="Reply..."
         ></InputText>
-        <v-btn class="default-button subcomment__button" rounded>Reply</v-btn>
+        <v-btn class="default-button subcomment__button" type="submit" rounded
+          >Reply</v-btn
+        >
       </v-form>
     </div>
   </div>
@@ -52,6 +58,15 @@ export default {
   props: {
     user: Object,
     post: Object,
+    comment: Object,
+  },
+
+  data() {
+    return {
+      loading: false,
+      valid: true,
+      replyText: "",
+    };
   },
 
   components: {
@@ -61,9 +76,43 @@ export default {
 
   computed: {
     setImageProfile() {
-      if (!this.user.image_profile) {
+      if (!this.comment.user.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
-      } else return `${SERVER_URL}${this.user.image_profile}`;
+      } else return `${SERVER_URL}${this.comment.user.image_profile}`;
+    },
+
+    parseDate() {
+      const addDate = this.comment.created_at;
+      const currentDate = Date.parse(new Date());
+      const time = (currentDate - Date.parse(addDate)) / 1440;
+
+      return time;
+    },
+  },
+
+  methods: {
+    validate() {
+      this.$refs.form.validate();
+    },
+
+    onSubmit(event) {
+      event.preventDefault();
+      this.validate();
+      if (this.valid) {
+        this.loading = true;
+        const form = this.$refs.form.$el;
+        const formData = new FormData(form);
+        formData.append("commentId", this.comment.id);
+        this.$store
+          .dispatch("fetchAddComment", {
+            formData: formData,
+            postId: this.post.id,
+          })
+          .then((res) => {
+            this.loading = false;
+            console.log(res);
+          });
+      }
     },
   },
 };
@@ -72,7 +121,7 @@ export default {
 <style scoped lang="scss">
 .comment-container {
   font-size: 0.9em;
-  border: 1px solid #cccccc;
+  border: 1px solid #acacac;
   border-radius: 8px;
   padding: 8px;
 }
@@ -115,11 +164,28 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    max-height: 307px;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: inset 0 0 8px #6aa5ff;
+    padding: 8px 0;
+  }
+
+  &__subcomments-container::-webkit-scrollbar {
+    opacity: 0;
+    width: 4px;
+  }
+
+  &__subcomments-container::-webkit-scrollbar-thumb {
+    display: block;
+    border-radius: 10px;
+    background-color: #6aa5ff;
   }
 
   &__form-container {
     background-color: #e5e5e5;
     padding: 8px 12px 8px;
+    margin-top: 8px;
   }
 
   &__form {

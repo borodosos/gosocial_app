@@ -10,22 +10,33 @@
       </v-avatar>
       <div class="subcomment__info">
         <span class="subcomment__user-name">
-          {{ user.first_name }} {{ user.second_name }}
+          {{ reply.user.first_name }} {{ reply.user.second_name }}
         </span>
         <span class="subcomment__data">Just Now</span>
       </div>
     </div>
     <p class="subcomment__text">
-      Ahahahahahhaahahahhaahahhahahahaahhahahahahahahahahahahahahahaha
+      {{ reply.text }}
     </p>
   </div>
 </template>
 
 <script>
+import { SERVER_URL } from "@/constants";
+
 export default {
   props: {
     user: Object,
     post: Object,
+    reply: Object,
+  },
+
+  computed: {
+    setImageProfile() {
+      if (!this.reply.user.image_profile) {
+        return require("@/assets/photos/defaultGiga.jpg");
+      } else return `${SERVER_URL}${this.reply.user.image_profile}`;
+    },
   },
 };
 </script>

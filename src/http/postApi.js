@@ -21,3 +21,12 @@ export const searchPosts = async (query) => {
 
   return data;
 };
+
+export const addComment = async ({ formData, postId }) => {
+  const { data } = await authHost.post(
+    `api/posts/${postId}/comments`,
+    formData
+  );
+
+  return data;
+};
