@@ -56,12 +56,7 @@
             />
           </div>
           <div class="post__comments-form-container">
-            <v-form
-              ref="form"
-              v-model="valid"
-              class="comments__form"
-              @submit="onSubmit"
-            >
+            <v-form ref="form" class="comments__form" @submit="onSubmit">
               <InputText
                 v-model="commentText"
                 class="comments__input"
@@ -80,6 +75,7 @@
         </div>
       </div>
     </div>
+    <Toast position="bottom-left" group="bl" />
   </li>
 </template>
 
@@ -89,12 +85,14 @@ import { mapGetters } from "vuex";
 import VHighlightedText from "./VHighlightedText.vue";
 import VPostComments from "./comments/VPostComments.vue";
 import InputText from "primevue/inputtext/InputText";
+import Toast from "primevue/toast";
 
 export default {
   components: {
     VHighlightedText,
     VPostComments,
     InputText,
+    Toast,
   },
 
   props: {
@@ -105,7 +103,6 @@ export default {
   data() {
     return {
       postTags: [],
-      valid: true,
       loading: false,
       commentText: "",
     };
@@ -116,27 +113,40 @@ export default {
       this.$router.push("/users/" + this.user.id);
     },
 
-    validate() {
-      this.$refs.form.validate();
-    },
-
     onSubmit(event) {
       event.preventDefault();
-      this.validate();
-      if (this.valid) {
-        this.loading = true;
-        const form = this.$refs.form.$el;
-        const formData = new FormData(form);
-        this.$store
-          .dispatch("fetchAddComment", {
-            formData: formData,
-            postId: this.post.id,
-          })
-          .then((res) => {
-            this.loading = false;
-            console.log(res);
-          });
+      if (!this.commentText.trim().length) {
+        return this.$toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Please, write a comment",
+          group: "bl",
+          life: 1800,
+        });
       }
+
+      this.loading = true;
+      const form = this.$refs.form.$el;
+      const formData = new FormData(form);
+      this.$store
+        .dispatch("fetchAddComment", {
+          formData: formData,
+          postId: this.post.id,
+        })
+        .then(() => {
+          this.loading = false;
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: error,
+            group: "bl",
+            life: 1800,
+          });
+        })
+        .finally(() => (this.commentText = ""));
     },
   },
 
@@ -276,6 +286,7 @@ img {
   box-shadow: inset 0 0 8px #6aa5ff;
   padding: 8px;
   margin-top: 12px;
+  word-break: break-all;
 }
 
 .comments__form {

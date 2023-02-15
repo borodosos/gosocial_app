@@ -16,9 +16,48 @@
           <span class="comment__data">{{ parseDate }}</span>
         </div>
       </div>
-      <p class="comment__text">
+      <p v-if="!isMenuForChange" class="comment__text">
         {{ comment.text }}
       </p>
+      <v-form
+        v-else
+        ref="form"
+        class="comment__form"
+        id="form-change"
+        @submit="onSubmitChange"
+      >
+        <FormulateInput
+          :value="comment.text"
+          @validation="valid = $event"
+          resize="none"
+          type="textarea"
+          rows="3"
+          class="comment__input-change"
+          name="commentContent"
+          validation="required"
+        />
+      </v-form>
+      <div v-show="isAmI" class="comment__menu">
+        <v-btn
+          v-if="!isMenuForChange"
+          icon
+          small
+          @click="isMenuForChange = true"
+        >
+          <v-icon size="18">mdi-pencil</v-icon>
+        </v-btn>
+        <div v-else>
+          <v-btn icon text small type="submit" form="form-change">
+            <v-icon size="18">fa-check</v-icon>
+          </v-btn>
+          <v-btn icon text small @click="isMenuForChange = false">
+            <v-icon size="18">fa-xmark</v-icon>
+          </v-btn>
+        </div>
+        <v-btn icon text small type="submit" @click="deleteComment">
+          <v-icon size="18">fa-trash</v-icon>
+        </v-btn>
+      </div>
     </div>
     <div v-show="comment.replies.length" class="comment__subcomments-container">
       <VPostSubComments
@@ -28,12 +67,7 @@
       />
     </div>
     <div class="comment__form-container">
-      <v-form
-        ref="form"
-        v-model="valid"
-        class="comment__form"
-        @submit="onSubmit"
-      >
+      <v-form ref="form" class="comment__form" @submit="onSubmit">
         <InputText
           v-model="replyText"
           class="comment__input"
@@ -46,6 +80,7 @@
         >
       </v-form>
     </div>
+    <Toast position="bottom-left" group="bl" />
   </div>
 </template>
 
@@ -53,6 +88,9 @@
 import { SERVER_URL } from "@/constants";
 import VPostSubComments from "./VPostSubComments.vue";
 import InputText from "primevue/inputtext/InputText";
+import Toast from "primevue/toast";
+
+import moment from "moment";
 
 export default {
   props: {
@@ -61,17 +99,19 @@ export default {
     comment: Object,
   },
 
-  data() {
-    return {
-      loading: false,
-      valid: true,
-      replyText: "",
-    };
-  },
-
   components: {
     VPostSubComments,
     InputText,
+    Toast,
+  },
+
+  data() {
+    return {
+      loading: false,
+      replyText: "",
+      isMenuForChange: false,
+      valid: "",
+    };
   },
 
   computed: {
@@ -82,37 +122,112 @@ export default {
     },
 
     parseDate() {
-      const addDate = this.comment.created_at;
-      const currentDate = Date.parse(new Date());
-      const time = (currentDate - Date.parse(addDate)) / 1440;
-
-      return time;
+      return moment(this.comment.created_at).fromNow();
     },
   },
 
   methods: {
-    validate() {
-      this.$refs.form.validate();
+    isAmI() {
+      const userId = this.comment.user_id;
+      const authUserId = this.$store.getters.getAuthUser.id;
+      if (userId === authUserId) {
+        return true;
+      } else {
+        return false;
+      }
     },
 
     onSubmit(event) {
       event.preventDefault();
-      this.validate();
-      if (this.valid) {
-        this.loading = true;
-        const form = this.$refs.form.$el;
-        const formData = new FormData(form);
-        formData.append("commentId", this.comment.id);
-        this.$store
-          .dispatch("fetchAddComment", {
-            formData: formData,
-            postId: this.post.id,
-          })
-          .then((res) => {
-            this.loading = false;
-            console.log(res);
-          });
+      if (!this.replyText.trim().length) {
+        return this.$toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Please, write a reply",
+          group: "bl",
+          life: 1800,
+        });
       }
+      this.loading = true;
+      const form = this.$refs.form.$el;
+      const formData = new FormData(form);
+      formData.append("commentId", this.comment.id);
+      this.$store
+        .dispatch("fetchAddComment", {
+          formData: formData,
+          postId: this.post.id,
+        })
+        .then(() => {
+          this.loading = false;
+        })
+        .catch((error) => {
+          this.$toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: error,
+            group: "bl",
+            life: 1800,
+          });
+        })
+        .finally(() => (this.replyText = ""));
+    },
+
+    onSubmitChange(event) {
+      event.preventDefault();
+      if (this.valid.hasErrors) {
+        return;
+      }
+      this.loading = true;
+      const form = this.$refs.form.$el;
+      const formData = new FormData(form);
+      this.$store
+        .dispatch("fetchUpdateComment", {
+          formData: formData,
+          commentId: this.comment.id,
+        })
+        .then((res) => {
+          console.log(res);
+          this.loading = false;
+        })
+        .catch((error) => {
+          this.$toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: error,
+            group: "bl",
+            life: 1800,
+          });
+        })
+        .finally(() => {
+          this.isMenuForChange = false;
+        });
+    },
+
+    deleteComment(event) {
+      event.preventDefault();
+      this.$store
+        .dispatch("fetchDeleteComment", this.comment.id)
+        .then((res) => {
+          this.$toast.add({
+            severity: "success",
+            summary: "Success",
+            detail: res,
+            group: "bl",
+            life: 1800,
+          });
+        })
+        .catch((error) => {
+          this.$toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: error,
+            group: "bl",
+            life: 1800,
+          });
+        })
+        .finally(() => {
+          this.isMenuForChange = false;
+        });
     },
   },
 };
@@ -136,9 +251,6 @@ export default {
     margin-right: 4%;
   }
 
-  &__info {
-  }
-
   &__user-name {
     font-weight: bold;
   }
@@ -154,6 +266,29 @@ export default {
 
   &__text {
     padding-top: 8px;
+  }
+
+  &__input-change,
+  &__input-change::v-deep .formulate-input-wrapper,
+  &__input-change::v-deep .formulate-input-element {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  &__input-change::v-deep textarea {
+    font-family: "Rubik";
+    margin: 4px 0;
+    padding: 4px;
+    font-size: 1em;
+    resize: none;
+  }
+
+  &__menu {
+    display: inline-flex;
+    align-items: center;
+    background-color: #ffc8af;
+    border-radius: 8px;
+    margin-bottom: 4px;
   }
 
   span {
@@ -198,6 +333,10 @@ export default {
     width: 70%;
     padding: 4px;
     border-radius: 16px;
+  }
+
+  .subcomment__button {
+    padding: 0;
   }
 }
 </style>
