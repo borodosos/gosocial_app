@@ -109,8 +109,7 @@ export default {
           formData: formData,
           commentId: this.reply.id,
         })
-        .then((res) => {
-          console.log(res);
+        .then(() => {
           this.loading = false;
         })
         .catch((error) => {
