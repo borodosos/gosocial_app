@@ -1,10 +1,6 @@
 import { addComment, updateComment, deleteComment } from "@/http/commentApi";
 
 export default {
-  state: {},
-
-  mutations: {},
-
   actions: {
     fetchAddComment(ctx, payload) {
       return new Promise((resolve, reject) => {
@@ -49,6 +45,4 @@ export default {
       });
     },
   },
-
-  getters: {},
 };

@@ -364,7 +364,8 @@ export default {
     justify-content: center;
   }
 
-  &__list-element::v-deep .post__img {
+  &__list-element::v-deep .post__img,
+  &__list-element::v-deep .post__comments {
     display: none;
   }
 
