@@ -37,7 +37,7 @@
           validation="required"
         />
       </v-form>
-      <div v-show="isAmI" class="comment__menu">
+      <div v-show="isAmI()" class="comment__menu">
         <v-btn
           v-if="!isMenuForChange"
           icon
