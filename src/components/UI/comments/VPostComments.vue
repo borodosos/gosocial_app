@@ -21,7 +21,7 @@
       </p>
       <v-form
         v-else
-        ref="form"
+        ref="form_editing"
         class="comment__form"
         id="form-change"
         @submit="onSubmitChange"
@@ -178,7 +178,7 @@ export default {
         return;
       }
       this.loading = true;
-      const form = this.$refs.form.$el;
+      const form = this.$refs.form_editing.$el;
       const formData = new FormData(form);
       this.$store
         .dispatch("fetchUpdateComment", {
