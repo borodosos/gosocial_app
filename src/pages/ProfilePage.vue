@@ -365,7 +365,8 @@ export default {
   }
 
   &__list-element::v-deep .post__img,
-  &__list-element::v-deep .post__comments {
+  &__list-element::v-deep .post__comments,
+  &__list-element::v-deep .menu__button {
     display: none;
   }
 
