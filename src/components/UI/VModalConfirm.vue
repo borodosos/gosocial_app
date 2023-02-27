@@ -7,11 +7,16 @@
   >
     <v-card class="card-confirm">
       <div class="card-confirm__text">
-        Are you sure you want to delete the
-        <strong
-          >{{ post.user.first_name }} {{ post.user.second_name }}'s</strong
+        <span v-if="$store.getters.getAuthUser.id === post.user.id">
+          Are you sure you want to delete your post?</span
         >
-        post?
+        <span v-else>
+          Are you sure you want to delete the
+          <strong
+            >{{ post.user.first_name }} {{ post.user.second_name }}'s</strong
+          >
+          post?
+        </span>
       </div>
       <div class="card-confirm__menu">
         <v-spacer></v-spacer>
@@ -45,9 +50,9 @@ export default {
   },
   methods: {
     deletePost() {
-      console.log(this.post);
       this.$emit("closeDialog");
       this.$store.dispatch("fetchDeletePost", this.post.id).then((value) => {
+        console.log(value);
         this.$toast.add({
           severity: "success",
           summary: "Success",
@@ -66,19 +71,24 @@ export default {
 .card-confirm {
   border-radius: 8px;
   padding: 12px;
+
   &__text {
   }
+
   &__menu {
     padding-top: 12px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
   }
+
   &__button {
   }
+
   .disagree {
     background: linear-gradient(0deg, rgb(255, 74, 74), rgb(255, 136, 136));
   }
+
   .agree {
     margin-left: 8px;
     background: linear-gradient(0deg, rgb(125, 255, 74), rgb(136, 255, 146));

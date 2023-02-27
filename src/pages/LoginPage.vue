@@ -47,19 +47,18 @@
 <script>
 import VGoogleButton from "@/components/UI/VGoogleButton.vue";
 import Toast from "primevue/toast";
-
 export default {
   components: {
     Toast,
     VGoogleButton,
   },
+
   data() {
     return {
       loading: false,
       email: "",
       password: "",
       showPass: false,
-
       valid: true,
     };
   },
@@ -75,6 +74,7 @@ export default {
         (v) => v.length >= 8 || "Min 8 characters",
       ];
     },
+
     emailRules() {
       return [
         (v) => !!v || "E-mail is required",
@@ -91,7 +91,8 @@ export default {
         const formData = new FormData(form);
         this.$store
           .dispatch("userLoginFetch", formData)
-          .then(() => {
+          .then((res) => {
+            console.log(res);
             this.loading = !this.loading;
             this.$router.push("/");
           })
@@ -115,15 +116,18 @@ export default {
 
 <style scoped lang="scss">
 .card {
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 1px 10px 0 rgb(185, 185, 185);
+  box-shadow: 0 0 8px #6aa5ff;
+  backdrop-filter: blur(48px);
+  min-width: 400px;
 }
 
 .container {
-  margin-top: 5%;
   display: flex;
+  align-items: center;
   justify-content: center;
+  flex-grow: 1;
 }
 
 .login {
@@ -131,8 +135,7 @@ export default {
   z-index: 1;
 
   &__wrapper {
-    width: 50%;
-    background-color: white;
+    width: 40%;
   }
 
   &__title {
@@ -141,7 +144,6 @@ export default {
 
   &__form {
     margin-top: 15px;
-
     .login__form-submit-container {
       display: flex;
     }
@@ -157,12 +159,14 @@ export default {
     .v-text-field:nth-child(1) {
       margin-right: 15px;
     }
+
     display: flex;
     justify-content: space-between;
   }
 
   &__cropper {
     height: 200px;
+
     img {
       object-fit: cover;
     }
