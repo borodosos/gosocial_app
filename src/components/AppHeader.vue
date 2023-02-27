@@ -1,8 +1,9 @@
 <template>
   <header class="header">
     <div class="header__wrapper">
-      <h1 class="header__title">GoSocial</h1>
-
+      <router-link :to="'/'">
+        <h1 class="header__title">GoSocial</h1>
+      </router-link>
       <div class="header__menu">
         <nav class="header__navigation">
           <v-btn class="button-navigation" rounded>
@@ -21,6 +22,7 @@
           id="username"
           type="text"
           placeholder="Search"
+          :disabled="disableSearchForm"
         />
         <Dropdown
           class="custom-select"
@@ -81,6 +83,12 @@ export default {
         });
     },
   },
+
+  computed: {
+    disableSearchForm() {
+      return this.$route.fullPath.includes("/users/");
+    },
+  },
 };
 </script>
 
@@ -108,6 +116,7 @@ export default {
   align-items: center;
   justify-content: space-evenly;
   width: 25%;
+  margin: 0 auto;
 }
 
 .button-navigation.v-btn {
@@ -116,6 +125,7 @@ export default {
 
 .button-navigation {
   display: block;
+  margin: 0 4px;
 }
 
 .button-navigation::before {
@@ -140,7 +150,7 @@ export default {
   opacity: 0;
   animation: glowing 5s linear infinite;
   transition: all 0.4s;
-  border-radius: 20px;
+  border-radius: 12px;
 }
 
 .button-navigation:hover::before {
@@ -164,7 +174,7 @@ export default {
 .button-navigation a {
   text-decoration: none;
   color: indigo;
-  padding: 10px 20px;
+  padding: 12px 24px;
 }
 
 .header__search {
@@ -187,8 +197,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 10px;
-  padding: 10px;
+  border-radius: 12px;
+  padding: 12px;
   box-shadow: inset 0 0 15px 5px rgba(255, 255, 255, 0.5);
 }
 

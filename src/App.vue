@@ -25,6 +25,7 @@ export default {
 a {
   font-weight: bold;
   color: #2c3e50;
+  text-decoration: none;
 }
 
 a.router-link-exact-active {
@@ -77,7 +78,7 @@ i {
   font-family: "Rubik", sans-serif;
   border: none;
   border-radius: 50px;
-  padding: 0 16px;
+  padding: 0 12px;
   text-transform: none;
   font-weight: normal;
   background: linear-gradient(0deg, rgb(158, 160, 255), rgb(253, 239, 239));
@@ -129,6 +130,7 @@ i {
 .component-fade-leave-active {
   transition: opacity 0.3s ease;
 }
+
 .component-fade-enter,
 .component-fade-leave-to {
   opacity: 0;

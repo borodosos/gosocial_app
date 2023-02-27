@@ -28,7 +28,12 @@
           <div class="user__icon">
             <i class="fa-duotone fa-briefcase-blank"></i>
           </div>
-          <span>User</span>
+          <span
+            >{{ user.role }}
+            <span v-if="user.role === 'moderator'"
+              >(Boss of this GYM)</span
+            ></span
+          >
         </div>
       </div>
     </div>
@@ -93,6 +98,7 @@ export default {
   top: 15px;
   opacity: 0;
   transition: all 0.2s;
+  min-width: 255px;
 }
 
 .user__link {
@@ -196,6 +202,10 @@ export default {
 .user__status {
   display: flex;
   align-items: center;
+}
+
+.user__status span {
+  text-transform: capitalize;
 }
 
 .user__icon {

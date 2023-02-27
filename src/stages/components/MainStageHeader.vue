@@ -175,6 +175,16 @@ export default {
             group: "bl",
             life: 3000,
           });
+        })
+        .finally(() => {
+          this.postTitle = "";
+          this.postText = "";
+          this.postTags = [];
+          this.postFile = null;
+          this.postLikes = 0;
+          this.selectedTag = "";
+          this.fileInput = false;
+          this.isTitleInput = false;
         });
     },
 
@@ -274,6 +284,7 @@ export default {
   transition: all 0.4s;
   border-radius: 20px;
 }
+
 .main-header__back-input.text:before {
   opacity: v-bind(myopacityText);
 }
@@ -305,11 +316,9 @@ export default {
   0% {
     background-position: 0 0;
   }
-
   50% {
     background-position: 100% 0;
   }
-
   100% {
     background-position: 0 0;
   }

@@ -20,5 +20,6 @@ export default {
 <style scoped>
 .main {
   height: max-content;
+  min-width: 505px;
 }
 </style>

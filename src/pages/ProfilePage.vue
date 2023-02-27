@@ -272,6 +272,7 @@ export default {
     margin-bottom: 10px;
     white-space: nowrap;
   }
+
   &__main-settings-title::after,
   &__main-settings-title::before {
     content: "";
@@ -365,7 +366,9 @@ export default {
   }
 
   &__list-element::v-deep .post__img,
-  &__list-element::v-deep .post__comments {
+  &__list-element::v-deep .post__comments,
+  &__list-element::v-deep .menu__button,
+  &__list-element::v-deep .v-divider {
     display: none;
   }
 

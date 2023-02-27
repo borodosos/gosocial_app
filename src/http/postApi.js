@@ -21,3 +21,9 @@ export const searchPosts = async (query) => {
 
   return data;
 };
+
+export const deletePost = async (id) => {
+  const { data } = await authHost.delete(`api/posts/${id}`);
+
+  return data;
+};

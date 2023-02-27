@@ -38,47 +38,73 @@
         />
       </v-form>
       <div v-show="isAmI" class="comment__menu">
-        <v-btn
-          v-if="!isMenuForChange"
-          icon
-          small
-          @click="isMenuForChange = true"
-        >
-          <v-icon size="18">mdi-pencil</v-icon>
-        </v-btn>
-        <div v-else>
-          <v-btn icon text small type="submit" form="form-change">
-            <v-icon size="18">fa-check</v-icon>
+        <div class="comment__menu-buttons">
+          <v-btn
+            v-if="!isMenuForChange"
+            icon
+            small
+            @click="isMenuForChange = true"
+          >
+            <v-icon size="18">mdi-pencil</v-icon>
           </v-btn>
-          <v-btn icon text small @click="isMenuForChange = false">
-            <v-icon size="18">fa-xmark</v-icon>
+          <div class="d-flex" v-else>
+            <v-btn icon text small type="submit" form="form-change">
+              <v-icon size="18">fa-check</v-icon>
+            </v-btn>
+            <v-btn icon text small @click="isMenuForChange = false">
+              <v-icon size="18">fa-xmark</v-icon>
+            </v-btn>
+          </div>
+          <v-btn icon text small type="submit" @click="deleteComment">
+            <v-icon size="18">fa-trash</v-icon>
           </v-btn>
         </div>
-        <v-btn icon text small type="submit" @click="deleteComment">
-          <v-icon size="18">fa-trash</v-icon>
-        </v-btn>
+
+        <div class="comment__menu-form">
+          <span
+            v-if="!showFormReply"
+            class="comment__reply-text"
+            @click="showFormReply = true"
+            >Reply</span
+          >
+          <div v-else class="comment__form-container">
+            <v-form ref="form" class="comment__form" @submit="onSubmit">
+              <v-textarea
+                outlined
+                rows="1"
+                dense
+                max-height="100px"
+                auto-grow
+                v-model="replyText"
+                class="comment__input"
+                name="reply"
+                label="Reply"
+              ></v-textarea>
+              <v-btn
+                class="subcomment__button ms-1"
+                rounded
+                icon
+                @click="hideReplyForm"
+              >
+                <i class="fa-duotone fa-circle-xmark"></i>
+              </v-btn>
+              <v-btn class="subcomment__button ms-1" type="submit" rounded icon>
+                <i class="fa-duotone fa-paper-plane-top"></i>
+              </v-btn>
+            </v-form>
+          </div>
+        </div>
       </div>
     </div>
+
     <div v-show="comment.replies.length" class="comment__subcomments-container">
-      <VPostSubComments
-        v-for="(reply, index) in comment.replies"
-        :key="index"
-        :reply="reply"
-      />
-    </div>
-    <div class="comment__form-container">
-      <v-form ref="form" class="comment__form" @submit="onSubmit">
-        <InputText
-          v-model="replyText"
-          class="comment__input"
-          name="reply"
-          label="Reply"
-          placeholder="Reply..."
-        ></InputText>
-        <v-btn class="default-button subcomment__button" type="submit" rounded
-          >Reply</v-btn
-        >
-      </v-form>
+      <div class="comment__subcomments-wrapper">
+        <VPostSubComments
+          v-for="(reply, index) in comment.replies"
+          :key="index"
+          :reply="reply"
+        />
+      </div>
     </div>
     <Toast position="bottom-left" group="bl" />
   </div>
@@ -87,7 +113,6 @@
 <script>
 import { SERVER_URL } from "@/constants";
 import VPostSubComments from "./VPostSubComments.vue";
-import InputText from "primevue/inputtext/InputText";
 import Toast from "primevue/toast";
 
 import moment from "moment";
@@ -101,7 +126,6 @@ export default {
 
   components: {
     VPostSubComments,
-    InputText,
     Toast,
   },
 
@@ -111,6 +135,7 @@ export default {
       replyText: "",
       isMenuForChange: false,
       valid: "",
+      showFormReply: false,
     };
   },
 
@@ -198,6 +223,11 @@ export default {
         });
     },
 
+    hideReplyForm() {
+      this.replyText = "";
+      return (this.showFormReply = false);
+    },
+
     deleteComment(event) {
       event.preventDefault();
       this.$store
@@ -231,7 +261,6 @@ export default {
 <style scoped lang="scss">
 .comment-container {
   font-size: 0.9em;
-  border: 1px solid #acacac;
   border-radius: 8px;
   padding: 8px;
 }
@@ -280,10 +309,75 @@ export default {
 
   &__menu {
     display: inline-flex;
+    margin-bottom: 8px;
+    width: 100%;
+  }
+
+  &__menu-buttons {
+    display: flex;
     align-items: center;
     background-color: #ffc8af;
     border-radius: 8px;
-    margin-bottom: 4px;
+    margin-right: 8px;
+    height: max-content;
+  }
+
+  &__menu-form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  &__reply-text {
+    color: #cd38ff;
+    cursor: pointer;
+    font-style: italic;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__form-container {
+    width: 100%;
+  }
+
+  &__form {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &__input {
+    width: 100%;
+    border-radius: 8px;
+    margin: 0;
+  }
+
+  &__input::v-deep .v-text-field__details {
+    display: none;
+  }
+
+  &__input::v-deep textarea {
+    max-height: 150px;
+    overflow: auto;
+  }
+
+  &__input::v-deep textarea::-webkit-scrollbar {
+    opacity: 0;
+    width: 4px;
+  }
+
+  &__input::v-deep textarea::-webkit-scrollbar-thumb {
+    display: block;
+    border-radius: 10px;
+    background-color: #6aa5ff;
+    padding: 8px 0;
+  }
+
+  &__input::v-deep .v-input__slot {
+    margin: 0;
+    min-height: 38px;
   }
 
   span {
@@ -295,39 +389,25 @@ export default {
     flex-direction: column;
     align-items: flex-end;
     max-height: 307px;
-    overflow-y: auto;
     border-radius: 8px;
-    box-shadow: inset 0 0 8px #6aa5ff;
-    padding: 8px 0;
+    padding: 4px;
+    box-shadow: 0 0 4px;
   }
 
-  &__subcomments-container::-webkit-scrollbar {
+  &__subcomments-wrapper {
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  &__subcomments-wrapper::-webkit-scrollbar {
     opacity: 0;
     width: 4px;
   }
 
-  &__subcomments-container::-webkit-scrollbar-thumb {
+  &__subcomments-wrapper::-webkit-scrollbar-thumb {
     display: block;
     border-radius: 10px;
     background-color: #6aa5ff;
-  }
-
-  &__form-container {
-    background-color: #e5e5e5;
-    padding: 8px 12px 8px;
-    margin-top: 8px;
-  }
-
-  &__form {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  &__input {
-    width: 70%;
-    padding: 4px;
-    border-radius: 16px;
   }
 
   .subcomment__button {

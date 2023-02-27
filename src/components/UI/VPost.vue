@@ -5,16 +5,32 @@
         <v-avatar size="50" color="purple darken-1" @click="routeToUser">
           <img :src="setImageProfile" alt="alt" />
         </v-avatar>
-        <div class="post__user-info">
-          <div class="post__user-name" @click="routeToUser">
-            <VHighlightedText
-              v-if="storeFilter === 'Authors' || 'All'"
-              :text="`${user.first_name} ${user.second_name}`"
-            />
-            <span v-else> {{ user.first_name }} {{ user.second_name }} </span>
+        <div class="post__info">
+          <div class="post__user-info">
+            <div class="post__user-name" @click="routeToUser">
+              <VHighlightedText
+                v-if="storeFilter === 'Authors' || 'All'"
+                :text="`${user.first_name} ${user.second_name}`"
+              />
+              <span v-else> {{ user.first_name }} {{ user.second_name }} </span>
+            </div>
+            <span v-if="user.role === 'moderator'" class="post__user-role"
+              >Boss of this GYM</span
+            >
           </div>
           <div class="post__data">{{ parseDate }}</div>
         </div>
+        <VModerButtonSettings
+          v-if="
+            $store.getters.getAuthUser.role === 'moderator' &&
+            !($store.getters.getAuthUser.id === user.id)
+          "
+          :post="post"
+        />
+        <VButtonSettings
+          v-else-if="$store.getters.getAuthUser.id === user.id"
+          :post="post"
+        />
       </div>
       <div class="post__body">
         <div class="post__title">
@@ -45,6 +61,7 @@
             <span v-else> {{ tag.tag_text }} </span>
           </v-chip>
         </div>
+        <v-divider class="ma-2"></v-divider>
         <div class="post__comments">
           <div class="post__comments-container">
             <VPostComments
@@ -57,19 +74,26 @@
           </div>
           <div class="post__comments-form-container">
             <v-form ref="form" class="comments__form" @submit="onSubmit">
-              <InputText
+              <v-textarea
+                @keydown.enter="onSubmit"
+                outlined
+                rows="1"
+                dense
+                max-height="100px"
+                auto-grow
                 v-model="commentText"
                 class="comments__input"
                 name="comment"
                 label="Comment"
-                placeholder="Write a comment..."
-              ></InputText>
+              ></v-textarea>
               <v-btn
-                class="default-button comments__button"
+                ref="buttonComment"
+                class="comments__button"
                 type="submit"
                 rounded
-                >Comment</v-btn
-              >
+                icon
+                ><i class="fa-duotone fa-paper-plane-top"></i
+              ></v-btn>
             </v-form>
           </div>
         </div>
@@ -84,15 +108,17 @@ import { SERVER_URL } from "@/constants";
 import { mapGetters } from "vuex";
 import VHighlightedText from "./VHighlightedText.vue";
 import VPostComments from "./comments/VPostComments.vue";
-import InputText from "primevue/inputtext/InputText";
 import Toast from "primevue/toast";
+import VModerButtonSettings from "./VModerButtonSettings.vue";
+import VButtonSettings from "./VButtonSettings.vue";
 
 export default {
   components: {
     VHighlightedText,
     VPostComments,
-    InputText,
     Toast,
+    VModerButtonSettings,
+    VButtonSettings,
   },
 
   props: {
@@ -168,7 +194,6 @@ export default {
     parseDate() {
       const date = new Date(this.post.created_at);
       const myOptions = {
-        weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -188,76 +213,78 @@ export default {
   border-radius: 10px;
   background-color: rgb(255, 255, 255);
 }
-
 .post + .post {
   margin-top: 2em;
 }
-
 .post__wrapper {
   padding: 25px;
   border-radius: 10px;
 }
-
 .post__header {
   display: flex;
   align-items: center;
   margin-bottom: 2%;
 }
-
 .post__header .v-avatar {
   margin-right: 5%;
 }
-
 .v-avatar img {
   object-fit: cover;
 }
-
-.post__user-name {
+.post__user-info {
   font-weight: bold;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
-
+.post__user-role {
+  font-weight: normal;
+  margin-left: 8px;
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 0.8em;
+  color: rgb(139, 139, 139);
+  background-color: rgb(252, 220, 176);
+  cursor: default;
+}
 .post__data {
   color: #8b8b8b;
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
-
 .post__header .v-btn {
   margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .post__header .v-btn i {
   text-indent: 0;
   font-size: 1.1em;
 }
-
 .post__title {
   font-weight: bold;
   margin-bottom: 5px;
 }
-
 .post__text {
   font-size: 0.9em;
   margin-bottom: 1%;
   word-break: break-all;
 }
-
 .post__body {
   display: flex;
   flex-direction: column;
 }
-
 img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  border-radius: 8px;
 }
-
+.post__img::v-deep .v-image__image {
+  border-radius: 8px;
+}
 .post__img {
-  border-radius: 10px;
+  border-radius: 8px;
   background: linear-gradient(
     0deg,
     rgb(82, 82, 82),
@@ -266,84 +293,90 @@ img {
   );
   background-blend-mode: hard-light;
   position: relative;
+  box-shadow: 0 0 11px #cd38ff;
 }
-
 .post__img .v-image {
   margin: 0 auto;
 }
-
 .post__bottom {
   margin-top: 15px;
 }
-
 .post__tags {
   margin-top: 10px;
   display: flex;
 }
-
 .post__comments {
   border-radius: 8px;
-  box-shadow: inset 0 0 8px #6aa5ff;
+  box-shadow: 0 0 8px #cd38ff;
   padding: 8px;
   margin-top: 12px;
   word-break: break-all;
 }
-
 .comments__form {
   display: flex;
-  align-items: center;
   justify-content: space-between;
 }
-
 .post__comments-container {
   max-height: 400px;
   overflow-y: auto;
   padding: 4px;
 }
-
 .post__comments-container::-webkit-scrollbar {
   opacity: 0;
   width: 4px;
 }
-
 .post__comments-container::-webkit-scrollbar-thumb {
   display: block;
   border-radius: 10px;
   background-color: #6aa5ff;
 }
-
 .post__comments-form-container {
-  padding: 12px 16px 8px;
-  background-color: #e5e5e5;
+  border-radius: 8px;
+  position: relative;
+  padding: 8px;
 }
-
+.comments__input {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 0;
+  padding: 0;
+}
+.comments__input::v-deep .v-text-field__details {
+  display: none;
+}
+.comments__input::v-deep textarea {
+  max-height: 150px;
+  overflow: auto;
+}
+.comments__input::v-deep textarea::-webkit-scrollbar {
+  opacity: 0;
+  width: 4px;
+}
+.comments__input::v-deep textarea::-webkit-scrollbar-thumb {
+  display: block;
+  border-radius: 10px;
+  background-color: #6aa5ff;
+  padding: 8px 0;
+}
 .post__comment + .post__comment {
   margin-top: 8px;
 }
-
-.comments__input {
-  width: 75%;
-  border-radius: 16px;
-}
-
 .v-chip {
   cursor: pointer;
 }
-
 .v-chip__content .v-icon {
   font-size: 1.5em;
   padding: 5px;
 }
-
 .post__likes {
   display: flex;
   align-items: center;
 }
-
 .post__likes span {
   margin-left: 15px;
 }
-
 ul {
   list-style: none;
   margin: 0;

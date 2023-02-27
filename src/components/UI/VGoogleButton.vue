@@ -43,6 +43,12 @@ export default {
   padding: 4px 8px;
   border-radius: 8px;
   transition: all 0.1s linear;
+  background: linear-gradient(
+    180deg,
+    rgb(139, 241, 255),
+    rgb(233, 246, 255),
+    rgb(139, 241, 255)
+  );
 
   &:hover {
     background-color: #adadad;

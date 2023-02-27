@@ -74,6 +74,7 @@ export default {
     Toast,
     VGoogleButton,
   },
+
   data() {
     return {
       email: "",
@@ -100,6 +101,7 @@ export default {
         (value) => value.length >= 8 || "Min 8 characters",
       ];
     },
+
     emailRules() {
       return [
         (value) => !!value || "E-mail is required.",
@@ -140,15 +142,17 @@ export default {
 
 <style scoped lang="scss">
 .card {
-  border-radius: 10px;
-  padding: 30px;
-  box-shadow: 0 1px 10px 0 rgb(185, 185, 185);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 0 8px 0 #6aa5ff;
+  backdrop-filter: blur(48px);
 }
 
 .container {
-  margin-top: 5%;
   display: flex;
+  align-items: center;
   justify-content: center;
+  flex-grow: 1;
 }
 
 .registration {
@@ -156,8 +160,7 @@ export default {
   z-index: 1;
 
   &__wrapper {
-    width: 50%;
-    background-color: white;
+    width: 40%;
   }
 
   &__title {
@@ -165,8 +168,7 @@ export default {
   }
 
   &__form {
-    margin-top: 15px;
-
+    margin-top: 12px;
     .registration__form-submit-container {
       display: flex;
     }
@@ -180,17 +182,11 @@ export default {
 
   &__initials {
     .v-text-field:nth-child(1) {
-      margin-right: 15px;
+      margin-right: 12px;
     }
+
     display: flex;
     justify-content: space-between;
-  }
-
-  &__cropper {
-    height: 200px;
-    img {
-      object-fit: cover;
-    }
   }
 }
 </style>
