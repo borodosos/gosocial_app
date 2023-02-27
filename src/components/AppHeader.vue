@@ -30,6 +30,7 @@
           optionLabel="name"
           :options="filters"
           placeholder="Filter"
+          :disabled="disableSearchForm"
         />
       </div>
       <v-btn class="button-icon-menu" rounded @click="logout">

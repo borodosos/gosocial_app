@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
 import { authHost } from "@/http";
-import store from "@/store";
 
 export const getAllPosts = async (page) => {
   const { data } = await authHost.get(`api/posts/?page=${page}`);
