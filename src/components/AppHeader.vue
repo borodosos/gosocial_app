@@ -22,6 +22,7 @@
           id="username"
           type="text"
           placeholder="Search"
+          :disabled="disableSearchForm"
         />
         <Dropdown
           class="custom-select"
@@ -80,6 +81,12 @@ export default {
         .then((value) => {
           this.results = value;
         });
+    },
+  },
+
+  computed: {
+    disableSearchForm() {
+      return this.$route.fullPath.includes("/users/");
     },
   },
 };
