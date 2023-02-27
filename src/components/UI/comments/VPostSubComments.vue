@@ -36,7 +36,7 @@
         validation="required"
       />
     </v-form>
-    <div v-show="isAmI()" class="subcomment__menu">
+    <div v-show="isAmI" class="subcomment__menu">
       <v-btn v-if="!isMenuForChange" icon small @click="isMenuForChange = true">
         <v-icon size="18">mdi-pencil</v-icon>
       </v-btn>
@@ -83,9 +83,6 @@ export default {
     parseDate() {
       return moment(this.reply.created_at).fromNow();
     },
-  },
-
-  methods: {
     isAmI() {
       const userId = this.reply.user_id;
       const authUserId = this.$store.getters.getAuthUser.id;
@@ -95,7 +92,9 @@ export default {
         return false;
       }
     },
+  },
 
+  methods: {
     onSubmitChangeReply(event) {
       event.preventDefault();
       if (this.valid.hasErrors) {

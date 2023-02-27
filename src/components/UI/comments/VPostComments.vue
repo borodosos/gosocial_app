@@ -37,7 +37,7 @@
           validation="required"
         />
       </v-form>
-      <div v-show="isAmI()" class="comment__menu">
+      <div v-show="isAmI" class="comment__menu">
         <v-btn
           v-if="!isMenuForChange"
           icon
@@ -124,9 +124,6 @@ export default {
     parseDate() {
       return moment(this.comment.created_at).fromNow();
     },
-  },
-
-  methods: {
     isAmI() {
       const userId = this.comment.user_id;
       const authUserId = this.$store.getters.getAuthUser.id;
@@ -136,7 +133,9 @@ export default {
         return false;
       }
     },
+  },
 
+  methods: {
     onSubmit(event) {
       event.preventDefault();
       if (!this.replyText.trim().length) {
