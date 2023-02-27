@@ -86,11 +86,7 @@ export default {
     isAmI() {
       const userId = this.reply.user_id;
       const authUserId = this.$store.getters.getAuthUser.id;
-      if (userId === authUserId) {
-        return true;
-      } else {
-        return false;
-      }
+      return userId === authUserId;
     },
   },
 
