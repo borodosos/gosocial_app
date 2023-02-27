@@ -45,8 +45,37 @@
             <span v-else> {{ tag.tag_text }} </span>
           </v-chip>
         </div>
+        <div class="post__comments">
+          <div class="post__comments-container">
+            <VPostComments
+              class="post__comment"
+              v-for="(comment, index) in post.comments"
+              :key="index"
+              :comment="comment"
+              :post="post"
+            />
+          </div>
+          <div class="post__comments-form-container">
+            <v-form ref="form" class="comments__form" @submit="onSubmit">
+              <InputText
+                v-model="commentText"
+                class="comments__input"
+                name="comment"
+                label="Comment"
+                placeholder="Write a comment..."
+              ></InputText>
+              <v-btn
+                class="default-button comments__button"
+                type="submit"
+                rounded
+                >Comment</v-btn
+              >
+            </v-form>
+          </div>
+        </div>
       </div>
     </div>
+    <Toast position="bottom-left" group="bl" />
   </li>
 </template>
 
@@ -54,30 +83,70 @@
 import { SERVER_URL } from "@/constants";
 import { mapGetters } from "vuex";
 import VHighlightedText from "./VHighlightedText.vue";
+import VPostComments from "./comments/VPostComments.vue";
+import InputText from "primevue/inputtext/InputText";
+import Toast from "primevue/toast";
 
 export default {
   components: {
     VHighlightedText,
+    VPostComments,
+    InputText,
+    Toast,
   },
 
   props: {
-    post: {
-      type: Object,
-    },
-    user: {
-      type: Object,
-    },
+    post: Object,
+    user: Object,
   },
 
   data() {
     return {
       postTags: [],
+      loading: false,
+      commentText: "",
     };
   },
 
   methods: {
     routeToUser() {
       this.$router.push("/users/" + this.user.id);
+    },
+
+    onSubmit(event) {
+      event.preventDefault();
+      if (!this.commentText.trim().length) {
+        return this.$toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Please, write a comment",
+          group: "bl",
+          life: 1800,
+        });
+      }
+
+      this.loading = true;
+      const form = this.$refs.form.$el;
+      const formData = new FormData(form);
+      this.$store
+        .dispatch("fetchAddComment", {
+          formData: formData,
+          postId: this.post.id,
+        })
+        .then(() => {
+          this.loading = false;
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: error,
+            group: "bl",
+            life: 1800,
+          });
+        })
+        .finally(() => (this.commentText = ""));
     },
   },
 
@@ -212,6 +281,51 @@ img {
   display: flex;
 }
 
+.post__comments {
+  border-radius: 8px;
+  box-shadow: inset 0 0 8px #6aa5ff;
+  padding: 8px;
+  margin-top: 12px;
+  word-break: break-all;
+}
+
+.comments__form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post__comments-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.post__comments-container::-webkit-scrollbar {
+  opacity: 0;
+  width: 4px;
+}
+
+.post__comments-container::-webkit-scrollbar-thumb {
+  display: block;
+  border-radius: 10px;
+  background-color: #6aa5ff;
+}
+
+.post__comments-form-container {
+  padding: 12px 16px 8px;
+  background-color: #e5e5e5;
+}
+
+.post__comment + .post__comment {
+  margin-top: 8px;
+}
+
+.comments__input {
+  width: 75%;
+  border-radius: 16px;
+}
+
 .v-chip {
   cursor: pointer;
 }
@@ -228,5 +342,11 @@ img {
 
 .post__likes span {
   margin-left: 15px;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 </style>
