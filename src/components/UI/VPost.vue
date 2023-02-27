@@ -5,16 +5,25 @@
         <v-avatar size="50" color="purple darken-1" @click="routeToUser">
           <img :src="setImageProfile" alt="alt" />
         </v-avatar>
-        <div class="post__user-info">
-          <div class="post__user-name" @click="routeToUser">
-            <VHighlightedText
-              v-if="storeFilter === 'Authors' || 'All'"
-              :text="`${user.first_name} ${user.second_name}`"
-            />
-            <span v-else> {{ user.first_name }} {{ user.second_name }} </span>
+        <div class="post__info">
+          <div class="post__user-info">
+            <div class="post__user-name" @click="routeToUser">
+              <VHighlightedText
+                v-if="storeFilter === 'Authors' || 'All'"
+                :text="`${user.first_name} ${user.second_name}`"
+              />
+              <span v-else> {{ user.first_name }} {{ user.second_name }} </span>
+            </div>
+            <span v-if="user.role === 'moderator'" class="post__user-role"
+              >Boss of this GYM</span
+            >
           </div>
           <div class="post__data">{{ parseDate }}</div>
         </div>
+        <VModerButtonSettings
+          v-if="$store.getters.getAuthUser.role === 'moderator'"
+          :post="post"
+        />
       </div>
       <div class="post__body">
         <div class="post__title">
@@ -86,6 +95,7 @@ import VHighlightedText from "./VHighlightedText.vue";
 import VPostComments from "./comments/VPostComments.vue";
 import InputText from "primevue/inputtext/InputText";
 import Toast from "primevue/toast";
+import VModerButtonSettings from "./VModerButtonSettings.vue";
 
 export default {
   components: {
@@ -93,6 +103,7 @@ export default {
     VPostComments,
     InputText,
     Toast,
+    VModerButtonSettings,
   },
 
   props: {
@@ -212,14 +223,27 @@ export default {
   object-fit: cover;
 }
 
-.post__user-name {
-  font-weight: bold;
-  cursor: pointer;
-}
-
 .post__data {
   color: #8b8b8b;
   font-size: 0.9em;
+}
+
+.post__user-info {
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.post__user-role {
+  font-weight: normal;
+  margin-left: 8px;
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 0.8em;
+  color: rgb(139, 139, 139);
+  background-color: rgb(252, 220, 176);
+  cursor: default;
 }
 
 .post__header .v-btn {
