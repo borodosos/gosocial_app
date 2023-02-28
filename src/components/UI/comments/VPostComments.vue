@@ -59,40 +59,39 @@
             <v-icon size="18">fa-trash</v-icon>
           </v-btn>
         </div>
-
-        <div class="comment__menu-form">
-          <span
-            v-if="!showFormReply"
-            class="comment__reply-text"
-            @click="showFormReply = true"
-            >Reply</span
-          >
-          <div v-else class="comment__form-container">
-            <v-form ref="form" class="comment__form" @submit="onSubmit">
-              <v-textarea
-                outlined
-                rows="1"
-                dense
-                max-height="100px"
-                auto-grow
-                v-model="replyText"
-                class="comment__input"
-                name="reply"
-                label="Reply"
-              ></v-textarea>
-              <v-btn
-                class="subcomment__button ms-1"
-                rounded
-                icon
-                @click="hideReplyForm"
-              >
-                <i class="fa-duotone fa-circle-xmark"></i>
-              </v-btn>
-              <v-btn class="subcomment__button ms-1" type="submit" rounded icon>
-                <i class="fa-duotone fa-paper-plane-top"></i>
-              </v-btn>
-            </v-form>
-          </div>
+      </div>
+      <div class="comment__menu-form">
+        <span
+          v-if="!showFormReply"
+          class="comment__reply-text"
+          @click="showFormReply = true"
+          >Reply</span
+        >
+        <div v-else class="comment__form-container">
+          <v-form ref="form" class="comment__form" @submit="onSubmit">
+            <v-textarea
+              outlined
+              rows="1"
+              dense
+              max-height="100px"
+              auto-grow
+              v-model="replyText"
+              class="comment__input"
+              name="reply"
+              label="Reply"
+            ></v-textarea>
+            <v-btn
+              class="subcomment__button ms-1"
+              rounded
+              icon
+              @click="hideReplyForm"
+            >
+              <i class="fa-duotone fa-circle-xmark"></i>
+            </v-btn>
+            <v-btn class="subcomment__button ms-1" type="submit" rounded icon>
+              <i class="fa-duotone fa-paper-plane-top"></i>
+            </v-btn>
+          </v-form>
         </div>
       </div>
     </div>
