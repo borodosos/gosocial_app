@@ -38,6 +38,7 @@
               v-model="postFile"
               v-show="fileInput"
               @file-removed="postFile = null"
+              @file-upload-complete="fileUploaded = true"
               type="image"
               name="image"
               label="Post Image"
@@ -116,6 +117,7 @@ export default {
       selectedTag: "",
       fileInput: false,
       tags: ["IT", "Film", "Sport", "Music"],
+      fileUploaded: false,
 
       // --- Value for style
       showbackText: false,
@@ -153,6 +155,15 @@ export default {
           life: 3000,
         });
       }
+      if (!this.fileUploaded) {
+        return this.$toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "File not uploaded yet",
+          group: "bl",
+          life: 3000,
+        });
+      }
       const form = this.$refs.form.$el;
       const formData = new FormData(form);
       formData.set("tags", this.postTags);
@@ -185,6 +196,7 @@ export default {
           this.selectedTag = "";
           this.fileInput = false;
           this.isTitleInput = false;
+          this.fileUploaded = false;
         });
     },
 

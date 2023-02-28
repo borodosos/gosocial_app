@@ -61,8 +61,8 @@
           <v-btn :loading="loading" rounded type="submit">Sign Up</v-btn>
         </div>
       </v-form>
-      <Toast position="bottom-left" group="bl" />
     </div>
+    <Toast position="bottom-left" group="breg" />
   </section>
 </template>
 
@@ -127,7 +127,7 @@ export default {
               severity: "error",
               summary: "Registration",
               detail: error,
-              group: "bl",
+              group: "breg",
               life: 3000,
             });
           })

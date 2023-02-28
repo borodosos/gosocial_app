@@ -89,7 +89,7 @@
               :key="index"
               class="profile__list-element"
             >
-              <VPost :post="post" :user="user" />
+              <VListPostElement :post="post" :user="user" />
             </li>
           </ul>
           <p v-else class="d-flex justify-center">
@@ -103,20 +103,20 @@
 </template>
 
 <script>
-import VPost from "@/components/UI/VPost.vue";
 import VLoader from "@/components/UI/VLoader.vue";
 import VProfileField from "@/components/UI/VProfileField.vue";
 import VProfileModal from "@/components/UI/VProfileModal.vue";
 import Toast from "primevue/toast";
 import { SERVER_URL } from "@/constants";
+import VListPostElement from "@/components/UI/VListPostElement.vue";
 
 export default {
   components: {
-    VPost,
     VProfileField,
     VLoader,
     VProfileModal,
     Toast,
+    VListPostElement,
   },
   data() {
     return {
@@ -327,13 +327,13 @@ export default {
 
   &__posts::-webkit-scrollbar {
     opacity: 0;
-    height: 8px;
+    height: 4px;
   }
 
   &__posts::-webkit-scrollbar-thumb {
     display: block;
-    border-radius: 10px;
-    background-color: black;
+    border-radius: 8px;
+    background-color: #6aa5ff;
   }
 
   &__footer-title {
@@ -363,17 +363,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  &__list-element::v-deep .post__img,
-  &__list-element::v-deep .post__comments,
-  &__list-element::v-deep .menu__button,
-  &__list-element::v-deep .v-divider {
-    display: none;
-  }
-
-  &__list-element::v-deep .post__user-info {
-    white-space: nowrap;
   }
 
   &__list-element:hover {

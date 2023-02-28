@@ -30,6 +30,7 @@
           optionLabel="name"
           :options="filters"
           placeholder="Filter"
+          :disabled="disableSearchForm"
         />
       </div>
       <v-btn class="button-icon-menu" rounded @click="logout">
@@ -99,7 +100,8 @@ export default {
   position: relative;
   z-index: 10;
   padding: 15px;
-  margin: 0 120px 20px;
+  width: 80%;
+  margin: 0 auto;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   background-color: white;
@@ -174,7 +176,7 @@ export default {
 .button-navigation a {
   text-decoration: none;
   color: indigo;
-  padding: 12px 24px;
+  padding: 8px 20px;
 }
 
 .header__search {

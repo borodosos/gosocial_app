@@ -59,41 +59,6 @@
             <v-icon size="18">fa-trash</v-icon>
           </v-btn>
         </div>
-
-        <div class="comment__menu-form">
-          <span
-            v-if="!showFormReply"
-            class="comment__reply-text"
-            @click="showFormReply = true"
-            >Reply</span
-          >
-          <div v-else class="comment__form-container">
-            <v-form ref="form" class="comment__form" @submit="onSubmit">
-              <v-textarea
-                outlined
-                rows="1"
-                dense
-                max-height="100px"
-                auto-grow
-                v-model="replyText"
-                class="comment__input"
-                name="reply"
-                label="Reply"
-              ></v-textarea>
-              <v-btn
-                class="subcomment__button ms-1"
-                rounded
-                icon
-                @click="hideReplyForm"
-              >
-                <i class="fa-duotone fa-circle-xmark"></i>
-              </v-btn>
-              <v-btn class="subcomment__button ms-1" type="submit" rounded icon>
-                <i class="fa-duotone fa-paper-plane-top"></i>
-              </v-btn>
-            </v-form>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -104,6 +69,41 @@
           :key="index"
           :reply="reply"
         />
+      </div>
+    </div>
+    <div class="comment__menu-form mt-2">
+      <span
+        v-if="!showFormReply"
+        class="comment__reply-text"
+        @click="showFormReply = true"
+        >Reply</span
+      >
+      <div v-else class="comment__form-container">
+        <v-form ref="form" class="comment__form mt-2" @submit="onSubmit">
+          <v-textarea
+            @keydown.enter="onSubmit"
+            outlined
+            rows="1"
+            dense
+            max-height="100px"
+            auto-grow
+            v-model="replyText"
+            class="comment__input"
+            name="reply"
+            label="Reply"
+          ></v-textarea>
+          <v-btn
+            class="subcomment__button ms-1"
+            rounded
+            icon
+            @click="hideReplyForm"
+          >
+            <i class="fa-duotone fa-circle-xmark"></i>
+          </v-btn>
+          <v-btn class="subcomment__button ms-1" type="submit" rounded icon>
+            <i class="fa-duotone fa-paper-plane-top"></i>
+          </v-btn>
+        </v-form>
       </div>
     </div>
     <Toast position="bottom-left" group="bl" />
@@ -289,7 +289,7 @@ export default {
   }
 
   &__text {
-    padding-top: 8px;
+    padding-top: 4px;
   }
 
   &__input-change,
@@ -309,7 +309,6 @@ export default {
 
   &__menu {
     display: inline-flex;
-    margin-bottom: 8px;
     width: 100%;
   }
 
@@ -388,15 +387,24 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    max-height: 307px;
     border-radius: 8px;
     padding: 4px;
-    box-shadow: 0 0 4px;
+    padding-left: 28px;
+    position: relative;
+  }
+
+  &__subcomments-container::before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 12px;
+    height: 100%;
+    width: 1px;
+    background-color: rgb(155, 198, 255);
   }
 
   &__subcomments-wrapper {
     width: 100%;
-    overflow-y: auto;
   }
 
   &__subcomments-wrapper::-webkit-scrollbar {
