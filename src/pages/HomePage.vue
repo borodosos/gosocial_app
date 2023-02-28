@@ -23,7 +23,8 @@ export default {
   grid-template-columns: 0.5fr 1fr 0.5fr;
   column-gap: 4%;
   font-family: "Rubik", sans-serif;
-  margin: 1.8em 120px;
+  width: 75%;
+  margin: 1.8em auto;
 }
 
 .panel {
