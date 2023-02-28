@@ -3,7 +3,7 @@
     <div class="subcomment__title">
       <v-avatar
         class="subcomment__user-avatar"
-        size="40"
+        size="30"
         color="purple darken-1"
       >
         <img :src="setImageProfile" alt="alt" />

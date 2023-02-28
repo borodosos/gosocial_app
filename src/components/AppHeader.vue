@@ -175,7 +175,7 @@ export default {
 .button-navigation a {
   text-decoration: none;
   color: indigo;
-  padding: 12px 24px;
+  padding: 8px 20px;
 }
 
 .header__search {

@@ -388,15 +388,24 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    max-height: 307px;
     border-radius: 8px;
     padding: 4px;
-    box-shadow: 0 0 4px;
+    padding-left: 28px;
+    position: relative;
+  }
+
+  &__subcomments-container::before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 12px;
+    height: 100%;
+    width: 1px;
+    background-color: rgb(155, 198, 255);
   }
 
   &__subcomments-wrapper {
     width: 100%;
-    overflow-y: auto;
   }
 
   &__subcomments-wrapper::-webkit-scrollbar {
