@@ -171,9 +171,6 @@ export default {
     margin-right: 4%;
   }
 
-  &__info {
-  }
-
   &__user-name {
     font-weight: bold;
   }
@@ -181,10 +178,6 @@ export default {
   &__data {
     font-size: 0.85em;
     color: #8b8b8b;
-  }
-
-  &__text {
-    padding-top: 8px;
   }
 
   &__input-change,
