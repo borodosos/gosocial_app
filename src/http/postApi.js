@@ -20,6 +20,15 @@ export const searchPosts = async (query) => {
   return data;
 };
 
+export const updatePost = async (paramsId, formData) => {
+  const { data } = await authHost.post(
+    `api/posts/${paramsId}?_method=PATCH`,
+    formData
+  );
+
+  return data;
+};
+
 export const deletePost = async (id) => {
   const { data } = await authHost.delete(`api/posts/${id}`);
 
