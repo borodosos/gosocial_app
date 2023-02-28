@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-main">
     <UserStage class="stage" />
     <MainStage class="stage" />
   </div>
@@ -18,7 +18,7 @@ export default {
 </script>
 
 <style>
-.container {
+.container-main {
   display: grid;
   grid-template-columns: 0.5fr 1fr 0.5fr;
   column-gap: 4%;

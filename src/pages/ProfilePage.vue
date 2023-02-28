@@ -36,6 +36,14 @@
                     :nameField="'first_name'"
                     :typeField="'text'"
                     :isAmI="isAmI"
+                    @closeOtherValue="
+                      closeOtherValueChangeable,
+                        [
+                          passwordChangeable,
+                          emailChangeable,
+                          secondNameChangeable,
+                        ]
+                    "
                   />
                 </div>
                 <div class="profile__second-name">
@@ -46,6 +54,14 @@
                     :nameField="'second_name'"
                     :typeField="'text'"
                     :isAmI="isAmI"
+                    @closeOtherValue="
+                      closeOtherValueChangeable,
+                        [
+                          firstNameChangeable,
+                          passwordChangeable,
+                          emailChangeable,
+                        ]
+                    "
                   />
                 </div>
                 <div class="profile__email">
@@ -56,6 +72,14 @@
                     :nameField="'email'"
                     :typeField="'email'"
                     :isAmI="isAmI"
+                    @closeOtherValue="
+                      closeOtherValueChangeable,
+                        [
+                          firstNameChangeable,
+                          secondNameChangeable,
+                          passwordChangeable,
+                        ]
+                    "
                   >
                   </VProfileField>
                 </div>
@@ -67,6 +91,14 @@
                     :nameField="'password'"
                     :typeField="'password'"
                     :isAmI="isAmI"
+                    @closeOtherValue="
+                      closeOtherValueChangeable,
+                        [
+                          firstNameChangeable,
+                          secondNameChangeable,
+                          emailChangeable,
+                        ]
+                    "
                   />
                 </div>
               </div>
@@ -168,6 +200,10 @@ export default {
   methods: {
     toggleDialog() {
       this.dialog = !this.dialog;
+    },
+
+    closeOtherValueChangeable(current) {
+      console.log(current);
     },
   },
 };

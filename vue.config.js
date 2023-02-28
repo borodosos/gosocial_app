@@ -3,6 +3,6 @@ module.exports = defineConfig({
   transpileDependencies: ["vuetify"],
   devServer: {
     allowedHosts: "all",
-    // webSocketServer: false,
+    webSocketServer: false,
   },
 });
