@@ -63,7 +63,7 @@ export default {
 
   created() {
     const newEcho = new Echo({
-      authEndpoint: "http://localhost:8000/broadcasting/auth",
+      authEndpoint: "http://localhost:8000/api/broadcasting/auth",
       pusher: Pusher,
       broadcaster: "pusher",
       key: "livepost",
