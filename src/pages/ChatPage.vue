@@ -39,7 +39,11 @@
 
 <script>
 import VChatMessage from "@/components/UI/VChatMessage.vue";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
+import { PUSHER_APP_CLUSTER } from "@/constants";
+import axios from "axios";
 
 export default {
   components: { VChatMessage },
@@ -53,14 +57,61 @@ export default {
       ready: false,
       info: [],
       connections: 0,
+      token: this.$store.getters.getAccessToken,
     };
   },
 
-  created() {},
+  created() {
+    const newEcho = new Echo({
+      authEndpoint: "http://localhost:8000/broadcasting/auth",
+      pusher: Pusher,
+      broadcaster: "pusher",
+      key: "livepost",
+      cluster: `${PUSHER_APP_CLUSTER}`,
+      forceTLS: false,
+      wsHost: "localhost",
+      wsPort: 6001,
+      encrypted: true,
+      enabledTransports: ["ws", "wss"],
+      auth: {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.getAccessToken,
+        },
+      },
+      // authorizer: () => {
+      //   return {
+      //     authorize: () => {
+      //       axios
+      //         .post("http://localhost:8000/api/broadcasting/auth", {
+      //           socket_id: "livepost",
+      //           channel_name: "chat",
+      //         })
+      //         .then(() => {
+      //           console.log("success");
+      //         })
+      //         .catch((error) => {
+      //           console.log(error);
+      //         });
+      //     },
+      //   };
+      // },
+    });
+
+    const channel = newEcho.private("private.chat.1");
+
+    channel
+      .subscribed(() => {
+        console.log("Subscribed!!");
+      })
+      .listen(".chat-message", (e) => console.log(e));
+  },
 
   methods: {
     send() {
-      io("http://localhost:8000/api/playground");
+      axios.get("http://localhost:8000/api/playground").then((value) => {
+        console.log(value);
+      });
+      // io("ws://localhost:6001");
       // socket.emit("private-public.playground.1", (a) => console.log(a));
     },
   },
