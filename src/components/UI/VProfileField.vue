@@ -42,7 +42,7 @@
         </v-btn>
       </div>
     </v-form>
-    <Toast position="bottom-left" group="bl" />
+    <Toast position="bottom-left" group="bprofilefield" />
   </div>
 </template>
 
@@ -60,6 +60,7 @@ export default {
     nameField: String,
     typeField: String,
     isAmI: Boolean,
+    otherValueChangeable: Array,
   },
 
   data() {
@@ -92,6 +93,9 @@ export default {
 
   methods: {
     changeValue() {
+      // this.otherValueChangeable.forEach((value) => value === false);
+      // console.log(this.otherValueChangeable);
+      this.$emit("closeOtherValue");
       this.modelValueChangeable = !this.modelValueChangeable;
     },
 
@@ -116,7 +120,7 @@ export default {
             severity: "success",
             summary: "Success",
             detail: "Your profile is updated!",
-            group: "bl",
+            group: "bprofilefield",
             life: 1800,
           });
         });

@@ -120,9 +120,10 @@
                   >{{ tag }}</v-chip
                 >
               </div>
-              <div>
+              <div class="change-post__button-tags-container">
                 <VSelectTags
                   :placeholder="'Tags'"
+                  class="button-tags"
                   :options="tags"
                   @add-tag="addTag"
                 />
@@ -378,6 +379,11 @@ export default {
     align-items: center;
     justify-content: flex-end;
     align-self: flex-end;
+  }
+
+  .button-tags::v-deep .p-dropdown-panel {
+    top: -94px !important;
+    left: 68px !important;
   }
 
   &__button {
