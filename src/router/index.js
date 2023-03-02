@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import HomePage from "@/pages/HomePage.vue";
 import ProfilePage from "@/pages/ProfilePage.vue";
 import LoginPage from "@/pages/LoginPage.vue";
+import ChatPage from "@/pages/ChatPage.vue";
 import RegistrationPage from "@/pages/RegistrationPage.vue";
 import store from "@/store";
 
@@ -20,6 +21,14 @@ const routes = [
   {
     path: "/users/:id",
     component: ProfilePage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+
+  {
+    path: "/chat",
+    component: ChatPage,
     meta: {
       requiresAuth: true,
     },
