@@ -5,14 +5,20 @@
       <div class="chat__body">
         <div class="chat__content">
           <div class="chat__content-wrapper">
-            <VChatMessage
-              v-for="(message, index) in messages"
-              :key="`${index}`"
-            />
+            <template v-if="!dataMessages.length">
+              <span>There are not any messages...</span>
+            </template>
+            <template v-else>
+              <VChatMessage
+                v-for="(dataMessage, index) in dataMessages"
+                :key="`${index}`"
+                :dataMessage="dataMessage"
+              />
+            </template>
           </div>
         </div>
         <div class="chat__form-container">
-          <v-form id="formChat" class="chat__form">
+          <v-form ref="formChat" class="chat__form" @submit="onSubmit">
             <v-textarea
               @keydown.enter="onSubmit"
               outlined
@@ -30,7 +36,6 @@
               <i class="fa-duotone fa-paper-plane-top"></i>
             </v-btn>
           </v-form>
-          <v-btn color="success" @click="send">Send</v-btn>
         </div>
       </div>
     </div>
@@ -39,34 +44,27 @@
 
 <script>
 import VChatMessage from "@/components/UI/VChatMessage.vue";
-// import { io } from "socket.io-client";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import { PUSHER_APP_CLUSTER } from "@/constants";
-import axios from "axios";
+import { mapGetters } from "vuex";
 
 export default {
   components: { VChatMessage },
   data() {
     return {
       message: "",
-      messages: [1, 2, 3, 4],
-      newMessage: null,
+      toUser: this.$route.params.id,
       typing: false,
-      username: null,
-      ready: false,
-      info: [],
-      connections: 0,
-      token: this.$store.getters.getAccessToken,
     };
   },
 
   created() {
     const newEcho = new Echo({
-      authEndpoint: "http://localhost:8000/broadcasting/auth",
+      authEndpoint: "http://localhost:8000/api/broadcasting/auth",
       pusher: Pusher,
       broadcaster: "pusher",
-      key: "livepost",
+      key: "livepost_key",
       cluster: `${PUSHER_APP_CLUSTER}`,
       forceTLS: false,
       wsHost: "localhost",
@@ -78,41 +76,35 @@ export default {
           Authorization: "Bearer " + this.$store.getters.getAccessToken,
         },
       },
-      // authorizer: () => {
-      //   return {
-      //     authorize: () => {
-      //       axios
-      //         .post("http://localhost:8000/api/broadcasting/auth", {
-      //           socket_id: "livepost",
-      //           channel_name: "chat",
-      //         })
-      //         .then(() => {
-      //           console.log("success");
-      //         })
-      //         .catch((error) => {
-      //           console.log(error);
-      //         });
-      //     },
-      //   };
-      // },
     });
 
-    const channel = newEcho.private("private.chat.1");
+    const channel = newEcho.private(`private.chat.${this.toUser}`);
 
     channel
       .subscribed(() => {
         console.log("Subscribed!!");
       })
-      .listen(".chat-message", (e) => console.log(e));
+      .listen(".chat-message", (data) => {
+        this.$store.commit("updateMessages", data);
+        console.log(this.$store.getters.getMessages);
+      });
+  },
+
+  computed: {
+    ...mapGetters({
+      dataMessages: "getMessages",
+    }),
   },
 
   methods: {
-    send() {
-      axios.get("http://localhost:8000/api/playground").then((value) => {
-        console.log(value);
-      });
-      // io("ws://localhost:6001");
-      // socket.emit("private-public.playground.1", (a) => console.log(a));
+    onSubmit(event) {
+      event.preventDefault();
+      const form = this.$refs.formChat.$el;
+      const formData = new FormData(form);
+      // formData.append("user", JSON.stringify(this.$store.getters.getAuthUser));
+      formData.append("to_user", this.toUser);
+      this.$store.dispatch("fetchSendMessage", formData);
+      this.message = "";
     },
   },
 };
