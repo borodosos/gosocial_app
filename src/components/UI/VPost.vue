@@ -8,11 +8,12 @@
         <div class="post__info">
           <div class="post__user-info">
             <div class="post__user-name" @click="routeToUser">
-              <VHighlightedText
+              <!-- <VHighlightedText
                 v-if="storeFilter === 'Authors' || 'All'"
                 :text="`${user.first_name} ${user.second_name}`"
               />
-              <span v-else> {{ user.first_name }} {{ user.second_name }} </span>
+              <span v-else> {{ user.first_name }} {{ user.second_name }} </span> -->
+              <VPopoverMenuUser :user="user" />
             </div>
             <span v-if="user.role === 'moderator'" class="post__user-role"
               >Boss of this GYM</span
@@ -111,6 +112,7 @@ import VPostComments from "./comments/VPostComments.vue";
 import Toast from "primevue/toast";
 import VModerButtonSettings from "./VModerButtonSettings.vue";
 import VButtonSettings from "./VButtonSettings.vue";
+import VPopoverMenuUser from "./VPopoverMenuUser.vue";
 
 export default {
   components: {
@@ -119,6 +121,7 @@ export default {
     Toast,
     VModerButtonSettings,
     VButtonSettings,
+    VPopoverMenuUser,
   },
 
   props: {

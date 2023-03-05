@@ -10,22 +10,25 @@
           <!-- <img :src="setImageProfile" alt="alt" /> -->
         </v-avatar>
         <div class="message__header-content">
-          <span class="message__user-name"> Aboba Abobus </span>
+          <span class="message__user-name">
+            {{ dataMessage.user.first_name }} {{ dataMessage.user.second_name }}
+          </span>
           <span class="message__data"> dadasdadadsd </span>
         </div>
       </div>
       <div class="message__body">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate
-        commodi repellendus illo aliquid reiciendis iure. Ipsa quasi, aliquam
-        fuga repellendus dolores, cumque corporis enim itaque atque natus unde
-        eveniet maxime?
+        {{ dataMessage.message }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    dataMessage: Object,
+  },
+};
 </script>
 
 <style scoped lang="scss">
