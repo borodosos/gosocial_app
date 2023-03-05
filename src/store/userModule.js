@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
-import { getUserInfo, updateUserInfo } from "@/http/userApi";
-import router from "@/router";
+import { getUserInfo, updateUserInfo, getAllUsers } from "@/http/userApi";
 
 export default {
   state: {
     user: null,
     authUser: null,
+    users: [],
   },
 
   actions: {
@@ -13,6 +12,19 @@ export default {
       return new Promise((resolve) => {
         ctx.commit("updateAuthUser", userDetails);
         resolve();
+      });
+    },
+
+    fetchAllUsers(ctx) {
+      return new Promise((resolve, reject) => {
+        getAllUsers()
+          .then((res) => {
+            ctx.commit("updateAllUsers", res);
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
       });
     },
 
@@ -49,6 +61,9 @@ export default {
     updateAuthUser(state, payload) {
       state.authUser = payload;
     },
+    updateAllUsers(state) {
+      state.users = state;
+    },
   },
 
   getters: {
@@ -57,6 +72,9 @@ export default {
     },
     getAuthUser(state) {
       return state.authUser;
+    },
+    getAllUsers(state) {
+      return state.users;
     },
   },
 };

@@ -2,10 +2,12 @@
   <div class="container-main">
     <UserStage class="stage" />
     <MainStage class="stage" />
+    <FriendsStage class="stage" />
   </div>
 </template>
 
 <script>
+import FriendsStage from "@/stages/FriendsStage.vue";
 import MainStage from "@/stages/MainStage.vue";
 import UserStage from "@/stages/UserStage.vue";
 
@@ -13,6 +15,7 @@ export default {
   components: {
     MainStage,
     UserStage,
+    FriendsStage,
   },
 };
 </script>

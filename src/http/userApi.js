@@ -23,6 +23,11 @@ export const refresh = async () => {
   return data;
 };
 
+export const getAllUsers = async () => {
+  const { data } = await authHost.get("api/users/");
+  return data;
+};
+
 export const getUserInfo = async (paramsId) => {
   const { data } = await authHost.get(`api/users/${paramsId}`);
   return data;

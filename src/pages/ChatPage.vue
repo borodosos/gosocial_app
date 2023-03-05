@@ -46,7 +46,6 @@
 import VChatMessage from "@/components/UI/VChatMessage.vue";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
-import { PUSHER_APP_CLUSTER } from "@/constants";
 import { mapGetters } from "vuex";
 
 export default {
@@ -64,10 +63,10 @@ export default {
       authEndpoint: "http://localhost:8000/api/broadcasting/auth",
       pusher: Pusher,
       broadcaster: "pusher",
-      key: "livepost_key",
-      cluster: `${PUSHER_APP_CLUSTER}`,
+      key: process.env.VUE_APP_PUSHER_APP_KEY,
+      cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
       forceTLS: false,
-      wsHost: "localhost",
+      wsHost: process.env.VUE_APP_PUSHER_HOST,
       wsPort: 6001,
       encrypted: true,
       enabledTransports: ["ws", "wss"],
@@ -78,15 +77,18 @@ export default {
       },
     });
 
-    const channel = newEcho.private(`private.chat.${this.toUser}`);
+    const channel = newEcho.channel("chat");
+    console.log(channel);
+    console.log(process.env.VUE_APP_PUSHER_KEY);
 
     channel
       .subscribed(() => {
         console.log("Subscribed!!");
       })
-      .listen(".chat-message", (data) => {
+      .listen("SessionEvent", (data) => {
+        console.log("SessionEvent");
         this.$store.commit("updateMessages", data);
-        console.log(this.$store.getters.getMessages);
+        console.log(data);
       });
   },
 
