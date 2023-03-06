@@ -27,7 +27,7 @@ const routes = [
   },
 
   {
-    path: "/chat/:id",
+    path: "/chats/:id",
     component: ChatPage,
     meta: {
       requiresAuth: true,

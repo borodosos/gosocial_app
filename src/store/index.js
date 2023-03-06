@@ -4,7 +4,7 @@ import userModule from "./userModule";
 import authModule from "./authModule";
 import postModule from "./postModule";
 import commentModule from "./commentModule";
-import messagesModule from "./messagesModule";
+import chatModule from "./chatModule";
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -13,6 +13,6 @@ export default new Vuex.Store({
     userModule,
     postModule,
     commentModule,
-    messagesModule,
+    chatModule,
   },
 });

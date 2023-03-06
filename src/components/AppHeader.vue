@@ -14,6 +14,9 @@
               >My Profile</router-link
             >
           </v-btn>
+          <v-btn class="button-navigation" rounded>
+            <router-link :to="'/chats/1'">Chats</router-link>
+          </v-btn>
         </nav>
         <InputText
           v-debounce:300ms="search"

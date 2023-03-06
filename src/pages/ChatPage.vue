@@ -1,8 +1,41 @@
 <template>
   <section class="container chat">
     <div class="chat__wrapper">
-      <div class="chat__title">Chat</div>
+      <div class="chat__sidebar">
+        <div class="chat__sidebar-title">Friends list</div>
+        <div class="chat__sidebar-wrapper">
+          <ul class="chat__sidebar-list">
+            <template v-if="users.length">
+              <li
+                class="chat__sidebar-list-component"
+                v-for="(user, index) in users"
+                v-show="user.id !== $store.getters.getAuthUser.id"
+                :key="index"
+              >
+                <v-btn
+                  rounded
+                  class="chat__sidebar-button"
+                  @click="chatWithUser(user.id)"
+                >
+                  <v-avatar size="32" color="indigo lighten-1 mr-1">
+                    <img
+                      lazy-src="../assets/photos/defaultGiga.jpg"
+                      :src="'http://localhost:8000/' + user?.image_profile"
+                      alt="alt"
+                    />
+                  </v-avatar>
+                  {{ user.first_name }} {{ user.second_name }}
+                </v-btn>
+              </li>
+            </template>
+            <template v-else>
+              <span>Loading...</span>
+            </template>
+          </ul>
+        </div>
+      </div>
       <div class="chat__body">
+        <div class="chat__title">Chat</div>
         <div class="chat__content">
           <div class="chat__content-wrapper">
             <template v-if="!dataMessages.length">
@@ -55,56 +88,76 @@ export default {
       message: "",
       toUser: this.$route.params.id,
       typing: false,
+      users: [],
     };
   },
 
-  created() {
-    const newEcho = new Echo({
-      authEndpoint: "http://localhost:8000/api/broadcasting/auth",
-      pusher: Pusher,
-      broadcaster: "pusher",
-      key: process.env.VUE_APP_PUSHER_APP_KEY,
-      cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
-      forceTLS: false,
-      wsHost: process.env.VUE_APP_PUSHER_HOST,
-      wsPort: 6001,
-      encrypted: true,
-      enabledTransports: ["ws", "wss"],
-      auth: {
-        headers: {
-          Authorization: "Bearer " + this.$store.getters.getAccessToken,
-        },
-      },
+  mounted() {
+    this.$store.dispatch("fetchAllUsers").then((value) => {
+      this.users = value;
     });
-
-    const channel = newEcho.channel("chat");
-    console.log(channel);
-    console.log(process.env.VUE_APP_PUSHER_KEY);
-
-    channel
-      .subscribed(() => {
-        console.log("Subscribed!!");
-      })
-      .listen("SessionEvent", (data) => {
-        console.log("SessionEvent");
-        this.$store.commit("updateMessages", data);
-        console.log(data);
-      });
   },
 
   computed: {
     ...mapGetters({
       dataMessages: "getMessages",
+      dataChatOptions: "getChatOptions",
     }),
+
+    isAmI() {
+      const userId = this.comment.user_id;
+      const authUserId = this.$store.getters.getAuthUser.id;
+      return userId === authUserId;
+    },
   },
 
   methods: {
+    chatWithUser(friendId) {
+      this.$store
+        .dispatch("fetchCreateSession", { friend_id: friendId })
+        .then((value) => {
+          console.log(value);
+          // this.connectChannel(this.dataChatOptions);
+        });
+    },
+
+    connectChannel(chatOptions) {
+      console.log(chatOptions.session_data.id);
+      const newEcho = new Echo({
+        authEndpoint: "http://localhost:8000/api/broadcasting/auth",
+        pusher: Pusher,
+        broadcaster: "pusher",
+        key: process.env.VUE_APP_PUSHER_APP_KEY,
+        cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
+        forceTLS: false,
+        wsHost: process.env.VUE_APP_PUSHER_HOST,
+        wsPort: 6001,
+        encrypted: true,
+        enabledTransports: ["ws", "wss"],
+        auth: {
+          headers: {
+            Authorization: "Bearer " + this.$store.getters.getAccessToken,
+          },
+        },
+      });
+
+      const channel = newEcho.private(`session.${chatOptions.session_data.id}`);
+
+      channel
+        .subscribed(() => {
+          console.log("Subscribed!!");
+        })
+        .listen(".session-message", (data) => {
+          // this.$store.commit("updateMessages", data);
+          console.log(data);
+        });
+    },
+
     onSubmit(event) {
       event.preventDefault();
       const form = this.$refs.formChat.$el;
       const formData = new FormData(form);
-      // formData.append("user", JSON.stringify(this.$store.getters.getAuthUser));
-      formData.append("to_user", this.toUser);
+      formData.append("session_id", this.dataChatOptions.session_data.id);
       this.$store.dispatch("fetchSendMessage", formData);
       this.message = "";
     },
@@ -118,6 +171,7 @@ export default {
   align-items: center;
   justify-content: center;
   flex-grow: 1;
+
   z-index: 1;
 }
 
@@ -127,10 +181,11 @@ export default {
     padding: 8px;
     border-radius: 8px;
     box-shadow: 0 0 8px #cd38ff;
-
     width: 50%;
     margin: 48px;
     font-family: "Rubik";
+    display: flex;
+    position: relative;
   }
 
   &__title {
@@ -139,8 +194,53 @@ export default {
     border-bottom: solid 1px rgb(206, 206, 206);
   }
 
+  &__sidebar {
+    padding: 4px 8px 8px 8px;
+
+    border-radius: 8px;
+    width: 30%;
+    box-shadow: 0 0 8px #6aa5ff;
+    background: linear-gradient(0deg, rgb(149, 255, 255), rgb(68, 186, 255));
+  }
+
+  &__sidebar-button.v-btn::v-deep {
+    width: 100%;
+    font-size: 0.8em;
+    padding: 0;
+    height: 42px;
+
+    .v-btn__content {
+      width: 100%;
+      height: 100%;
+      justify-content: start;
+      padding: 0 8px;
+    }
+  }
+
+  &__sidebar-wrapper {
+    padding-top: 8px;
+  }
+
+  &__sidebar-title {
+    font-size: 1.4em;
+    font-weight: bold;
+    border-bottom: solid 1px rgb(206, 206, 206);
+  }
+
+  &__sidebar-list::v-deep {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__sidebar-list-component + &__sidebar-list-component {
+    padding-top: 8px;
+  }
+
   &__body {
     position: relative;
+    padding: 4px;
+    width: 70%;
   }
 
   &__content {
