@@ -43,7 +43,6 @@ export default {
     }),
 
     isAmI() {
-      console.log(this.user);
       const userId = this.user.id;
       const authUserId = this.$store.getters.getAuthUser.id;
       return userId === authUserId;
