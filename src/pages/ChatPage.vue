@@ -81,9 +81,10 @@
 <script>
 import VChatMessage from "@/components/UI/VChatMessage.vue";
 import Echo from "laravel-echo";
-import Pusher from "pusher-js";
+// import Pusher from "pusher-js";
+// import { io } from "socket.io-client";
 import { mapGetters } from "vuex";
-
+window.io = require("socket.io-client");
 export default {
   components: { VChatMessage },
   data() {
@@ -118,14 +119,21 @@ export default {
         });
     },
 
+    // eslint-disable-next-line no-unused-vars
     connectChannel(chatOptions) {
+      if (typeof io !== undefined) {
+        console.log("message");
+      }
+      // eslint-disable-next-line no-unused-vars
       const newEcho = new Echo({
         authEndpoint: "http://localhost:8000/api/broadcasting/auth",
-        pusher: Pusher,
-        broadcaster: "pusher",
+        // pusher: Pusher,
+        broadcaster: "socket.io",
         key: process.env.VUE_APP_PUSHER_APP_KEY,
         cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
         forceTLS: false,
+        // host: process.env.VUE_APP_PUSHER_HOST,
+        host: "ws://localhost:6001",
         wsHost: process.env.VUE_APP_PUSHER_HOST,
         wsPort: 6001,
         encrypted: true,
@@ -137,16 +145,16 @@ export default {
         },
       });
 
-      const channel = newEcho.private(`room.${chatOptions.id}`);
+      // const channel = newEcho.private(`room.${chatOptions.id}`);
 
-      channel
-        .subscribed(() => {
-          console.log("Subscribed!!");
-          this.$store.dispatch("fetchAllMessages", chatOptions.id);
-        })
-        .listen(".room-message", (data) => {
-          this.$store.commit("pushMessage", data.message);
-        });
+      // channel
+      //   .subscribed(() => {
+      //     console.log("Subscribed!!");
+      //     this.$store.dispatch("fetchAllMessages", chatOptions.id);
+      //   })
+      //   .listen(".room-message", (data) => {
+      //     this.$store.commit("pushMessage", data.message);
+      //   });
     },
 
     onSubmit(event) {
