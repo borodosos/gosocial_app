@@ -142,12 +142,9 @@ export default {
       channel
         .subscribed(() => {
           console.log("Subscribed!!");
-          console.log(channel.subscription.subscribed);
-
           this.$store.dispatch("fetchAllMessages", chatOptions.id);
         })
         .listen(".room-message", (data) => {
-          console.log(data.message);
           this.$store.commit("pushMessage", data.message);
         });
     },
