@@ -1,5 +1,5 @@
 import { createSession } from "@/http/chatApi";
-import { sendMessage } from "../http/messageApi";
+import { getAllMessages, sendMessage } from "../http/messageApi";
 
 export default {
   state: {
@@ -8,6 +8,19 @@ export default {
   },
 
   actions: {
+    fetchAllMessages(ctx, payload) {
+      return new Promise((resolve, reject) => {
+        getAllMessages(payload)
+          .then((value) => {
+            ctx.commit("updateAllMessages", value);
+            resolve(value);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+
     fetchCreateSession(ctx, payload) {
       return new Promise((resolve, reject) => {
         createSession(payload)
@@ -35,7 +48,11 @@ export default {
   },
 
   mutations: {
-    updateMessages(state, message) {
+    updateAllMessages(state, messages) {
+      state.messages = messages;
+    },
+
+    pushMessage(state, message) {
       state.messages.push(message);
     },
 

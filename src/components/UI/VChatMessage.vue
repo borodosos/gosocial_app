@@ -1,5 +1,5 @@
 <template>
-  <div class="message">
+  <div class="message" :class="{ ['my-message']: isAmI }">
     <div class="message__wrapper">
       <div class="message__header">
         <v-avatar
@@ -13,11 +13,13 @@
           <span class="message__user-name">
             {{ dataMessage.user.first_name }} {{ dataMessage.user.second_name }}
           </span>
-          <span class="message__data"> dadasdadadsd </span>
+          <span class="message__data">
+            {{ parseDate }}
+          </span>
         </div>
       </div>
       <div class="message__body">
-        {{ dataMessage.message }}
+        {{ dataMessage.content }}
       </div>
     </div>
   </div>
@@ -28,14 +30,41 @@ export default {
   props: {
     dataMessage: Object,
   },
+
+  computed: {
+    isAmI() {
+      return this.dataMessage.user_id === this.$store.getters.getAuthUser.id;
+    },
+
+    parseDate() {
+      const date = new Date(this.dataMessage.created_at);
+      const myOptions = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      };
+      return date.toLocaleString("en-US", myOptions);
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
+.message + .message {
+  margin-top: 16px;
+}
+
 .message {
   font-family: "Rubik";
+  background-color: rgb(235, 235, 235);
+  border-radius: 8px;
+  width: 70%;
+  box-shadow: 0 0 8px rgb(173, 173, 173);
+
   &__wrapper {
-    padding: 8px 0;
+    padding: 8px;
   }
 
   &__header {
@@ -64,6 +93,12 @@ export default {
 
   &__body {
     padding-top: 4px;
+    word-break: break-word;
   }
+}
+
+.my-message {
+  align-self: flex-end;
+  background-color: rgb(185, 229, 255);
 }
 </style>

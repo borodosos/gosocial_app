@@ -37,9 +37,12 @@
       <div class="chat__body">
         <div class="chat__title">Chat</div>
         <div class="chat__content">
+          <div class="chat__subheader"></div>
           <div class="chat__content-wrapper">
-            <template v-if="!dataMessages.length">
-              <span>There are not any messages...</span>
+            <template v-if="!Object.keys(dataChatOptions).length">
+              <span class="chat__alert"
+                >Select the user you want to start a chat with</span
+              >
             </template>
             <template v-else>
               <VChatMessage
@@ -102,27 +105,20 @@ export default {
     ...mapGetters({
       dataMessages: "getMessages",
       dataChatOptions: "getChatOptions",
+      authUser: "getAuthUser",
     }),
-
-    isAmI() {
-      const userId = this.comment.user_id;
-      const authUserId = this.$store.getters.getAuthUser.id;
-      return userId === authUserId;
-    },
   },
 
   methods: {
     chatWithUser(friendId) {
       this.$store
         .dispatch("fetchCreateSession", { friend_id: friendId })
-        .then((value) => {
-          console.log(value);
-          // this.connectChannel(this.dataChatOptions);
+        .then(() => {
+          this.connectChannel(this.dataChatOptions);
         });
     },
 
     connectChannel(chatOptions) {
-      console.log(chatOptions.session_data.id);
       const newEcho = new Echo({
         authEndpoint: "http://localhost:8000/api/broadcasting/auth",
         pusher: Pusher,
@@ -141,15 +137,18 @@ export default {
         },
       });
 
-      const channel = newEcho.private(`session.${chatOptions.session_data.id}`);
+      const channel = newEcho.private(`room.${chatOptions.id}`);
 
       channel
         .subscribed(() => {
           console.log("Subscribed!!");
+          console.log(channel.subscription.subscribed);
+
+          this.$store.dispatch("fetchAllMessages", chatOptions.id);
         })
-        .listen(".session-message", (data) => {
-          // this.$store.commit("updateMessages", data);
-          console.log(data);
+        .listen(".room-message", (data) => {
+          console.log(data.message);
+          this.$store.commit("pushMessage", data.message);
         });
     },
 
@@ -157,7 +156,8 @@ export default {
       event.preventDefault();
       const form = this.$refs.formChat.$el;
       const formData = new FormData(form);
-      formData.append("session_id", this.dataChatOptions.session_data.id);
+      formData.append("room_id", this.dataChatOptions.id);
+      formData.append("user", JSON.stringify(this.authUser));
       this.$store.dispatch("fetchSendMessage", formData);
       this.message = "";
     },
@@ -182,6 +182,7 @@ export default {
     border-radius: 8px;
     box-shadow: 0 0 8px #cd38ff;
     width: 50%;
+    height: 55vh;
     margin: 48px;
     font-family: "Rubik";
     display: flex;
@@ -238,19 +239,32 @@ export default {
   }
 
   &__body {
-    position: relative;
     padding: 4px;
     width: 70%;
   }
 
   &__content {
     padding: 8px;
+    overflow-y: auto;
+    max-height: calc(100% - 88px);
+    height: 100%;
+  }
+
+  &__content::-webkit-scrollbar {
+    opacity: 0;
+    width: 4px;
+  }
+
+  &__content::-webkit-scrollbar-thumb {
+    display: block;
+    border-radius: 10px;
+    background-color: #6aa5ff;
+    padding: 8px 0;
   }
 
   &__content-wrapper {
-    height: 50vh;
-    overflow: auto;
-    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
     padding: 8px;
   }
 
@@ -260,11 +274,19 @@ export default {
   }
 
   &__form-container {
-    position: absolute;
-    bottom: 0;
     background-color: white;
     width: 100%;
     padding: 4px 8px;
+  }
+
+  &__alert {
+    font-size: 1.4em;
+    display: flex;
+    width: 100%;
+    height: 90%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   &__form {
