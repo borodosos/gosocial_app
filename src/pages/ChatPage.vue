@@ -1,48 +1,21 @@
 <template>
   <section class="container chat">
     <div class="chat__wrapper">
-      <div class="chat__sidebar">
-        <div class="chat__sidebar-title">Friends list</div>
-        <div class="chat__sidebar-wrapper">
-          <ul class="chat__sidebar-list">
-            <template v-if="users.length">
-              <li
-                class="chat__sidebar-list-component"
-                v-for="(user, index) in users"
-                v-show="user.id !== $store.getters.getAuthUser.id"
-                :key="index"
-              >
-                <v-btn
-                  rounded
-                  class="chat__sidebar-button"
-                  @click="chatWithUser(user.id)"
-                >
-                  <v-avatar size="32" color="indigo lighten-1 mr-1">
-                    <img
-                      lazy-src="../assets/photos/defaultGiga.jpg"
-                      :src="'http://localhost:8000/' + user?.image_profile"
-                      alt="alt"
-                    />
-                  </v-avatar>
-                  {{ user.first_name }} {{ user.second_name }}
-                </v-btn>
-              </li>
-            </template>
-            <template v-else>
-              <span>Loading...</span>
-            </template>
-          </ul>
-        </div>
-      </div>
+      <VChatSidebar @clicked-to-user="chatWithUser" />
       <div class="chat__body">
         <div class="chat__title">Chat</div>
-        <div class="chat__content">
+        <div class="chat__content" ref="chatContent">
           <div class="chat__subheader"></div>
           <div class="chat__content-wrapper">
             <template v-if="!Object.keys(dataChatOptions).length">
               <span class="chat__alert"
                 >Select the user you want to start a chat with</span
               >
+            </template>
+            <template v-else-if="loader">
+              <div class="d-flex justify-center">
+                <VChatLoader />
+              </div>
             </template>
             <template v-else>
               <VChatMessage
@@ -61,7 +34,6 @@
               rows="1"
               dense
               max-height="100px"
-              auto-grow
               v-model="message"
               class="chat__input"
               name="message"
@@ -80,46 +52,32 @@
 
 <script>
 import VChatMessage from "@/components/UI/VChatMessage.vue";
+import VChatSidebar from "@/components/UI/chats/VChatSidebar.vue";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import { mapGetters } from "vuex";
+import VChatLoader from "@/components/UI/chats/VChatLoader.vue";
 
 export default {
-  components: { VChatMessage },
+  components: {
+    VChatMessage,
+    VChatSidebar,
+    VChatLoader,
+  },
+
   data() {
     return {
       message: "",
       toUser: this.$route.params.id,
       typing: false,
       users: [],
+      loader: false,
     };
   },
 
   mounted() {
-    this.$store.dispatch("fetchAllUsers").then((value) => {
-      this.users = value;
-    });
-  },
-
-  computed: {
-    ...mapGetters({
-      dataMessages: "getMessages",
-      dataChatOptions: "getChatOptions",
-      authUser: "getAuthUser",
-    }),
-  },
-
-  methods: {
-    chatWithUser(friendId) {
-      this.$store
-        .dispatch("fetchCreateSession", { friend_id: friendId })
-        .then(() => {
-          this.connectChannel(this.dataChatOptions);
-        });
-    },
-
-    connectChannel(chatOptions) {
-      const newEcho = new Echo({
+    if (window.Echo === undefined) {
+      window.Echo = new Echo({
         authEndpoint: "http://localhost:8000/api/broadcasting/auth",
         pusher: Pusher,
         broadcaster: "pusher",
@@ -136,16 +94,44 @@ export default {
           },
         },
       });
+    }
+  },
 
-      const channel = newEcho.private(`room.${chatOptions.id}`);
+  computed: {
+    ...mapGetters({
+      dataMessages: "getMessages",
+      dataChatOptions: "getChatOptions",
+      authUser: "getAuthUser",
+    }),
+  },
+
+  methods: {
+    chatWithUser(friendId) {
+      this.loader = true;
+      this.$store
+        .dispatch("fetchCreateSession", { friend_id: friendId })
+        .then(() => {
+          this.connectChannel(this.dataChatOptions);
+        });
+    },
+
+    connectChannel(chatOptions) {
+      window.Echo.leave(`room.${chatOptions.id}`);
+
+      const channel = window.Echo.private(`room.${chatOptions.id}`);
 
       channel
         .subscribed(() => {
           console.log("Subscribed!!");
-          this.$store.dispatch("fetchAllMessages", chatOptions.id);
+          this.$store.dispatch("fetchAllMessages", chatOptions.id).then(() => {
+            this.scrollDown();
+          });
+          this.loader = false;
         })
         .listen(".room-message", (data) => {
-          this.$store.commit("pushMessage", data.message);
+          this.$store.dispatch("pushNewMessage", data.message).then(() => {
+            this.scrollDown();
+          });
         });
     },
 
@@ -158,6 +144,14 @@ export default {
       this.$store.dispatch("fetchSendMessage", formData);
       this.message = "";
     },
+
+    scrollDown() {
+      if (this.dataMessages.length) {
+        const element = this.$refs.chatContent;
+        const height = this.$refs.chatContent.scrollHeight;
+        element.scrollTop = height;
+      }
+    },
   },
 };
 </script>
@@ -168,7 +162,6 @@ export default {
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-
   z-index: 1;
 }
 
@@ -178,66 +171,24 @@ export default {
     padding: 8px;
     border-radius: 8px;
     box-shadow: 0 0 8px #cd38ff;
+    height: 70vh;
     width: 50%;
-    height: 55vh;
-    margin: 48px;
+    margin: 0 48px;
     font-family: "Rubik";
     display: flex;
     position: relative;
   }
 
   &__title {
+    text-align: center;
     font-size: 1.4em;
     font-weight: bold;
     border-bottom: solid 1px rgb(206, 206, 206);
-  }
-
-  &__sidebar {
-    padding: 4px 8px 8px 8px;
-
-    border-radius: 8px;
-    width: 30%;
-    box-shadow: 0 0 8px #6aa5ff;
-    background: linear-gradient(0deg, rgb(149, 255, 255), rgb(68, 186, 255));
-  }
-
-  &__sidebar-button.v-btn::v-deep {
-    width: 100%;
-    font-size: 0.8em;
-    padding: 0;
-    height: 42px;
-
-    .v-btn__content {
-      width: 100%;
-      height: 100%;
-      justify-content: start;
-      padding: 0 8px;
-    }
-  }
-
-  &__sidebar-wrapper {
-    padding-top: 8px;
-  }
-
-  &__sidebar-title {
-    font-size: 1.4em;
-    font-weight: bold;
-    border-bottom: solid 1px rgb(206, 206, 206);
-  }
-
-  &__sidebar-list::v-deep {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  &__sidebar-list-component + &__sidebar-list-component {
-    padding-top: 8px;
   }
 
   &__body {
     padding: 4px;
-    width: 70%;
+    width: 100%;
   }
 
   &__content {

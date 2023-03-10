@@ -7,7 +7,7 @@
           size="45"
           color="purple darken-1"
         >
-          <!-- <img :src="setImageProfile" alt="alt" /> -->
+          <img :src="setImageProfile" alt="alt" />
         </v-avatar>
         <div class="message__header-content">
           <span class="message__user-name">
@@ -32,6 +32,13 @@ export default {
   },
 
   computed: {
+    setImageProfile() {
+      if (!this.dataMessage.user.image_profile) {
+        return require("@/assets/photos/defaultGiga.jpg");
+      } else
+        return `${process.env.VUE_APP_SERVER_URL}${this.dataMessage.user.image_profile}`;
+    },
+
     isAmI() {
       return this.dataMessage.user_id === this.$store.getters.getAuthUser.id;
     },
@@ -60,7 +67,9 @@ export default {
   font-family: "Rubik";
   background-color: rgb(235, 235, 235);
   border-radius: 8px;
-  width: 70%;
+  width: fit-content;
+  max-width: 70%;
+
   box-shadow: 0 0 8px rgb(173, 173, 173);
 
   &__wrapper {

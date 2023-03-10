@@ -45,6 +45,13 @@ export default {
           });
       });
     },
+
+    pushNewMessage(ctx, payload) {
+      return new Promise((resolve) => {
+        ctx.commit("pushMessage", payload);
+        resolve(payload);
+      });
+    },
   },
 
   mutations: {
