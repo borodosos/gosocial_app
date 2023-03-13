@@ -2,14 +2,10 @@
   <v-btn
     rounded
     class="chat__sidebar-button"
-    @click="$emit('click-to-chat', user.id)"
+    @click="$emit('click-to-chat', user)"
   >
     <v-avatar size="32" color="indigo lighten-1 mr-1">
-      <img
-        lazy-src="../assets/photos/defaultGiga.jpg"
-        :src="setImageProfile"
-        alt="alt"
-      />
+      <img :src="setImageProfile" alt="alt" />
     </v-avatar>
     {{ user.first_name }} {{ user.second_name }}
   </v-btn>

@@ -12,7 +12,7 @@
           >
             <VChatSidebarUser
               :user="user"
-              @click-to-chat="$emit('clicked-to-user', user.id)"
+              @click-to-chat="$emit('clicked-to-user', user)"
             />
           </li>
         </template>

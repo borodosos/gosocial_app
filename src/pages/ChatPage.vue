@@ -4,31 +4,54 @@
       <VChatSidebar @clicked-to-user="chatWithUser" />
       <div class="chat__body">
         <div class="chat__title">Chat</div>
-        <div class="chat__content" ref="chatContent">
-          <div class="chat__subheader"></div>
-          <div class="chat__content-wrapper">
-            <template v-if="!Object.keys(dataChatOptions).length">
-              <span class="chat__alert"
-                >Select the user you want to start a chat with</span
-              >
-            </template>
-            <template v-else-if="loader">
-              <div class="d-flex justify-center">
-                <VChatLoader />
-              </div>
-            </template>
-            <template v-else>
-              <VChatMessage
-                v-for="(dataMessage, index) in dataMessages"
-                :key="`${index}`"
-                :dataMessage="dataMessage"
-              />
-            </template>
+        <div class="chat__subheader">
+          <div class="pa-1" v-if="!chatCurrentUser">
+            Select the user you want to start a chat with
+          </div>
+          <div class="chat__subheader-user" v-else>
+            <v-avatar size="28" color="indigo lighten-1 mr-1">
+              <img :src="setImageProfile" alt="alt" />
+            </v-avatar>
+            {{ chatCurrentUser.first_name }} {{ chatCurrentUser.second_name }}
           </div>
         </div>
+        <v-divider></v-divider>
+        <div class="chat__content" ref="chatContent">
+          <div class="chat__content-container">
+            <div class="chat__content-wrapper">
+              <template v-if="!Object.keys(dataChatOptions).length">
+                <div class="chat__image">
+                  <img src="@/assets/images/chat_image.svg" />
+                </div>
+              </template>
+              <template v-else-if="loader">
+                <div class="d-flex justify-center">
+                  <VChatLoader />
+                </div>
+              </template>
+              <template v-else>
+                <VChatMessage
+                  v-for="(dataMessage, index) in dataMessages"
+                  :key="`${index}`"
+                  :dataMessage="dataMessage"
+                />
+              </template>
+            </div>
+          </div>
+        </div>
+        <transition name="fade">
+          <div
+            v-if="userTyping && userTyping.id === chatCurrentUser.id"
+            class="chat__typing animate"
+          >
+            <span>{{ userTyping.first_name }} is typing...</span>
+          </div>
+        </transition>
+
         <div class="chat__form-container">
           <v-form ref="formChat" class="chat__form" @submit="onSubmit">
             <v-textarea
+              @keydown="sendTypingEvent"
               @keydown.enter="onSubmit"
               outlined
               rows="1"
@@ -72,6 +95,10 @@ export default {
       typing: false,
       users: [],
       loader: false,
+      userTyping: null,
+      typingTimer: null,
+      chatCurrentUser: null,
+      heightTyping: 0,
     };
   },
 
@@ -103,13 +130,21 @@ export default {
       dataChatOptions: "getChatOptions",
       authUser: "getAuthUser",
     }),
+
+    setImageProfile() {
+      if (!this.chatCurrentUser.image_profile) {
+        return require("@/assets/photos/defaultGiga.jpg");
+      } else
+        return `${process.env.VUE_APP_SERVER_URL}${this.chatCurrentUser.image_profile}`;
+    },
   },
 
   methods: {
-    chatWithUser(friendId) {
+    chatWithUser(user) {
+      this.chatCurrentUser = user;
       this.loader = true;
       this.$store
-        .dispatch("fetchCreateSession", { friend_id: friendId })
+        .dispatch("fetchCreateSession", { friend_id: user.id })
         .then(() => {
           this.connectChannel(this.dataChatOptions);
         });
@@ -118,7 +153,7 @@ export default {
     connectChannel(chatOptions) {
       window.Echo.leave(`room.${chatOptions.id}`);
 
-      const channel = window.Echo.private(`room.${chatOptions.id}`);
+      const channel = window.Echo.join(`room.${chatOptions.id}`);
 
       channel
         .subscribed(() => {
@@ -132,6 +167,17 @@ export default {
           this.$store.dispatch("pushNewMessage", data.message).then(() => {
             this.scrollDown();
           });
+        })
+        .listenForWhisper("typing", (user) => {
+          this.userTyping = user;
+          console.log(this.heightTyping);
+          if (this.typingTimer) {
+            clearTimeout(this.typingTimer);
+          }
+
+          this.typingTimer = setTimeout(() => {
+            this.userTyping = null;
+          }, 3000);
         });
     },
 
@@ -151,6 +197,13 @@ export default {
         const height = this.$refs.chatContent.scrollHeight;
         element.scrollTop = height;
       }
+    },
+
+    sendTypingEvent() {
+      window.Echo.join(`room.${this.dataChatOptions.id}`).whisper(
+        "typing",
+        this.authUser
+      );
     },
   },
 };
@@ -186,15 +239,27 @@ export default {
     border-bottom: solid 1px rgb(206, 206, 206);
   }
 
+  &__subheader {
+    padding: 4px;
+    text-align: center;
+  }
+
+  &__subheader-user {
+    background-color: rgb(206, 206, 206);
+    display: inline-block;
+    border-radius: 16px;
+    padding: 4px;
+  }
+
   &__body {
     padding: 4px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   &__content {
-    padding: 8px;
     overflow-y: auto;
-    max-height: calc(100% - 88px);
     height: 100%;
   }
 
@@ -214,11 +279,43 @@ export default {
     display: flex;
     flex-direction: column;
     padding: 8px;
+    height: 100%;
   }
 
   &__content-wrapper::-webkit-scrollbar {
     opacity: 0;
     width: 4px;
+  }
+
+  &__typing {
+    color: rgb(136, 136, 136);
+    padding: 8px;
+
+    span {
+      animation: blinking 1.5s infinite;
+    }
+
+    @keyframes blinking {
+      0% {
+        opacity: 0.4;
+      }
+
+      25% {
+        opacity: 0.8;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      75% {
+        opacity: 0.8;
+      }
+
+      100% {
+        opacity: 0.4;
+      }
+    }
   }
 
   &__form-container {
@@ -227,14 +324,11 @@ export default {
     padding: 4px 8px;
   }
 
-  &__alert {
-    font-size: 1.4em;
+  &__image {
+    height: 100%;
     display: flex;
-    width: 100%;
-    height: 90%;
     align-items: center;
     justify-content: center;
-    text-align: center;
   }
 
   &__form {
