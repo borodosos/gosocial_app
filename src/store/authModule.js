@@ -1,5 +1,6 @@
 import { login, refresh, registration } from "@/http/userApi";
 import parseToken from "@/utils/parseToken";
+import createEcho from "../utils/createEcho";
 
 export default {
   state: {
@@ -17,6 +18,8 @@ export default {
             const userDetails = parseToken(accessToken).user_info;
             ctx.dispatch("initUser", userDetails); // -- Init user
             ctx.commit("fetchSuccess", accessToken); // -- Set access token
+            createEcho(accessToken, userDetails.id);
+
             resolve(res);
           })
           .catch((error) => {
@@ -37,6 +40,7 @@ export default {
             const userDetails = parseToken(accessToken).user_info;
             ctx.dispatch("initUser", userDetails); // -- Init user
             ctx.commit("fetchSuccess", accessToken); // -- Set access token
+            createEcho(accessToken, userDetails.id);
             resolve(res);
           })
           .catch((error) => {
@@ -57,6 +61,8 @@ export default {
             const userDetails = parseToken(accessToken).user_info;
             ctx.dispatch("initUser", userDetails); // -- Init user
             ctx.commit("fetchSuccess", accessToken); // -- Set access token
+            createEcho(accessToken, userDetails.id);
+
             resolve(res);
           })
           .catch((error) => {

@@ -15,7 +15,7 @@
             >
           </v-btn>
           <v-btn class="button-navigation" rounded>
-            <router-link :to="'/chats/1'">Chats</router-link>
+            <router-link :to="'/chat'">Chat</router-link>
           </v-btn>
         </nav>
         <InputText

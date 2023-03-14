@@ -7,7 +7,6 @@ import PrimeVue from "primevue/config";
 import VueFormulate from "@braid/vue-formulate";
 import ToastService from "primevue/toastservice";
 import vueDebounce from "vue-debounce";
-// import sockets from "./plugins/socket";
 
 Vue.use(VueFormulate);
 Vue.use(ToastService);
@@ -24,7 +23,6 @@ new Vue({
   router,
   store,
   vuetify,
-  // sockets,
   PrimeVue,
   render: (h) => h(App),
 }).$mount("#app");

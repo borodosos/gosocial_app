@@ -56,6 +56,7 @@
               outlined
               rows="1"
               dense
+              auto-grow
               max-height="100px"
               v-model="message"
               class="chat__input"
@@ -76,8 +77,7 @@
 <script>
 import VChatMessage from "@/components/UI/VChatMessage.vue";
 import VChatSidebar from "@/components/UI/chats/VChatSidebar.vue";
-import Echo from "laravel-echo";
-import Pusher from "pusher-js";
+
 import { mapGetters } from "vuex";
 import VChatLoader from "@/components/UI/chats/VChatLoader.vue";
 
@@ -91,37 +91,13 @@ export default {
   data() {
     return {
       message: "",
-      toUser: this.$route.params.id,
       typing: false,
       users: [],
       loader: false,
       userTyping: null,
       typingTimer: null,
       chatCurrentUser: null,
-      heightTyping: 0,
     };
-  },
-
-  mounted() {
-    if (window.Echo === undefined) {
-      window.Echo = new Echo({
-        authEndpoint: "http://localhost:8000/api/broadcasting/auth",
-        pusher: Pusher,
-        broadcaster: "pusher",
-        key: process.env.VUE_APP_PUSHER_APP_KEY,
-        cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
-        forceTLS: false,
-        wsHost: process.env.VUE_APP_PUSHER_HOST,
-        wsPort: 6001,
-        encrypted: true,
-        enabledTransports: ["ws", "wss"],
-        auth: {
-          headers: {
-            Authorization: "Bearer " + this.$store.getters.getAccessToken,
-          },
-        },
-      });
-    }
   },
 
   computed: {
@@ -141,6 +117,7 @@ export default {
 
   methods: {
     chatWithUser(user) {
+      console.log(window.Echo);
       this.chatCurrentUser = user;
       this.loader = true;
       this.$store
@@ -164,20 +141,21 @@ export default {
           this.loader = false;
         })
         .listen(".room-message", (data) => {
-          this.$store.dispatch("pushNewMessage", data.message).then(() => {
-            this.scrollDown();
-          });
+          if (this.$route.name === "Chat") {
+            this.$store.dispatch("pushNewMessage", data.message).then(() => {
+              this.scrollDown();
+            });
+          }
         })
         .listenForWhisper("typing", (user) => {
           this.userTyping = user;
-          console.log(this.heightTyping);
           if (this.typingTimer) {
             clearTimeout(this.typingTimer);
           }
 
           this.typingTimer = setTimeout(() => {
             this.userTyping = null;
-          }, 3000);
+          }, 1000);
         });
     },
 
@@ -187,6 +165,8 @@ export default {
       const formData = new FormData(form);
       formData.append("room_id", this.dataChatOptions.id);
       formData.append("user", JSON.stringify(this.authUser));
+      formData.append("user_to_id", this.chatCurrentUser.id);
+
       this.$store.dispatch("fetchSendMessage", formData);
       this.message = "";
     },
@@ -242,6 +222,7 @@ export default {
   &__subheader {
     padding: 4px;
     text-align: center;
+    box-shadow: 0 6px 4px -4px #c700ff57;
   }
 
   &__subheader-user {
@@ -288,8 +269,10 @@ export default {
   }
 
   &__typing {
-    color: rgb(136, 136, 136);
+    color: rgb(102, 102, 102);
     padding: 8px;
+    background-color: #f0c5ff;
+    border-radius: 8px;
 
     span {
       animation: blinking 1.5s infinite;
@@ -322,12 +305,12 @@ export default {
     background-color: white;
     width: 100%;
     padding: 4px 8px;
+    box-shadow: 0px -6px 4px -4px #c700ff57;
   }
 
   &__image {
     height: 100%;
     display: flex;
-    align-items: center;
     justify-content: center;
   }
 

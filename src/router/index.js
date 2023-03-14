@@ -27,11 +27,12 @@ const routes = [
   },
 
   {
-    path: "/chats/:id",
+    path: "/chat",
     component: ChatPage,
     meta: {
       requiresAuth: true,
     },
+    name: "Chat",
   },
 
   {
