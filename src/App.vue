@@ -27,7 +27,7 @@ export default {
 
   watch: {
     notification() {
-      if (this.$route.name !== "Chat") {
+      if (this.$route.name !== "Chat" && this.notification.message) {
         this.$toast.add({
           severity: "info",
           detail: this.notification.message,

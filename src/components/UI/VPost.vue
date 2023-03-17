@@ -38,6 +38,7 @@
           <span v-else> {{ post.text }} </span>
         </div>
         <div class="post__img">
+          <div class="post__img-overlay" @click="dialog = !dialog"></div>
           <v-img :src="setImage" max-height="400" max-width="500" contain />
         </div>
         <div class="post__tags">
@@ -96,6 +97,11 @@
       </div>
     </div>
     <Toast position="bottom-left" group="bl" />
+    <VModalPost
+      :modalDialog="dialog"
+      @toggle-func="toggleDialog"
+      :post="post"
+    />
   </li>
 </template>
 
@@ -108,6 +114,7 @@ import Toast from "primevue/toast";
 import VModerButtonSettings from "./VModerButtonSettings.vue";
 import VButtonSettings from "./VButtonSettings.vue";
 import VPopoverMenuUser from "./VPopoverMenuUser.vue";
+import VModalPost from "./VModalPost.vue";
 
 export default {
   components: {
@@ -117,6 +124,7 @@ export default {
     VModerButtonSettings,
     VButtonSettings,
     VPopoverMenuUser,
+    VModalPost,
   },
 
   props: {
@@ -129,6 +137,7 @@ export default {
       postTags: [],
       loading: false,
       commentText: "",
+      dialog: false,
     };
   },
 
@@ -171,6 +180,9 @@ export default {
           });
         })
         .finally(() => (this.commentText = ""));
+    },
+    toggleDialog() {
+      this.dialog = false;
     },
   },
 
@@ -314,6 +326,25 @@ img {
   margin: 0 auto;
 }
 
+.post__img-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 10;
+  border-radius: 8px;
+  cursor: pointer;
+  background: url("@/assets/—Pngtree—vector\ open\ icon_3996316.png") no-repeat,
+    #8b8b8b;
+  background-position: 50% 50%;
+  background-size: 50%;
+}
+
+.post__img:hover .post__img-overlay {
+  opacity: 0.5;
+}
+
 .post__bottom {
   margin-top: 15px;
 }
@@ -325,8 +356,6 @@ img {
 
 .post__comments {
   border-radius: 8px;
-  padding: 8px;
-  margin-top: 12px;
   word-break: break-all;
 }
 

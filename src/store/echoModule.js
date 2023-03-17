@@ -1,11 +1,10 @@
 export default {
   state: {
-    notification: {},
-    timer: null,
+    echo: null,
   },
 
   actions: {
-    addNotification(ctx, payload) {
+    createEcho(ctx, payload) {
       return new Promise((resolve) => {
         ctx.commit("updateNotification", payload);
 
@@ -24,10 +23,6 @@ export default {
   mutations: {
     updateNotification(state, payload) {
       state.notification = payload;
-    },
-
-    removeNotification(state) {
-      state.notification = {};
     },
   },
 

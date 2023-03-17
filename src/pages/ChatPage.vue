@@ -80,6 +80,7 @@ import VChatSidebar from "@/components/UI/chats/VChatSidebar.vue";
 
 import { mapGetters } from "vuex";
 import VChatLoader from "@/components/UI/chats/VChatLoader.vue";
+import { VUE_ECHO } from "@/utils/createEcho";
 
 export default {
   components: {
@@ -117,7 +118,7 @@ export default {
 
   methods: {
     chatWithUser(user) {
-      console.log(window.Echo);
+      console.log(VUE_ECHO);
       this.chatCurrentUser = user;
       this.loader = true;
       this.$store
@@ -128,9 +129,9 @@ export default {
     },
 
     connectChannel(chatOptions) {
-      window.Echo.leave(`room.${chatOptions.id}`);
+      VUE_ECHO.leave(`room.${chatOptions.id}`);
 
-      const channel = window.Echo.join(`room.${chatOptions.id}`);
+      const channel = VUE_ECHO.join(`room.${chatOptions.id}`);
 
       channel
         .subscribed(() => {
@@ -180,7 +181,7 @@ export default {
     },
 
     sendTypingEvent() {
-      window.Echo.join(`room.${this.dataChatOptions.id}`).whisper(
+      VUE_ECHO.join(`room.${this.dataChatOptions.id}`).whisper(
         "typing",
         this.authUser
       );
