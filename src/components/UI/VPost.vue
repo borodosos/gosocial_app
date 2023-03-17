@@ -391,7 +391,6 @@ img {
 .comments__input {
   display: block;
   width: 100%;
-  padding: 8px;
   border-radius: 8px;
   margin: 0;
   padding: 0;

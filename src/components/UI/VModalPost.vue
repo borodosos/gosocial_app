@@ -21,39 +21,51 @@
 
           <div class="post-card__sidebar">
             <div class="post-card__comments-container">
-              <VPostComments
-                v-for="(comment, index) in post.comments"
-                :key="index"
-                :comment="comment"
-                :post="post"
-              />
+              <template v-if="post.comments.length">
+                <VPostComments
+                  v-for="(comment, index) in post.comments"
+                  :key="index"
+                  :comment="comment"
+                  :post="post"
+                />
+              </template>
+              <template v-else>
+                <div class="post-card__comments-empty">
+                  <div>
+                    <span>No comments. Comment it</span>
+                    <img src="@/assets/doit.gif" />
+                  </div>
+                </div>
+              </template>
             </div>
-            <v-form
-              ref="form"
-              class="post-card__comments-form"
-              @submit.prevent="onSubmit"
-            >
-              <v-textarea
-                @keydown.enter="onSubmit"
-                outlined
-                rows="1"
-                dense
-                max-height="100px"
-                auto-grow
-                v-model="commentText"
-                class="post-card__comments-input"
-                name="comment"
-                label="Comment"
-              ></v-textarea>
-              <v-btn
-                ref="buttonComment"
-                class="post-card__comments-button"
-                type="submit"
-                rounded
-                icon
-                ><i class="fa-duotone fa-paper-plane-top"></i
-              ></v-btn>
-            </v-form>
+            <div class="post-card__comments-form-container">
+              <v-form
+                ref="form"
+                class="post-card__comments-form"
+                @submit.prevent="onSubmit"
+              >
+                <v-textarea
+                  @keydown.enter="onSubmit"
+                  outlined
+                  rows="1"
+                  dense
+                  max-height="100px"
+                  auto-grow
+                  v-model="commentText"
+                  class="post-card__comments-input"
+                  name="comment"
+                  label="Comment"
+                ></v-textarea>
+                <v-btn
+                  ref="buttonComment"
+                  class="post-card__comments-button"
+                  type="submit"
+                  rounded
+                  icon
+                  ><i class="fa-duotone fa-paper-plane-top"></i
+                ></v-btn>
+              </v-form>
+            </div>
           </div>
         </div>
       </div>
@@ -82,14 +94,6 @@ export default {
     return {
       commentText: "",
     };
-  },
-
-  watch: {
-    modalDialog() {
-      if (this.modalDialog == true) {
-        console.log("message");
-      }
-    },
   },
 
   computed: {
@@ -122,7 +126,6 @@ export default {
           this.loading = false;
         })
         .catch((error) => {
-          console.log(error);
           this.$toast.add({
             severity: "error",
             summary: "Error",
@@ -210,11 +213,49 @@ export default {
     width: 30%;
     display: flex;
     flex-direction: column;
-    padding: 8px;
+  }
+
+  &__comments-empty {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 8px #6aa5ff;
+      padding: 8px;
+      border-radius: 8px;
+    }
+    img {
+      max-width: 100%;
+    }
   }
 
   &__comments-container {
     flex-grow: 1;
+    overflow: auto;
+    padding: 8px;
+  }
+
+  &__comments-container::-webkit-scrollbar {
+    opacity: 0;
+    width: 4px;
+  }
+
+  &__comments-container::-webkit-scrollbar-thumb {
+    display: block;
+    border-radius: 10px;
+    background-color: #6aa5ff;
+  }
+
+  &__comments-form-container {
+    background-color: #dfdfdf;
+    padding: 8px;
   }
 
   &__comments-form {
@@ -222,8 +263,30 @@ export default {
   }
 
   &__comments-input::v-deep {
+    margin: 0;
+    padding: 0;
+
     .v-text-field__details {
       display: none;
+    }
+
+    textarea {
+      max-height: 150px;
+      overflow: auto;
+      padding: 0;
+      margin-right: 12px;
+    }
+
+    textarea::-webkit-scrollbar {
+      opacity: 0;
+      width: 4px;
+    }
+
+    textarea::-webkit-scrollbar-thumb {
+      display: block;
+      border-radius: 10px;
+      background-color: #6aa5ff;
+      padding: 8px 0;
     }
   }
 
