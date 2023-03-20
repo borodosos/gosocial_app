@@ -3,10 +3,11 @@ import { PUSHER_APP_CLUSTER, PUSHER_APP_AUTH_ENDPOINT } from "../constants";
 import Pusher from "pusher-js";
 import Echo from "laravel-echo";
 import connectToBroadcast from "./connectToBroadcast";
-export let VUE_ECHO = null;
+
+export let VUE_ECHO;
 
 export default (accessToken, userId) => {
-  if (window.Echo === undefined) {
+  if (VUE_ECHO === undefined) {
     VUE_ECHO = new Echo({
       authEndpoint: PUSHER_APP_AUTH_ENDPOINT,
       pusher: Pusher,
