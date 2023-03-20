@@ -158,4 +158,8 @@ i {
 .component-fade-leave-to {
   opacity: 0;
 }
+
+.v-application .v-dialog {
+  border-radius: 16px;
+}
 </style>

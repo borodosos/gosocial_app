@@ -4,7 +4,7 @@
       <div class="comment__title">
         <v-avatar
           class="comment__user-avatar"
-          size="45"
+          :size="sizeAvatar || 45"
           color="purple darken-1"
         >
           <img :src="setImageProfile" alt="alt" />
@@ -122,6 +122,7 @@ export default {
     user: Object,
     post: Object,
     comment: Object,
+    sizeAvatar: Number,
   },
 
   components: {
