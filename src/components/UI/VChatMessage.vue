@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { SERVER_URL } from "@/constants";
+
 export default {
   props: {
     dataMessage: Object,
@@ -35,8 +37,10 @@ export default {
     setImageProfile() {
       if (!this.dataMessage.user.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
-      } else
-        return `${process.env.VUE_APP_SERVER_URL}${this.dataMessage.user.image_profile}`;
+      } else {
+        const path = this.dataMessage.user.image_profile.replace("public/", "");
+        return `${SERVER_URL}${path}`;
+      }
     },
 
     isAmI() {

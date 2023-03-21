@@ -40,7 +40,8 @@ export default {
 .profile__list-post-element::v-deep .post__header,
 .profile__list-post-element::v-deep .post__comments,
 .profile__list-post-element::v-deep .menu__button,
-.profile__list-post-element::v-deep .v-divider {
+.profile__list-post-element::v-deep .v-divider,
+.profile__list-post-element::v-deep .post__dialog {
   display: none;
 }
 

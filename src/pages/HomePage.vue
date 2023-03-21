@@ -32,9 +32,9 @@ export default {
 
 .panel {
   background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 1px 10px 0 rgb(107, 107, 107);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px 0 rgb(107, 107, 107);
 }
 
 .stage {

@@ -144,7 +144,10 @@ export default {
     setImageProfile() {
       if (!this.comment.user.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
-      } else return `${SERVER_URL}${this.comment.user.image_profile}`;
+      } else {
+        const path = this.comment.user.image_profile.replace("public/", "");
+        return `${SERVER_URL}${path}`;
+      }
     },
 
     parseDate() {

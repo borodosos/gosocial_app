@@ -13,7 +13,7 @@
           @click="route"
         >
           <v-avatar size="32" color="indigo lighten-1 mr-1" @click="route">
-            <img :src="setImageProfile" alt="alt" />
+            <img :src.attr="setImageProfile(friend)" alt="alt" />
           </v-avatar>
           {{ friend.first_name }} {{ friend.second_name }}
         </li>
@@ -52,15 +52,17 @@ export default {
     route() {
       this.$router.push("/chat");
     },
-  },
-
-  computed: {
-    setImageProfile() {
-      if (!this.user.image_profile) {
+    setImageProfile(friend) {
+      if (!friend.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
-      } else return `${SERVER_URL}${this.user.image_profile}`;
+      } else {
+        const path = friend.image_profile.replace("public/", "");
+        return `${SERVER_URL}${path}`;
+      }
     },
   },
+
+  computed: {},
 
   mounted() {
     const options = {
@@ -101,6 +103,17 @@ export default {
     padding: 0;
     max-height: 320px;
     overflow-y: auto;
+  }
+
+  &__list::-webkit-scrollbar {
+    opacity: 0;
+    width: 4px;
+  }
+
+  &__list::-webkit-scrollbar-thumb {
+    display: block;
+    border-radius: 10px;
+    background-color: #6aa5ff;
   }
 
   &__list-wrapper {

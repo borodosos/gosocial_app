@@ -31,7 +31,7 @@
                 </v-avatar>
                 <div class="post-card__sidebar-header-info">
                   <span class="post-card__user-name">
-                    {{ post.user.first_name }} {{ post.user.second_name }}
+                    {{ post.user?.first_name }} {{ post.user?.second_name }}
                   </span>
                   <span class="post-card__sidebar-header-data">{{
                     parseDate
@@ -40,7 +40,7 @@
               </div>
 
               <div class="post-card__comments-container">
-                <template v-if="post.comments.length">
+                <template v-if="post.comments?.length">
                   <VPostComments
                     v-for="(comment, index) in post.comments"
                     :key="index"
@@ -124,9 +124,12 @@ export default {
     },
 
     setImageProfile() {
-      if (!this.post.user.image_profile) {
+      if (!this.post.user?.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
-      } else return `${SERVER_URL}${this.post.user.image_profile}`;
+      } else {
+        const path = this.post.user.image_profile.replace("public/", "");
+        return `${SERVER_URL}${path}`;
+      }
     },
 
     parseDate() {

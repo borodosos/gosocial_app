@@ -57,10 +57,10 @@ export default {
   }
 
   &__sidebar-button.v-btn::v-deep {
-    width: 100%;
     font-size: 0.8em;
     padding: 0;
     height: 42px;
+    width: 100%;
 
     .v-btn__content {
       width: 100%;
@@ -72,7 +72,20 @@ export default {
   }
 
   &__sidebar-wrapper {
-    padding-top: 8px;
+    padding: 8px 8px 8px 0;
+    overflow-y: auto;
+    max-height: calc(100% - 36px);
+  }
+
+  &__sidebar-wrapper::-webkit-scrollbar {
+    opacity: 0;
+    width: 4px;
+  }
+
+  &__sidebar-wrapper::-webkit-scrollbar-thumb {
+    display: block;
+    border-radius: 10px;
+    background-color: #ffffff;
   }
 
   &__sidebar-title {
@@ -88,6 +101,10 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  &__sidebar-list-component {
+    width: 100%;
   }
 
   &__sidebar-list-component + &__sidebar-list-component {

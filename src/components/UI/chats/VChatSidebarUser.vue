@@ -7,7 +7,9 @@
     <v-avatar size="32" color="indigo lighten-1 mr-1">
       <img :src="setImageProfile" alt="alt" />
     </v-avatar>
-    {{ user.first_name }} {{ user.second_name }}
+    <span class="chat__button-text"
+      >{{ user.first_name }} {{ user.second_name }}</span
+    >
   </v-btn>
 </template>
 
@@ -29,20 +31,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.chat {
-  &__sidebar-button.v-btn::v-deep {
-    width: 100%;
-    font-size: 0.8em;
-    padding: 0;
-    height: 42px;
-
-    .v-btn__content {
-      width: 100%;
-      height: 100%;
-      justify-content: start;
-      padding: 0 8px;
-      white-space: initial;
-    }
-  }
+.chat__button-text {
+  width: 100%;
 }
 </style>

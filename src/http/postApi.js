@@ -1,7 +1,7 @@
 import { authHost } from "@/http";
 
 export const getAllPosts = async (page) => {
-  const { data } = await authHost.get(`api/posts/?page=${page}`);
+  const { data } = await authHost.get(`api/posts?page=${page}`);
 
   return data;
 };

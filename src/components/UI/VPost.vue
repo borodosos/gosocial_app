@@ -33,10 +33,18 @@
           <VHighlightedText v-if="storeFilter === 'All'" :text="post.title" />
           <span v-else> {{ post.title }}</span>
         </div>
-        <div class="post__text">
+        <div class="post__text" ref="post_text-div">
           <VHighlightedText v-if="storeFilter === 'All'" :text="post.text" />
-          <span v-else> {{ post.text }} </span>
+          <span ref="post_text-span" v-else> {{ post.text }} </span>
         </div>
+        <button
+          class="post__button-show-text"
+          v-show="showExpandButton"
+          @click="expandText"
+        >
+          Show text
+        </button>
+
         <div class="post__img">
           <div class="post__img-overlay" @click="dialog = !dialog"></div>
           <v-img :src="setImage" max-height="400" max-width="500" contain />
@@ -98,6 +106,7 @@
     </div>
     <Toast position="bottom-left" group="bl" />
     <VModalPost
+      class="post__dialog"
       :modalDialog="dialog"
       @toggle-func="toggleDialog"
       :post="post"
@@ -138,7 +147,17 @@ export default {
       loading: false,
       commentText: "",
       dialog: false,
+      showExpandButton: false,
+      textDivHeight: `${14.5 * 5 + 16}px`,
     };
+  },
+
+  mounted() {
+    if (this.$refs["post_text-span"].getClientRects().length > 5) {
+      this.showExpandButton = true;
+    } else {
+      this.showExpandButton = false;
+    }
   },
 
   methods: {
@@ -181,8 +200,15 @@ export default {
         })
         .finally(() => (this.commentText = ""));
     },
+
     toggleDialog() {
       this.dialog = false;
+    },
+
+    expandText() {
+      const countRows = this.$refs["post_text-span"].getClientRects().length;
+      this.textDivHeight = `${countRows * 21.6}px`;
+      this.showExpandButton = false;
     },
   },
 
@@ -199,7 +225,10 @@ export default {
     setImageProfile() {
       if (!this.user.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
-      } else return `${SERVER_URL}${this.user.image_profile}`;
+      } else {
+        const path = this.user.image_profile.replace("public/", "");
+        return `${SERVER_URL}${path}`;
+      }
     },
 
     parseDate() {
@@ -290,8 +319,26 @@ export default {
 
 .post__text {
   font-size: 0.9em;
-  margin-bottom: 8px;
   word-break: break-all;
+  max-height: v-bind(textDivHeight);
+  overflow-y: hidden;
+  transition: all 0.5s ease;
+}
+
+.post__button-show-text {
+  display: inline;
+  width: max-content;
+  font-size: 0.9em;
+  border-radius: 8px;
+  color: #4a92ff;
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  box-shadow: 0 0 8px #4a92ff;
+}
+
+.post__button-show-text:hover {
+  background-color: #6aa5ff;
+  color: #ffffff;
 }
 
 .post__body {
@@ -311,6 +358,7 @@ img {
 }
 
 .post__img {
+  margin-top: 8px;
   border-radius: 8px;
   background: linear-gradient(
     0deg,
