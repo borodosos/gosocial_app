@@ -119,7 +119,8 @@ export default {
 
   computed: {
     setImage() {
-      return `${SERVER_URL}${this.post.image}`;
+      const path = this.post.image.replace("public/", "");
+      return `${SERVER_URL}${path}`;
     },
 
     setImageProfile() {

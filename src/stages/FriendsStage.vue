@@ -99,6 +99,8 @@ export default {
   &__list {
     list-style: none;
     padding: 0;
+    max-height: 320px;
+    overflow-y: auto;
   }
 
   &__list-wrapper {
