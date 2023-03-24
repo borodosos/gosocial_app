@@ -416,7 +416,6 @@ img {
 .post__comments-container {
   max-height: 400px;
   overflow-y: auto;
-  margin-bottom: 8px;
 }
 
 .post__comments-container::-webkit-scrollbar {
