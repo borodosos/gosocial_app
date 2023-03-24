@@ -2,18 +2,41 @@
   <v-app>
     <AppHeader v-show="this.$store.getters.isAuthenticated" />
     <router-view />
+    <Toast position="bottom-left" group="bnotification" />
   </v-app>
 </template>
 
 <script>
 import "@/components/UI/particles/particles";
+import Toast from "primevue/toast/Toast";
+import { mapGetters } from "vuex";
+
 import AppHeader from "./components/AppHeader.vue";
 
 export default {
-  components: { AppHeader },
+  components: { AppHeader, Toast },
   data: () => ({
     //
   }),
+
+  computed: {
+    ...mapGetters({
+      notification: "getNotification",
+    }),
+  },
+
+  watch: {
+    notification() {
+      if (this.$route.name !== "Chat" && this.notification.message) {
+        this.$toast.add({
+          severity: "info",
+          detail: this.notification.message,
+          group: "bnotification",
+          life: 3000,
+        });
+      }
+    },
+  },
 };
 </script>
 
@@ -134,5 +157,9 @@ i {
 .component-fade-enter,
 .component-fade-leave-to {
   opacity: 0;
+}
+
+.v-application .v-dialog {
+  border-radius: 16px;
 }
 </style>

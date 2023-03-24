@@ -13,7 +13,7 @@
       <p v-else>Oops, there are not any posts...</p>
     </transition>
     <template>
-      <div class="text-center">
+      <div class="text-center pt-2">
         <v-pagination
           v-model="currentPage"
           :length="$store.getters.getLengthPosts"
@@ -36,7 +36,6 @@ export default {
     return {
       loading: false,
       currentPage: 1,
-      paginatedPosts: [],
     };
   },
 

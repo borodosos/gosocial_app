@@ -3,7 +3,7 @@
     <div class="subcomment__title">
       <v-avatar
         class="subcomment__user-avatar"
-        size="30"
+        size="38"
         color="purple darken-1"
       >
         <img :src="setImageProfile" alt="alt" />
@@ -77,7 +77,10 @@ export default {
     setImageProfile() {
       if (!this.reply.user.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
-      } else return `${SERVER_URL}${this.reply.user.image_profile}`;
+      } else {
+        const path = this.reply.user.image_profile.replace("public/", "");
+        return `${SERVER_URL}${path}`;
+      }
     },
 
     parseDate() {

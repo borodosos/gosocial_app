@@ -193,7 +193,10 @@ export default {
     setImageProfile() {
       if (!this.user.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
-      } else return `${SERVER_URL}${this.user.image_profile}`;
+      } else {
+        const path = this.user.image_profile.replace("public/", "");
+        return `${SERVER_URL}${path}`;
+      }
     },
   },
 
@@ -399,6 +402,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: min-content;
   }
 
   &__list-element:hover {

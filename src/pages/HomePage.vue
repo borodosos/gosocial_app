@@ -2,10 +2,12 @@
   <div class="container-main">
     <UserStage class="stage" />
     <MainStage class="stage" />
+    <FriendsStage class="stage" />
   </div>
 </template>
 
 <script>
+import FriendsStage from "@/stages/FriendsStage.vue";
 import MainStage from "@/stages/MainStage.vue";
 import UserStage from "@/stages/UserStage.vue";
 
@@ -13,6 +15,7 @@ export default {
   components: {
     MainStage,
     UserStage,
+    FriendsStage,
   },
 };
 </script>
@@ -29,9 +32,9 @@ export default {
 
 .panel {
   background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 1px 10px 0 rgb(107, 107, 107);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px 0 rgb(107, 107, 107);
 }
 
 .stage {

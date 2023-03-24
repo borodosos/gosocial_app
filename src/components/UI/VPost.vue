@@ -8,11 +8,7 @@
         <div class="post__info">
           <div class="post__user-info">
             <div class="post__user-name" @click="routeToUser">
-              <VHighlightedText
-                v-if="storeFilter === 'Authors' || 'All'"
-                :text="`${user.first_name} ${user.second_name}`"
-              />
-              <span v-else> {{ user.first_name }} {{ user.second_name }} </span>
+              <VPopoverMenuUser :user="user" />
             </div>
             <span v-if="user.role === 'moderator'" class="post__user-role"
               >Boss of this GYM</span
@@ -37,11 +33,20 @@
           <VHighlightedText v-if="storeFilter === 'All'" :text="post.title" />
           <span v-else> {{ post.title }}</span>
         </div>
-        <div class="post__text">
+        <div class="post__text" ref="post_text-div">
           <VHighlightedText v-if="storeFilter === 'All'" :text="post.text" />
-          <span v-else> {{ post.text }} </span>
+          <span ref="post_text-span" v-else> {{ post.text }} </span>
         </div>
+        <button
+          class="post__button-show-text"
+          v-show="showExpandButton"
+          @click="expandText"
+        >
+          Show text
+        </button>
+
         <div class="post__img">
+          <div class="post__img-overlay" @click="dialog = !dialog"></div>
           <v-img :src="setImage" max-height="400" max-width="500" contain />
         </div>
         <div class="post__tags">
@@ -100,6 +105,12 @@
       </div>
     </div>
     <Toast position="bottom-left" group="bl" />
+    <VModalPost
+      class="post__dialog"
+      :modalDialog="dialog"
+      @toggle-func="toggleDialog"
+      :post="post"
+    />
   </li>
 </template>
 
@@ -111,6 +122,8 @@ import VPostComments from "./comments/VPostComments.vue";
 import Toast from "primevue/toast";
 import VModerButtonSettings from "./VModerButtonSettings.vue";
 import VButtonSettings from "./VButtonSettings.vue";
+import VPopoverMenuUser from "./VPopoverMenuUser.vue";
+import VModalPost from "./VModalPost.vue";
 
 export default {
   components: {
@@ -119,6 +132,8 @@ export default {
     Toast,
     VModerButtonSettings,
     VButtonSettings,
+    VPopoverMenuUser,
+    VModalPost,
   },
 
   props: {
@@ -131,7 +146,18 @@ export default {
       postTags: [],
       loading: false,
       commentText: "",
+      dialog: false,
+      showExpandButton: false,
+      textDivHeight: `${14.5 * 5 + 16}px`,
     };
+  },
+
+  mounted() {
+    if (this.$refs["post_text-span"].getClientRects().length > 5) {
+      this.showExpandButton = true;
+    } else {
+      this.showExpandButton = false;
+    }
   },
 
   methods: {
@@ -174,6 +200,16 @@ export default {
         })
         .finally(() => (this.commentText = ""));
     },
+
+    toggleDialog() {
+      this.dialog = false;
+    },
+
+    expandText() {
+      const countRows = this.$refs["post_text-span"].getClientRects().length;
+      this.textDivHeight = `${countRows * 21.6}px`;
+      this.showExpandButton = false;
+    },
   },
 
   computed: {
@@ -182,13 +218,17 @@ export default {
     }),
 
     setImage() {
-      return `${SERVER_URL}${this.post.image}`;
+      const path = this.post.image.replace("public/", "");
+      return `${SERVER_URL}${path}`;
     },
 
     setImageProfile() {
       if (!this.user.image_profile) {
         return require("@/assets/photos/defaultGiga.jpg");
-      } else return `${SERVER_URL}${this.user.image_profile}`;
+      } else {
+        const path = this.user.image_profile.replace("public/", "");
+        return `${SERVER_URL}${path}`;
+      }
     },
 
     parseDate() {
@@ -279,8 +319,26 @@ export default {
 
 .post__text {
   font-size: 0.9em;
-  margin-bottom: 8px;
   word-break: break-all;
+  max-height: v-bind(textDivHeight);
+  overflow-y: hidden;
+  transition: all 0.5s ease;
+}
+
+.post__button-show-text {
+  display: inline;
+  width: max-content;
+  font-size: 0.9em;
+  border-radius: 8px;
+  color: #4a92ff;
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  box-shadow: 0 0 8px #4a92ff;
+}
+
+.post__button-show-text:hover {
+  background-color: #6aa5ff;
+  color: #ffffff;
 }
 
 .post__body {
@@ -300,6 +358,7 @@ img {
 }
 
 .post__img {
+  margin-top: 8px;
   border-radius: 8px;
   background: linear-gradient(
     0deg,
@@ -316,6 +375,25 @@ img {
   margin: 0 auto;
 }
 
+.post__img-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 10;
+  border-radius: 8px;
+  cursor: pointer;
+  background: url("@/assets/—Pngtree—vector\ open\ icon_3996316.png") no-repeat,
+    #8b8b8b;
+  background-position: 50% 50%;
+  background-size: 50%;
+}
+
+.post__img:hover .post__img-overlay {
+  opacity: 0.5;
+}
+
 .post__bottom {
   margin-top: 15px;
 }
@@ -327,8 +405,6 @@ img {
 
 .post__comments {
   border-radius: 8px;
-  padding: 8px;
-  margin-top: 12px;
   word-break: break-all;
 }
 
@@ -340,7 +416,6 @@ img {
 .post__comments-container {
   max-height: 400px;
   overflow-y: auto;
-  margin-bottom: 8px;
 }
 
 .post__comments-container::-webkit-scrollbar {
@@ -364,7 +439,6 @@ img {
 .comments__input {
   display: block;
   width: 100%;
-  padding: 8px;
   border-radius: 8px;
   margin: 0;
   padding: 0;

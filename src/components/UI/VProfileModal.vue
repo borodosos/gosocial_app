@@ -12,7 +12,7 @@
           @file-removed="imageProfile.src = null"
           type="image"
           label="Post Image"
-          validation="mime:image/jpeg,image/jpg,image/png"
+          validation="mime:image/jpeg,image/jpg,image/png,image/gif"
           help="Download your image"
         />
         <div class="cropper__container">
