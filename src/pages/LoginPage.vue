@@ -97,7 +97,6 @@ export default {
           .then((res) => {
             console.log(res);
             this.loading = !this.loading;
-            this.$router.push("/");
           })
           .catch((error) => {
             this.$toast.add({
